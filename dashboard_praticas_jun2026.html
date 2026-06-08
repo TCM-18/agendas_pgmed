@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acompanhamento Semanal de Práticas — Jun/2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --blue-dark: #1F4E79;
+    --blue-mid: #2E75B6;
+    --blue-light: #BDD7EE;
+    --blue-pale: #EBF3FA;
+    --green: #375623;
+    --green-light: #E2EFDA;
+    --red: #C00000;
+    --orange: #ED7D31;
+    --yellow: #FFC000;
+    --gray: #595959;
+    --gray-light: #F2F2F2;
+    --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #F0F4F8; color: #222; font-size: 13px; }
+
+  /* NAV */
+  .topbar { background: var(--blue-dark); color: #fff; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .topbar h1 { font-size: 17px; font-weight: bold; letter-spacing: .3px; }
+  .topbar .sub { font-size: 11px; opacity: .75; margin-top: 2px; }
+  .tabs { display: flex; gap: 2px; background: var(--blue-dark); padding: 0 24px; border-bottom: 3px solid var(--blue-mid); }
+  .tab { padding: 9px 20px; cursor: pointer; font-size: 12px; font-weight: bold; color: rgba(255,255,255,.65); border-radius: 6px 6px 0 0; transition: background .15s, color .15s; }
+  .tab:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .tab.active { background: var(--white); color: var(--blue-dark); }
+
+  /* MAIN */
+  .page { display: none; padding: 20px 24px; }
+  .page.active { display: block; }
+
+  /* KPI CARDS */
+  .kpi-row { display: flex; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+  .kpi { background: #fff; border-radius: 8px; padding: 14px 18px; flex: 1; min-width: 140px; box-shadow: 0 1px 4px rgba(0,0,0,.08); border-left: 4px solid var(--blue-mid); }
+  .kpi .label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: .4px; }
+  .kpi .value { font-size: 26px; font-weight: bold; color: var(--blue-dark); margin-top: 4px; }
+  .kpi .sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+  .kpi.green { border-left-color: #375623; } .kpi.green .value { color: #375623; }
+  .kpi.orange { border-left-color: var(--orange); } .kpi.orange .value { color: var(--orange); }
+  .kpi.red { border-left-color: var(--red); } .kpi.red .value { color: var(--red); }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+  @media(max-width:900px){ .grid-2,.grid-3 { grid-template-columns:1fr; } }
+
+  /* CARD */
+  .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow: hidden; }
+  .card-header { background: var(--blue-dark); color: #fff; padding: 10px 16px; font-size: 12px; font-weight: bold; letter-spacing: .3px; }
+  .card-body { padding: 14px 16px; }
+  .card-body.no-pad { padding: 0; }
+  .chart-wrap { position: relative; height: 220px; }
+  .chart-wrap.tall { height: 280px; }
+
+  /* TABLES */
+  .tbl-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { background: var(--blue-dark); color: #fff; padding: 8px 10px; text-align: center; position: sticky; top: 0; z-index: 2; white-space: nowrap; font-size: 11px; }
+  thead th.left { text-align: left; }
+  tbody tr:nth-child(even) { background: var(--blue-pale); }
+  tbody tr:hover { background: var(--blue-light); }
+  tbody td { padding: 6px 10px; border-bottom: 1px solid #E8EEF4; text-align: center; white-space: nowrap; }
+  tbody td.left { text-align: left; white-space: normal; word-break: break-word; max-width: 260px; }
+  tfoot td { background: var(--blue-light); font-weight: bold; padding: 7px 10px; text-align: center; border-top: 2px solid var(--blue-mid); }
+  tfoot td.left { text-align: left; }
+
+  /* HEATMAP */
+  .heatmap-cell { padding: 8px 6px; font-size: 11px; font-weight: bold; border-radius: 4px; text-align: center; }
+
+  /* SEARCH / FILTER */
+  .filter-bar { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+  .filter-bar input, .filter-bar select {
+    padding: 6px 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 12px; background: #fff;
+  }
+  .filter-bar input { flex: 1; min-width: 180px; }
+
+  /* BADGE */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; }
+  .badge-cps { background: #DDEEFF; color: #1F4E79; }
+  .badge-sp  { background: #E2EFDA; color: #375623; }
+  .badge-onl { background: #FFF2CC; color: #7F6000; }
+  .badge-bsb { background: #FCE4D6; color: #843C0C; }
+
+  /* WEEK PILLS */
+  .week-nav { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .week-pill { padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; border: 2px solid var(--blue-mid); color: var(--blue-mid); background: #fff; transition: all .15s; }
+  .week-pill.active, .week-pill:hover { background: var(--blue-dark); color: #fff; border-color: var(--blue-dark); }
+
+  /* PROGRESS BAR */
+  .pbar-wrap { background: #E8EEF4; border-radius: 4px; height: 14px; overflow: hidden; min-width: 80px; }
+  .pbar { height: 100%; border-radius: 4px; transition: width .3s; }
+
+  /* SECTION TITLE */
+  .section-title { font-size: 14px; font-weight: bold; color: var(--blue-dark); margin-bottom: 10px; margin-top: 6px; border-left: 4px solid var(--blue-mid); padding-left: 10px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="sub">Faculdade São Leopoldo Mandic</div>
+    <h1>Acompanhamento Semanal de Práticas — Junho/2026</h1>
+  </div>
+  <div style="text-align:right">
+    <div class="sub">Última atualização</div>
+    <div style="font-size:13px;font-weight:bold">05/06/2026</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showPage('macro')">📊 Visão Macro</div>
+  <div class="tab" onclick="showPage('semana')">📅 Por Semana</div>
+  <div class="tab" onclick="showPage('unidade')">🏛️ Por Unidade</div>
+  <div class="tab" onclick="showPage('turma')">👥 Por Turma</div>
+  <div class="tab" onclick="showPage('modulo')">📚 Por Módulo</div>
+</div>
+
+<!-- ═══════════════ MACRO ═══════════════ -->
+<div id="page-macro" class="page active">
+
+  <div class="kpi-row" id="kpi-macro"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">Ocupação por Semana (base: slots da prática)</div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-semana-occ"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">Agendamentos vs Slots — por Semana</div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-semana-vol"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">Ocupação por Unidade</div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-unid-occ"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">Distribuição de Práticas por Unidade</div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-unid-dist"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Heatmap — Ocupação por Semana × Unidade</div>
+    <div class="card-body no-pad" id="heatmap-container"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ SEMANA ═══════════════ -->
+<div id="page-semana" class="page">
+  <div class="week-nav" id="week-nav"></div>
+  <div class="kpi-row" id="kpi-semana"></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">Ocupação por Unidade — Semana Selecionada</div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-sw-unid"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">Turmas com Maior e Menor Ocupação</div>
+      <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-sw-turmas"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- CARD: EVOLUÇÃO DIÁRIA POR TURMA -->
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+      <span>📅 Evolução Diária por Turma — Semana Selecionada</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="filter-unid-daily" onchange="renderDailyCard()" style="padding:4px 8px;border:1px solid rgba(255,255,255,.4);border-radius:4px;background:rgba(255,255,255,.15);color:#fff;font-size:11px">
+          <option value="">Todas unidades</option>
+          <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
+        </select>
+        <select id="filter-trend-daily" onchange="renderDailyCard()" style="padding:4px 8px;border:1px solid rgba(255,255,255,.4);border-radius:4px;background:rgba(255,255,255,.15);color:#fff;font-size:11px">
+          <option value="">Todas tendências</option>
+          <option value="up">↑ Crescendo</option>
+          <option value="down">↓ Caindo</option>
+          <option value="stable">→ Estável</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="daily-legend" style="display:flex;gap:16px;margin-bottom:12px;font-size:11px;flex-wrap:wrap">
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#375623;margin-right:4px"></span>≥ 85%</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#FFC000;margin-right:4px"></span>50–85%</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#C00000;margin-right:4px"></span>&lt; 50%</span>
+        <span style="margin-left:12px;color:#595959">Tendência: <strong style="color:#375623">↑ Crescendo</strong> · <strong style="color:#C00000">↓ Caindo</strong> · <strong style="color:#7F6000">→ Estável</strong></span>
+      </div>
+      <div id="daily-cards-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Detalhamento de Práticas — Semana Selecionada</div>
+    <div class="card-body" style="padding-bottom:0">
+      <div class="filter-bar" style="margin-bottom:10px">
+        <input id="search-semana" type="text" placeholder="Buscar turma…" oninput="renderSemanaTable()">
+        <select id="filter-unid-semana" onchange="renderSemanaTable()">
+          <option value="">Todas as unidades</option>
+          <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
+        </select>
+        <select id="filter-occ-semana" onchange="renderSemanaTable()">
+          <option value="">Qualquer ocupação</option>
+          <option value="high">≥ 85% (Alta)</option>
+          <option value="med">50–85% (Média)</option>
+          <option value="low">&lt; 50% (Baixa)</option>
+          <option value="zero">0% (Sem agendamentos)</option>
+          <option value="over">Overbooking (&gt; 100%)</option>
+          <option value="noslot">Sem slots</option>
+        </select>
+        <select id="filter-sort-semana" onchange="renderSemanaTable()">
+          <option value="date">Ordenar: Data</option>
+          <option value="occ-desc">Ordenar: Maior Ocupação</option>
+          <option value="occ-asc">Ordenar: Menor Ocupação</option>
+          <option value="ag-desc">Ordenar: Mais Agendamentos</option>
+          <option value="name">Ordenar: Nome</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-body no-pad">
+      <div class="tbl-wrap"><table id="tbl-semana">
+        <thead><tr>
+          <th class="left">Turma</th><th>Unid.</th><th>Data</th>
+          <th>Slots Prática</th><th>Slots Extras</th><th>Slots Totais</th>
+          <th>Agendamentos</th><th>Ocupação</th><th>Ocup. Overbooking</th>
+        </tr></thead>
+        <tbody></tbody>
+        <tfoot><tr id="tbl-semana-foot"></tr></tfoot>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ UNIDADE ═══════════════ -->
+<div id="page-unidade" class="page">
+  <div class="kpi-row" id="kpi-unidades"></div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header">Evolução Semanal por Unidade</div>
+    <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-unid-evolucao"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div class="card-header">Resumo por Unidade × Semana</div>
+    <div class="card-body no-pad">
+      <div class="tbl-wrap"><table id="tbl-unidade">
+        <thead><tr>
+          <th class="left">Unidade</th><th>Semana</th>
+          <th>Slots Prática</th><th>Slots Extras</th><th>Slots Totais</th>
+          <th>Agendamentos</th><th>Ocupação</th><th>Ocup. Overbooking</th><th>Práticas</th>
+        </tr></thead>
+        <tbody></tbody>
+        <tfoot><tr id="tbl-unidade-foot"></tr></tfoot>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TURMA ═══════════════ -->
+<div id="page-turma" class="page">
+  <!-- ROW 1: main filters -->
+  <div class="filter-bar" style="margin-bottom:8px">
+    <input id="search-turma" type="text" placeholder="Buscar turma…" oninput="renderTurmaTable()" style="flex:1.5">
+    <select id="filter-unid-turma" onchange="renderTurmaTable();rebuildModuleDropdown()">
+      <option value="">Todas as unidades</option>
+      <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
+    </select>
+    <select id="filter-week-turma" onchange="renderTurmaTable();rebuildModuleDropdown()">
+      <option value="">Todas as semanas</option>
+      <option>S1 (01–07/06)</option><option>S2 (08–14/06)</option>
+      <option>S3 (15–21/06)</option><option>S4 (22–28/06)</option><option>S5 (29–30/06)</option>
+    </select>
+    <select id="filter-sort-turma" onchange="renderTurmaTable()">
+      <option value="occ-desc">Ordenar: Maior Ocupação</option>
+      <option value="occ-asc">Ordenar: Menor Ocupação</option>
+      <option value="name">Ordenar: Nome</option>
+      <option value="ag-desc">Ordenar: Mais Agendamentos</option>
+    </select>
+    <select id="select-turma-exec" onchange="dispatchExecSelect(this.value)" style="flex:1.2;font-weight:bold;border-color:#2E75B6">
+      <option value="">🔍 Análise executiva…</option>
+    </select>
+    <button onclick="showGroupExec()" style="padding:6px 14px;background:#1F4E79;color:#fff;border:none;border-radius:5px;font-weight:bold;cursor:pointer;font-size:12px;white-space:nowrap">
+      📊 Analisar grupo
+    </button>
+  </div>
+
+  <!-- ROW 2: specialty + module multi-selects -->
+  <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+
+    <!-- Specialty multi-select -->
+    <div style="position:relative" id="spec-dropdown-wrap">
+      <button id="spec-dropdown-btn" onclick="toggleSpecDropdown()"
+        style="padding:6px 12px;border:1px solid #ccc;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;white-space:nowrap;min-width:190px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span id="spec-btn-label">🏷️ Filtrar por especialidade…</span>
+        <span>▾</span>
+      </button>
+      <div id="spec-dropdown-list" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:1000;background:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.15);min-width:300px;max-height:320px;overflow-y:auto;padding:6px 0">
+        <div style="padding:6px 10px;border-bottom:1px solid #eee;display:flex;gap:8px">
+          <input id="spec-search-input" type="text" placeholder="Buscar especialidade…" oninput="filterSpecDropdown()"
+            style="flex:1;padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:11px">
+          <button onclick="clearSpecFilter()" style="padding:4px 8px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;font-size:11px;cursor:pointer">Limpar</button>
+        </div>
+        <div id="spec-checkbox-list" style="padding:4px 0"></div>
+      </div>
+    </div>
+
+    <!-- Module multi-select -->
+    <div style="position:relative" id="mod-dropdown-wrap">
+      <button id="mod-dropdown-btn" onclick="toggleModDropdown()"
+        style="padding:6px 12px;border:1px solid #ccc;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;white-space:nowrap;min-width:190px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span id="mod-btn-label">📚 Filtrar por módulo…</span>
+        <span>▾</span>
+      </button>
+      <div id="mod-dropdown-list" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.15);min-width:380px;max-height:320px;overflow-y:auto;padding:6px 0">
+        <div style="padding:6px 10px;border-bottom:1px solid #eee;display:flex;gap:8px">
+          <input id="mod-search-input" type="text" placeholder="Buscar módulo…" oninput="filterModDropdown()"
+            style="flex:1;padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:11px">
+          <button onclick="clearModFilter()" style="padding:4px 8px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;font-size:11px;cursor:pointer">Limpar</button>
+        </div>
+        <div id="mod-checkbox-list" style="padding:4px 0"></div>
+      </div>
+    </div>
+
+    <!-- Chips for both filters -->
+    <div id="spec-chips" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>
+    <div id="mod-chips" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>
+  </div>
+
+  <!-- GROUP EXECUTIVE ANALYSIS PANEL -->
+  <div id="group-exec-panel" style="display:none;margin-bottom:18px">
+    <div class="card" style="border:2px solid #375623">
+      <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;background:#375623">
+        <span id="group-exec-title" style="font-size:14px">Análise do Grupo</span>
+        <div style="display:flex;gap:8px">
+          <button onclick="copyGroupToPPT()" style="padding:5px 14px;background:#FFC000;color:#1F4E79;border:none;border-radius:5px;font-weight:bold;cursor:pointer;font-size:11px">📋 Copiar para PPT</button>
+          <button onclick="closeGroupExec()" style="padding:5px 10px;background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:13px">✕</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="kpi-row" id="group-exec-kpis" style="margin-bottom:14px"></div>
+        <div class="grid-2" style="margin-bottom:14px">
+          <div>
+            <div class="section-title" style="margin-bottom:8px">Ocupação por Turma</div>
+            <div style="position:relative;height:240px"><canvas id="group-chart-turmas"></canvas></div>
+          </div>
+          <div>
+            <div class="section-title" style="margin-bottom:8px">Evolução Semanal do Grupo</div>
+            <div style="position:relative;height:240px"><canvas id="group-chart-semanas"></canvas></div>
+          </div>
+        </div>
+        <div class="section-title" style="margin-bottom:8px">Ranking de Turmas do Grupo</div>
+        <div id="group-ranking-table"></div>
+        <div class="grid-2" style="margin-top:14px">
+          <div>
+            <div class="section-title" style="margin-bottom:8px">Destaques Executivos do Grupo</div>
+            <div id="group-insights" style="background:#F0F4F8;border-radius:8px;padding:14px;font-size:12px;line-height:1.9"></div>
+          </div>
+          <div>
+            <div class="section-title" style="margin-bottom:8px">Distribuição por Unidade</div>
+            <div style="position:relative;height:180px"><canvas id="group-chart-unid"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE ANALYSIS PANEL -->
+  <div id="exec-panel" style="display:none;margin-bottom:18px">
+    <div class="card" style="border:2px solid #2E75B6">
+      <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;background:#1F4E79">
+        <span id="exec-title" style="font-size:14px">Análise Executiva</span>
+        <div style="display:flex;gap:8px">
+          <button onclick="copyExecToPPT()" style="padding:5px 14px;background:#FFC000;color:#1F4E79;border:none;border-radius:5px;font-weight:bold;cursor:pointer;font-size:11px">📋 Copiar para PPT</button>
+          <button onclick="closeExec()" style="padding:5px 10px;background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:13px">✕</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="kpi-row" id="exec-kpis" style="margin-bottom:14px"></div>
+        <div class="grid-2" style="margin-bottom:14px">
+          <div>
+            <div class="section-title" style="margin-bottom:8px">Ocupação por Dia de Prática</div>
+            <div style="position:relative;height:200px"><canvas id="exec-chart-daily"></canvas></div>
+          </div>
+          <div>
+            <div class="section-title" style="margin-bottom:8px">Agendamentos vs Slots por Dia</div>
+            <div style="position:relative;height:200px"><canvas id="exec-chart-vol"></canvas></div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div class="section-title" style="margin-bottom:8px">Detalhamento por Semana</div>
+            <div id="exec-week-table"></div>
+          </div>
+          <div>
+            <div class="section-title" style="margin-bottom:8px">Destaques Executivos</div>
+            <div id="exec-insights" style="background:#F0F4F8;border-radius:8px;padding:14px;font-size:12px;line-height:1.8"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Consolidado por Turma</div>
+    <div class="card-body no-pad">
+      <div class="tbl-wrap"><table id="tbl-turma">
+        <thead><tr>
+          <th class="left">Turma</th><th>Unid.</th><th class="left">Módulo</th>
+          <th>Slots Prática</th><th>Slots Extras</th><th>Slots Totais</th>
+          <th>Agendamentos</th><th>Ocupação</th><th>Ocup. Overbooking</th><th>Práticas</th>
+        </tr></thead>
+        <tbody></tbody>
+        <tfoot><tr id="tbl-turma-foot"></tr></tfoot>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MÓDULO ═══════════════ -->
+<div id="page-modulo" class="page">
+  <div class="filter-bar">
+    <input id="search-modulo" type="text" placeholder="Buscar módulo…" oninput="renderModuloTable()">
+    <select id="filter-unid-modulo" onchange="renderModuloTable()">
+      <option value="">Todas as unidades</option>
+      <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
+    </select>
+    <select id="filter-week-modulo" onchange="buildModulo()">
+      <option value="">Todas as semanas</option>
+      <option>S1 (01–07/06)</option><option>S2 (08–14/06)</option>
+      <option>S3 (15–21/06)</option><option>S4 (22–28/06)</option><option>S5 (29–30/06)</option>
+    </select>
+    <select id="filter-sort-modulo" onchange="renderModuloTable()">
+      <option value="occ-desc">Ordenar: Maior Ocupação</option>
+      <option value="occ-asc">Ordenar: Menor Ocupação</option>
+      <option value="name">Ordenar: Nome</option>
+      <option value="ag-desc">Ordenar: Mais Agendamentos</option>
+    </select>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">Top 10 Módulos — Maior Ocupação</div>
+      <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-mod-top"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">Top 10 Módulos — Menor Ocupação (com slots > 0)</div>
+      <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-mod-bot"></canvas></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">Consolidado por Módulo</div>
+    <div class="card-body no-pad">
+      <div class="tbl-wrap"><table id="tbl-modulo">
+        <thead><tr>
+          <th class="left">Módulo</th><th>Unid.</th>
+          <th>Slots Prática</th><th>Slots Totais</th>
+          <th>Agendamentos</th><th>Ocupação</th><th>Ocup. Overbooking</th><th>Turmas</th>
+        </tr></thead>
+        <tbody></tbody>
+        <tfoot><tr id="tbl-modulo-foot"></tr></tfoot>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── RAW DATA ─────────────────────────────────────────────────────────────────
+const RAW = [
+  ["Dermatologia CPS T05","CPS","M4 - Farmacologia Dermatológica e Estética","01/06/2026",39,0,39,39],
+  ["Pediatria CPS T03","CPS","M8 - Cirurgia Pediátrica e Hematologia/Oncologia","01/06/2026",24,0,24,24],
+  ["Dermatologia SP T07","SP","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","01/06/2026",12,0,12,12],
+  ["Endocrinologia SP T03","SP","M4 - Diabetes tipo 1, bomba de insulina","01/06/2026",24,0,24,24],
+  ["Oftalmologia SP T03","SP","M11 - Oftalmologia cirúrgica I","01/06/2026",0,0,0,0],
+  ["Dermatologia CPS T05","CPS","M4 - Farmacologia Dermatológica e Estética","02/06/2026",39,0,39,29],
+  ["Pediatria CPS T03","CPS","M8 - Cirurgia Pediátrica e Hematologia/Oncologia","02/06/2026",24,0,24,24],
+  ["Dermatologia SP T07","SP","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","02/06/2026",12,0,12,12],
+  ["Endocrinologia SP T03","SP","M4 - Diabetes tipo 1, bomba de insulina","02/06/2026",24,0,24,8],
+  ["Oftalmologia SP T03","SP","M11 - Oftalmologia cirúrgica I","02/06/2026",0,0,0,0],
+  ["Dermatologia CPS T05","CPS","M4 - Farmacologia Dermatológica e Estética","03/06/2026",39,0,39,15],
+  ["Dermatologia SP T07","SP","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","03/06/2026",12,0,12,12],
+  ["Endocrinologia SP T03","SP","M4 - Diabetes tipo 1, bomba de insulina","03/06/2026",24,0,24,10],
+  ["Oftalmologia SP T03","SP","M11 - Oftalmologia cirúrgica I","03/06/2026",0,0,0,0],
+  ["Endocrinologia ONL T01","ONL","M11 - Hipófise e Hipotálamo: Patologias e Terapêutica","03/06/2026",24,0,24,0],
+  ["Oftalmologia CPS T02","CPS","M4 - Plástica Ocular, Vias Lacrimais e Órbita I","08/06/2026",24,6,30,25],
+  ["Psiquiatria CPS T02","CPS","M13 - Transtornos da personalidade","08/06/2026",24,6,30,24],
+  ["Dermatologia Cirurgica SP T01","SP","M5 - Tratamento de unha encravada","08/06/2026",12,5,17,14],
+  ["Dermatologia SP T04","SP","M18 - Estética Genital Feminina","08/06/2026",12,2,14,12],
+  ["Dermatologia SP T11","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","08/06/2026",12,8,20,9],
+  ["Dermatologia SP T14","SP","M4 - Farmacologia Dermatológica e Estética","08/06/2026",39,8,47,39],
+  ["Oftalmologia CPS T02","CPS","M4 - Plástica Ocular, Vias Lacrimais e Órbita I","09/06/2026",24,5,29,25],
+  ["Psiquiatria CPS T02","CPS","M13 - Transtornos da personalidade","09/06/2026",24,6,30,24],
+  ["Dermatologia Cirurgica SP T01","SP","M5 - Tratamento de unha encravada","09/06/2026",12,3,15,11],
+  ["Dermatologia SP T04","SP","M18 - Estética Genital Feminina","09/06/2026",12,2,14,12],
+  ["Dermatologia SP T11","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","09/06/2026",12,8,20,9],
+  ["Dermatologia SP T14","SP","M4 - Farmacologia Dermatológica e Estética","09/06/2026",39,8,47,35],
+  ["Oftalmologia CPS T02","CPS","M4 - Plástica Ocular, Vias Lacrimais e Órbita I","10/06/2026",24,5,29,26],
+  ["Psiquiatria CPS T02","CPS","M13 - Transtornos da personalidade","10/06/2026",24,5,29,27],
+  ["Psiquiatria CPS T04","CPS","M4 - Transtornos de ansiedade I","10/06/2026",24,7,31,26],
+  ["Dermatologia Cirurgica SP T01","SP","M5 - Tratamento de unha encravada","10/06/2026",12,2,14,8],
+  ["Dermatologia SP T04","SP","M18 - Estética Genital Feminina","10/06/2026",12,1,13,12],
+  ["Dermatologia SP T11","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","10/06/2026",12,7,19,5],
+  ["Dermatologia SP T14","SP","M4 - Farmacologia Dermatológica e Estética","10/06/2026",39,7,46,29],
+  ["Psiquiatria ONL T01","ONL","M11 - Emergências Psiquiátricas II","10/06/2026",24,3,27,0],
+  ["Dermatologia CPS T04","CPS","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)","11/06/2026",24,3,27,23],
+  ["Dermatologia CPS T07","CPS","M4 - Farmacologia Dermatológica e Estética","11/06/2026",39,8,47,33],
+  ["Endocrinologia CPS T01","CPS","M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)","11/06/2026",24,0,24,14],
+  ["Dermatologia SP T05","SP","M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)","11/06/2026",12,9,21,18],
+  ["Dermatologia SP T09","SP","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)","11/06/2026",24,18,42,36],
+  ["Dermatologia SP T13","SP","M4 - Farmacologia Dermatológica e Estética","11/06/2026",39,8,47,28],
+  ["Psiquiatria SP T03","SP","M4 - Transtornos do humor II","11/06/2026",24,4,28,24],
+  ["Dermatologia BSB T02","BSB","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","11/06/2026",12,2,14,9],
+  ["Psiquiatria ONL T03","ONL","M5 - Transtornos Relacionados ao uso de Substâncias","11/06/2026",24,3,27,0],
+  ["Dermatologia CPS T04","CPS","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)","12/06/2026",24,4,28,24],
+  ["Dermatologia CPS T07","CPS","M4 - Farmacologia Dermatológica e Estética","12/06/2026",39,8,47,7],
+  ["Endocrinologia CPS T01","CPS","M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)","12/06/2026",24,7,31,15],
+  ["Dermatologia SP T05","SP","M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)","12/06/2026",12,5,17,12],
+  ["Dermatologia SP T09","SP","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)","12/06/2026",24,5,29,26],
+  ["Dermatologia SP T13","SP","M4 - Farmacologia Dermatológica e Estética","12/06/2026",39,8,47,14],
+  ["Psiquiatria SP T03","SP","M4 - Transtornos do humor II","12/06/2026",24,5,29,24],
+  ["Dermatologia BSB T02","BSB","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","12/06/2026",12,2,14,7],
+  ["Dermatologia CPS T04","CPS","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)","13/06/2026",24,3,27,26],
+  ["Dermatologia CPS T07","CPS","M4 - Farmacologia Dermatológica e Estética","13/06/2026",39,7,46,3],
+  ["Endocrinologia CPS T01","CPS","M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)","13/06/2026",24,7,31,14],
+  ["Dermatologia SP T05","SP","M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)","13/06/2026",12,4,16,11],
+  ["Dermatologia SP T09","SP","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)","13/06/2026",24,9,33,31],
+  ["Dermatologia SP T13","SP","M4 - Farmacologia Dermatológica e Estética","13/06/2026",39,7,46,19],
+  ["Psiquiatria Infantil SP T01","SP","M5 - Transtornos do neurodesenvolvimento II - Transtorno de déficit de atenção e hiperatividade (TDAH)","13/06/2026",12,7,19,16],
+  ["Psiquiatria SP T03","SP","M4 - Transtornos do humor II","13/06/2026",24,4,28,25],
+  ["Dermatologia BSB T02","BSB","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","13/06/2026",12,1,13,8],
+  ["Dermatologia CPS T03","CPS","M14 - Preenchimento Glúteo","15/06/2026",12,1,13,12],
+  ["Endocrinologia CPS T02","CPS","M7 - Urgências em diabetes","15/06/2026",24,5,29,24],
+  ["Pediatria CPS T04","CPS","M5 - Neonatologia","15/06/2026",24,7,31,2],
+  ["Dermatologia SP T08","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","15/06/2026",12,5,17,15],
+  ["Dermatologia SP T18","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","15/06/2026",12,2,14,14],
+  ["Endocrinologia SP T02","SP","M6 - Diabetes gestacional e outros tipos de diabetes","15/06/2026",24,7,31,14],
+  ["Oftalmologia SP T06","SP","M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I","15/06/2026",24,6,30,24],
+  ["Dermatologia BSB T03","BSB","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","15/06/2026",39,8,47,38],
+  ["Dermatologia CPS T03","CPS","M14 - Preenchimento Glúteo","16/06/2026",12,3,15,13],
+  ["Endocrinologia CPS T02","CPS","M7 - Urgências em diabetes","16/06/2026",24,5,29,23],
+  ["Pediatria CPS T04","CPS","M5 - Neonatologia","16/06/2026",24,7,31,1],
+  ["Dermatologia SP T08","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","16/06/2026",12,2,14,12],
+  ["Dermatologia SP T18","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","16/06/2026",12,2,14,13],
+  ["Endocrinologia SP T02","SP","M6 - Diabetes gestacional e outros tipos de diabetes","16/06/2026",24,6,30,6],
+  ["Oftalmologia SP T06","SP","M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I","16/06/2026",24,5,29,11],
+  ["Dermatologia BSB T03","BSB","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","16/06/2026",39,8,47,21],
+  ["Dermatologia CPS T03","CPS","M14 - Preenchimento Glúteo","17/06/2026",12,1,13,12],
+  ["Endocrinologia CPS T02","CPS","M7 - Urgências em diabetes","17/06/2026",24,5,29,13],
+  ["Dermatologia SP T08","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","17/06/2026",12,3,15,13],
+  ["Dermatologia SP T18","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","17/06/2026",12,1,13,12],
+  ["Endocrinologia SP T02","SP","M6 - Diabetes gestacional e outros tipos de diabetes","17/06/2026",24,6,30,1],
+  ["Oftalmologia SP T06","SP","M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I","17/06/2026",24,5,29,8],
+  ["Dermatologia BSB T03","BSB","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","17/06/2026",39,7,46,26],
+  ["Endocrinologia ONL T02","ONL","M8 - Osteometabolismo","17/06/2026",24,2,26,0],
+  ["Dermatologia CPS T02","CPS","M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética","18/06/2026",0,0,0,0],
+  ["Pediatria CPS T05","CPS","M5 - Neonatologia","18/06/2026",24,7,31,2],
+  ["Dermatologia SP T06","SP","M14 - Preenchimento Glúteo","18/06/2026",12,2,14,12],
+  ["Dermatologia SP T15","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","18/06/2026",12,2,14,12],
+  ["Dermatologia SP T21","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","18/06/2026",12,2,14,12],
+  ["Nutrologia SP T01","SP","M12 - Nutrologia Aplicada à Cirurgia Bariátrica","18/06/2026",12,4,16,13],
+  ["Oftalmologia SP T02","SP","M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II","18/06/2026",24,5,29,8],
+  ["Endocrinologia BSB T01","BSB","M11 - Hipopituitarismo","18/06/2026",24,3,27,24],
+  ["Endocrinologia ONL T03","ONL","M8 - Osteometabolismo","18/06/2026",24,2,26,0],
+  ["Endocrinologia ONL T04","ONL","M3 - Diabetes Mellitus","18/06/2026",24,2,26,0],
+  ["Dermatologia CPS T02","CPS","M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética","19/06/2026",0,0,0,0],
+  ["Pediatria CPS T05","CPS","M5 - Neonatologia","19/06/2026",24,7,31,0],
+  ["Dermatologia SP T06","SP","M14 - Preenchimento Glúteo","19/06/2026",12,1,13,12],
+  ["Dermatologia SP T15","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","19/06/2026",12,2,14,12],
+  ["Dermatologia SP T21","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","19/06/2026",12,2,14,12],
+  ["Oftalmologia SP T02","SP","M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II","19/06/2026",24,5,29,0],
+  ["Endocrinologia BSB T01","BSB","M11 - Hipopituitarismo","19/06/2026",24,2,26,14],
+  ["Dermatologia CPS T02","CPS","M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética","20/06/2026",0,0,0,0],
+  ["Neuropediatria CPS T01","CPS","M7 - TEA e diferenciais","20/06/2026",12,3,15,13],
+  ["Dermatologia SP T06","SP","M14 - Preenchimento Glúteo","20/06/2026",12,1,13,13],
+  ["Dermatologia SP T15","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","20/06/2026",12,1,13,12],
+  ["Dermatologia SP T21","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","20/06/2026",12,1,13,13],
+  ["Oftalmologia SP T02","SP","M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II","20/06/2026",24,4,28,1],
+  ["Endocrinologia BSB T01","BSB","M11 - Hipopituitarismo","20/06/2026",24,2,26,15],
+  ["Dermatologia One SP T01","SP","M3 - Ácido Hialurônico I – preenchimento básico, MD Codes, proporções faciais","21/06/2026",12,2,14,14],
+  ["Dermatologia CPS T06","CPS","M4 - Farmacologia Dermatológica e Estética","22/06/2026",39,8,47,2],
+  ["Dermatologia SP T20","SP","M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face","22/06/2026",0,0,0,0],
+  ["Oftalmologia SP T05","SP","M5 - Estrabismo I","22/06/2026",24,5,29,15],
+  ["Psiquiatria SP T02","SP","M8 - Compreensão do conteúdo e discussão de casos clínicos I","22/06/2026",24,5,29,5],
+  ["Tricologia SP T02","SP","M2 - Nutrição e Suplementação em Tricologia","22/06/2026",18,4,22,20],
+  ["Dermatologia CPS T06","CPS","M4 - Farmacologia Dermatológica e Estética","23/06/2026",39,8,47,0],
+  ["Endocrinologia CPS T03","CPS","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","23/06/2026",24,5,29,3],
+  ["Dermatologia SP T20","SP","M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face","23/06/2026",0,0,0,0],
+  ["Oftalmologia SP T05","SP","M5 - Estrabismo I","23/06/2026",24,5,29,6],
+  ["Psiquiatria SP T02","SP","M8 - Compreensão do conteúdo e discussão de casos clínicos I","23/06/2026",24,5,29,0],
+  ["Tricologia SP T02","SP","M2 - Nutrição e Suplementação em Tricologia","23/06/2026",18,4,22,16],
+  ["Dermatologia CPS T06","CPS","M4 - Farmacologia Dermatológica e Estética","24/06/2026",39,7,46,0],
+  ["Endocrinologia CPS T03","CPS","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","24/06/2026",24,5,29,12],
+  ["Dermatologia SP T20","SP","M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face","24/06/2026",0,0,0,0],
+  ["Oftalmologia SP T05","SP","M5 - Estrabismo I","24/06/2026",24,4,28,9],
+  ["Psiquiatria SP T02","SP","M8 - Compreensão do conteúdo e discussão de casos clínicos I","24/06/2026",24,4,28,1],
+  ["Tricologia SP T02","SP","M2 - Nutrição e Suplementação em Tricologia","24/06/2026",18,4,22,17],
+  ["Psiquiatria BSB T01","BSB","M3 - Transtornos do humor II – Transtorno afetivo bipolar","24/06/2026",24,3,27,24],
+  ["Endocrinologia ONL T05","ONL","M3 - Diabetes Mellitus","24/06/2026",24,2,26,0],
+  ["Dermatologia CPS T09","CPS","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","25/06/2026",39,12,51,46],
+  ["Oftalmologia CPS T01","CPS","M22 - Oftalmologia cirúrgica II","25/06/2026",0,0,0,0],
+  ["Dermatologia SP T10","SP","M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)","25/06/2026",24,4,28,26],
+  ["Dermatologia SP T17","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","25/06/2026",12,2,14,5],
+  ["Dermatologia SP T19","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","25/06/2026",12,2,14,10],
+  ["Endocrinologia SP T04","SP","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","25/06/2026",24,7,31,22],
+  ["Oftalmologia SP T04","SP","M9 - Retina e Vítreo I","25/06/2026",24,5,29,12],
+  ["Tricologia SP T01","SP","M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo","25/06/2026",18,5,23,20],
+  ["Dermatologia BSB T01","BSB","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","25/06/2026",12,3,15,0],
+  ["Psiquiatria ONL T04","ONL","M4 - Espectro da Esquizofrenia e Outros Transtornos Psicóticos","25/06/2026",24,3,27,0],
+  ["Dermatologia CPS T09","CPS","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","26/06/2026",39,8,47,40],
+  ["Oftalmologia CPS T01","CPS","M22 - Oftalmologia cirúrgica II","26/06/2026",0,0,0,0],
+  ["Dermatologia SP T10","SP","M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)","26/06/2026",24,4,28,26],
+  ["Dermatologia SP T17","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","26/06/2026",12,2,14,0],
+  ["Dermatologia SP T19","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","26/06/2026",12,2,14,7],
+  ["Endocrinologia SP T04","SP","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","26/06/2026",24,9,33,14],
+  ["Oftalmologia SP T04","SP","M9 - Retina e Vítreo I","26/06/2026",24,5,29,7],
+  ["Tricologia SP T01","SP","M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo","26/06/2026",18,4,22,18],
+  ["Dermatologia BSB T01","BSB","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","26/06/2026",12,2,14,0],
+  ["Dermatologia CPS T09","CPS","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","27/06/2026",39,8,47,39],
+  ["Neuropediatria CPS T02","CPS","M5 - Transtornos do Sono, Traumatismo Cranioencefálico, COMA e Morte Encefálica","27/06/2026",12,2,14,12],
+  ["Neuropediatria CPS T03","CPS","M4 - Neurologia da Prematuridade e das Encefalopatias Neonatais","27/06/2026",12,5,17,10],
+  ["Oftalmologia CPS T01","CPS","M22 - Oftalmologia cirúrgica II","27/06/2026",0,0,0,0],
+  ["Dermatologia SP T10","SP","M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)","27/06/2026",24,3,27,24],
+  ["Dermatologia SP T17","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","27/06/2026",12,1,13,3],
+  ["Dermatologia SP T19","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","27/06/2026",12,4,16,9],
+  ["Oftalmologia SP T04","SP","M9 - Retina e Vítreo I","27/06/2026",24,4,28,13],
+  ["Psiquiatria SP T04","SP","M4 - Transtornos de ansiedade I","27/06/2026",24,5,29,28],
+  ["Tricologia SP T01","SP","M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo","27/06/2026",18,4,22,19],
+  ["Dermatologia BSB T01","BSB","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","27/06/2026",12,2,14,0],
+  ["Dermatologia CPS T05","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","29/06/2026",39,8,47,47],
+  ["Dermatologia CPS T08","CPS","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","29/06/2026",12,2,14,14],
+  ["Pediatria CPS T03","CPS","M7 - Saúde Mental e Adolescência","29/06/2026",24,7,31,2],
+  ["Dermatologia SP T07","SP","M14 - Preenchimento Glúteo","29/06/2026",12,2,14,13],
+  ["Endocrinologia SP T03","SP","M5 - Diabetes tipo 2","29/06/2026",24,7,31,19],
+  ["Oftalmologia SP T03","SP","M12 - Introdução à Oftalmologia II","29/06/2026",24,5,29,29],
+  ["Dermatologia CPS T05","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","30/06/2026",39,8,47,42],
+  ["Dermatologia CPS T08","CPS","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","30/06/2026",12,2,14,14],
+  ["Pediatria CPS T03","CPS","M7 - Saúde Mental e Adolescência","30/06/2026",24,7,31,0],
+  ["Dermatologia SP T07","SP","M14 - Preenchimento Glúteo","30/06/2026",12,1,13,13],
+  ["Endocrinologia SP T03","SP","M5 - Diabetes tipo 2","30/06/2026",24,6,30,10],
+  ["Oftalmologia SP T03","SP","M12 - Introdução à Oftalmologia II","30/06/2026",24,5,29,29],
+];
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const WEEKS = ["S1 (01–07/06)","S2 (08–14/06)","S3 (15–21/06)","S4 (22–28/06)","S5 (29–30/06)"];
+const UNIDADES = ["CPS","SP","ONL","BSB"];
+const U_COLORS = { CPS:"#1F4E79", SP:"#375623", ONL:"#7F6000", BSB:"#843C0C" };
+const U_FILLS  = { CPS:"#BDD7EE", SP:"#E2EFDA", ONL:"#FFF2CC", BSB:"#FCE4D6" };
+
+function getWeek(dateStr){
+  const d = parseInt(dateStr.split("/")[0]);
+  if(d<=7)  return WEEKS[0];
+  if(d<=14) return WEEKS[1];
+  if(d<=21) return WEEKS[2];
+  if(d<=28) return WEEKS[3];
+  return WEEKS[4];
+}
+
+function parseData(){
+  return RAW.map(r => ({
+    turma:r[0], unidade:r[1], modulo:r[2], data:r[3],
+    week: getWeek(r[3]),
+    sp:r[4], se:r[5], st:r[6], ag:r[7]
+  }));
+}
+const DATA = parseData();
+
+function aggBy(data, keys){
+  const map = {};
+  data.forEach(d => {
+    const k = keys.map(k=>d[k]).join("|||");
+    if(!map[k]) map[k] = {sp:0,se:0,st:0,ag:0,count:0, _meta:{}};
+    map[k].sp += d.sp; map[k].se += d.se; map[k].st += d.st; map[k].ag += d.ag; map[k].count++;
+    keys.forEach(k2 => map[k]._meta[k2] = d[k2]);
+  });
+  return Object.entries(map).map(([k,v]) => ({...v._meta, ...v}));
+}
+
+function pct(ag,sp){ return sp>0 ? (ag/sp*100).toFixed(1)+"%" : "—"; }
+function pctV(ag,sp){ return sp>0 ? ag/sp : null; }
+
+function occColor(v){
+  if(v===null) return "#E8EEF4";
+  if(v>=1.0) return "#375623"; if(v>=0.85) return "#70AD47";
+  if(v>=0.70) return "#FFC000"; if(v>=0.50) return "#ED7D31";
+  return "#C00000";
+}
+function occTextColor(v){
+  if(v===null) return "#999";
+  return v>=0.5 ? "#fff" : "#fff";
+}
+
+function badgeUnid(u){
+  return `<span class="badge badge-${u.toLowerCase()}">${u}</span>`;
+}
+
+function fmtN(n){ return n.toLocaleString("pt-BR"); }
+
+// ─── CHARTS registry ─────────────────────────────────────────────────────────
+const charts = {};
+function mkChart(id, cfg){
+  if(charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id);
+  if(!ctx) return;
+  charts[id] = new Chart(ctx, cfg);
+}
+
+// ─── PAGE NAVIGATION ─────────────────────────────────────────────────────────
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  event.target.classList.add('active');
+  if(name==='macro') buildMacro();
+  if(name==='semana') buildSemana();
+  if(name==='unidade') buildUnidade();
+  if(name==='turma'){ rebuildModuleDropdown(); rebuildSpecDropdown(); renderTurmaTable(); }
+  if(name==='modulo') buildModulo();
+}
+
+// ─── MACRO ───────────────────────────────────────────────────────────────────
+function buildMacro(){
+  const total = DATA.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
+  const withSlots = DATA.filter(d=>d.sp>0).length;
+  const noSlots = DATA.filter(d=>d.sp===0).length;
+
+  document.getElementById("kpi-macro").innerHTML = `
+    <div class="kpi"><div class="label">Slots da Prática</div><div class="value">${fmtN(total.sp)}</div><div class="sub">${withSlots} práticas com slots</div></div>
+    <div class="kpi"><div class="label">Slots Extras</div><div class="value">${fmtN(total.se)}</div><div class="sub">Overbooking disponível</div></div>
+    <div class="kpi"><div class="label">Slots Totais</div><div class="value">${fmtN(total.st)}</div><div class="sub">Prática + extras</div></div>
+    <div class="kpi green"><div class="label">Agendamentos</div><div class="value">${fmtN(total.ag)}</div><div class="sub">Total do mês</div></div>
+    <div class="kpi orange"><div class="label">Ocupação (base)</div><div class="value">${pct(total.ag,total.sp)}</div><div class="sub">Agend. / Slots prática</div></div>
+    <div class="kpi ${pctV(total.ag,total.st)<0.6?'red':'green'}"><div class="label">Ocupação (c/ extra)</div><div class="value">${pct(total.ag,total.st)}</div><div class="sub">Agend. / Slots totais</div></div>
+    <div class="kpi"><div class="label">Práticas s/ Slots</div><div class="value">${noSlots}</div><div class="sub">Sem slots cadastrados</div></div>
+  `;
+
+  // Semana occ chart
+  const wAgg = aggBy(DATA, ["week"]);
+  const wMap = {}; wAgg.forEach(w=>wMap[w.week]=w);
+  const wOcc = WEEKS.map(w => wMap[w] ? (wMap[w].sp>0 ? +(wMap[w].ag/wMap[w].sp*100).toFixed(1) : 0) : 0);
+  const wOccST = WEEKS.map(w => wMap[w] ? (wMap[w].st>0 ? +(wMap[w].ag/wMap[w].st*100).toFixed(1) : 0) : 0);
+
+  mkChart("chart-semana-occ",{type:"bar",data:{labels:WEEKS.map(w=>w.replace("S","S")),
+    datasets:[
+      {label:"Ocup. base (slots prática)",data:wOcc,backgroundColor:"#2E75B6",borderRadius:4},
+      {label:"Ocup. c/ overbooking",data:wOccST,backgroundColor:"#BDD7EE",borderRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}}},
+      scales:{y:{min:0,max:130,ticks:{callback:v=>v+"%"},grid:{color:"#eee"}},x:{grid:{display:false}}}}
+  });
+
+  // Volume chart
+  mkChart("chart-semana-vol",{type:"bar",data:{labels:WEEKS,
+    datasets:[
+      {label:"Slots Prática",data:WEEKS.map(w=>wMap[w]?.sp||0),backgroundColor:"#BDD7EE",borderRadius:3},
+      {label:"Agendamentos",data:WEEKS.map(w=>wMap[w]?.ag||0),backgroundColor:"#1F4E79",borderRadius:3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}}},
+      scales:{y:{ticks:{stepSize:100},grid:{color:"#eee"}},x:{grid:{display:false}}}}
+  });
+
+  // Unidade occ
+  const uAgg = aggBy(DATA.filter(d=>d.sp>0), ["unidade"]);
+  const uMap = {}; uAgg.forEach(u=>uMap[u.unidade]=u);
+  mkChart("chart-unid-occ",{type:"bar",data:{labels:UNIDADES,
+    datasets:[{label:"Ocupação base (%)",
+      data:UNIDADES.map(u=>uMap[u]?+(uMap[u].ag/uMap[u].sp*100).toFixed(1):0),
+      backgroundColor:UNIDADES.map(u=>U_COLORS[u]||"#999"),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",
+      plugins:{legend:{display:false}},
+      scales:{x:{min:0,max:130,ticks:{callback:v=>v+"%"},grid:{color:"#eee"}},y:{grid:{display:false}}}}
+  });
+
+  // Distribuição pie
+  const uAll = aggBy(DATA, ["unidade"]);
+  const uAllMap = {}; uAll.forEach(u=>uAllMap[u.unidade]=u);
+  mkChart("chart-unid-dist",{type:"doughnut",data:{
+    labels:UNIDADES,
+    datasets:[{data:UNIDADES.map(u=>uAllMap[u]?.ag||0),
+      backgroundColor:UNIDADES.map(u=>U_COLORS[u]||"#999"),borderWidth:2,borderColor:"#fff"}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:"right",labels:{font:{size:11}}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtN(ctx.parsed)} agend. (${(ctx.parsed/total.ag*100).toFixed(1)}%)`}}}}
+  });
+
+  buildHeatmap();
+}
+
+function buildHeatmap(){
+  const uAgg = aggBy(DATA, ["unidade","week"]);
+  const map = {}; uAgg.forEach(x=>{ if(!map[x.unidade]) map[x.unidade]={}; map[x.unidade][x.week]=x; });
+
+  let html = `<table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead><tr><th style="padding:10px 14px;background:#1F4E79;color:#fff;text-align:left">Unidade</th>`;
+  WEEKS.forEach(w=>{ html+=`<th style="padding:10px 8px;background:#1F4E79;color:#fff;text-align:center;font-size:11px">${w}</th>`; });
+  html+=`<th style="padding:10px 8px;background:#1F4E79;color:#fff;text-align:center">Total Mês</th></tr></thead><tbody>`;
+
+  UNIDADES.forEach((u,ui)=>{
+    const bg = ui%2===0?"#fff":"#F0F4F8";
+    html+=`<tr style="background:${bg}"><td style="padding:10px 14px;font-weight:bold;color:${U_COLORS[u]}">${u}</td>`;
+    let tot_ag=0,tot_sp=0;
+    WEEKS.forEach(w=>{
+      const v = map[u]?.[w];
+      const occ = v && v.sp>0 ? v.ag/v.sp : null;
+      const bg2 = occColor(occ);
+      const tc = "#fff";
+      const label = occ!==null ? (occ*100).toFixed(1)+"%" : "—";
+      html+=`<td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:${bg2};color:${tc};min-width:64px">${label}
+          ${v && v.sp>0 ? `<div style="font-size:9px;opacity:.85">${v.ag}/${v.sp}</div>` : ''}
+        </div></td>`;
+      if(v){tot_ag+=v.ag;tot_sp+=v.sp;}
+    });
+    const totOcc = tot_sp>0?tot_ag/tot_sp:null;
+    html+=`<td style="padding:6px;text-align:center">
+      <div class="heatmap-cell" style="background:${occColor(totOcc)};color:#fff;min-width:64px">
+        ${totOcc!==null?(totOcc*100).toFixed(1)+"%":"—"}
+        <div style="font-size:9px;opacity:.85">${tot_ag}/${tot_sp}</div>
+      </div></td></tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById("heatmap-container").innerHTML = html;
+}
+
+// ─── SEMANA ───────────────────────────────────────────────────────────────────
+let selWeek = WEEKS[0];
+
+function buildSemana(){
+  const nav = document.getElementById("week-nav");
+  nav.innerHTML = WEEKS.map(w=>`<div class="week-pill ${w===selWeek?'active':''}" onclick="selectWeek('${w}')">${w}</div>`).join("");
+  renderSemanaContent();
+}
+
+function selectWeek(w){ selWeek=w; buildSemana(); }
+
+function renderSemanaContent(){
+  const wData = DATA.filter(d=>d.week===selWeek);
+  const tot = wData.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
+
+  document.getElementById("kpi-semana").innerHTML=`
+    <div class="kpi"><div class="label">Práticas</div><div class="value">${wData.length}</div><div class="sub">${wData.filter(d=>d.sp>0).length} com slots</div></div>
+    <div class="kpi"><div class="label">Slots Prática</div><div class="value">${fmtN(tot.sp)}</div></div>
+    <div class="kpi"><div class="label">Slots Extras</div><div class="value">${fmtN(tot.se)}</div></div>
+    <div class="kpi green"><div class="label">Agendamentos</div><div class="value">${fmtN(tot.ag)}</div></div>
+    <div class="kpi orange"><div class="label">Ocupação (base)</div><div class="value">${pct(tot.ag,tot.sp)}</div></div>
+    <div class="kpi"><div class="label">Ocupação (total)</div><div class="value">${pct(tot.ag,tot.st)}</div></div>
+  `;
+
+  // by unidade
+  const uAgg = aggBy(wData.filter(d=>d.sp>0),["unidade"]);
+  const uMap={}; uAgg.forEach(u=>uMap[u.unidade]=u);
+  mkChart("chart-sw-unid",{type:"bar",data:{labels:UNIDADES.filter(u=>uMap[u]),
+    datasets:[
+      {label:"Agendamentos",data:UNIDADES.filter(u=>uMap[u]).map(u=>uMap[u].ag),backgroundColor:"#1F4E79",borderRadius:3},
+      {label:"Slots Prática",data:UNIDADES.filter(u=>uMap[u]).map(u=>uMap[u].sp),backgroundColor:"#BDD7EE",borderRadius:3},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}}},
+      scales:{y:{grid:{color:"#eee"}},x:{grid:{display:false}}}}
+  });
+
+  // top/bottom turmas
+  const tAgg = aggBy(wData.filter(d=>d.sp>0),["turma"]);
+  tAgg.sort((a,b)=>b.ag/b.sp - a.ag/a.sp);
+  const top5 = tAgg.slice(0,7);
+  mkChart("chart-sw-turmas",{type:"bar",data:{
+    labels:top5.map(t=>t.turma.length>22?t.turma.slice(0,22)+"…":t.turma),
+    datasets:[{label:"Ocupação %",
+      data:top5.map(t=>+(t.ag/t.sp*100).toFixed(1)),
+      backgroundColor:top5.map(t=>U_COLORS[t.unidade]||"#999"),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",
+      plugins:{legend:{display:false}},
+      scales:{x:{min:0,max:140,ticks:{callback:v=>v+"%"},grid:{color:"#eee"}},y:{ticks:{font:{size:10}},grid:{display:false}}}}
+  });
+
+  renderSemanaTable();
+  renderDailyCard();
+}
+
+function renderDailyCard(){
+  const fu    = document.getElementById("filter-unid-daily")?.value||"";
+  const ftrend= document.getElementById("filter-trend-daily")?.value||"";
+  const wData = DATA.filter(d=>d.week===selWeek);
+
+  // Group by turma → sorted days
+  const turmaMap = {};
+  wData.forEach(d=>{
+    if(!turmaMap[d.turma]) turmaMap[d.turma]={turma:d.turma,unidade:d.unidade,modulo:d.modulo,days:[]};
+    turmaMap[d.turma].days.push(d);
+  });
+  Object.values(turmaMap).forEach(t=>{
+    t.days.sort((a,b)=>a.data.split("/").reverse().join("").localeCompare(b.data.split("/").reverse().join("")));
+  });
+
+  // Compute trend
+  function trend(days){
+    const valid = days.filter(d=>d.sp>0);
+    if(valid.length<2) return "stable";
+    const first = valid[0].ag/valid[0].sp;
+    const last  = valid[valid.length-1].ag/valid[valid.length-1].sp;
+    const diff  = last - first;
+    if(diff > 0.07) return "up";
+    if(diff < -0.07) return "down";
+    return "stable";
+  }
+
+  const TREND_ICON  = {up:"↑",down:"↓",stable:"→"};
+  const TREND_COLOR = {up:"#375623",down:"#C00000",stable:"#7F6000"};
+  const TREND_LABEL = {up:"Crescendo",down:"Caindo",stable:"Estável"};
+
+  let turmas = Object.values(turmaMap);
+  if(fu)     turmas = turmas.filter(t=>t.unidade===fu);
+  if(ftrend) turmas = turmas.filter(t=>trend(t.days)===ftrend);
+  turmas.sort((a,b)=>a.turma.localeCompare(b.turma));
+
+  const container = document.getElementById("daily-cards-container");
+  if(!turmas.length){
+    container.innerHTML=`<div style="color:#999;font-size:13px;padding:12px">Nenhuma turma encontrada para os filtros selecionados.</div>`;
+    return;
+  }
+
+  container.innerHTML = turmas.map(t=>{
+    const tr = trend(t.days);
+    const tcolor = TREND_COLOR[tr];
+    const validDays = t.days.filter(d=>d.sp>0);
+    const avgOcc = validDays.length ? validDays.reduce((s,d)=>s+d.ag/d.sp,0)/validDays.length : null;
+
+    // Day bars
+    const bars = t.days.map(d=>{
+      const occ = d.sp>0 ? d.ag/d.sp : null;
+      const pct  = occ!==null ? Math.min(occ*100,130) : 0;
+      const col  = occColor(occ);
+      const label= occ!==null ? (occ*100).toFixed(0)+"%" : "—";
+      const dd   = d.data.slice(0,5); // dd/mm
+      return `<div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">${dd}</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:${col};height:${Math.max(pct/130*100,occ===null?0:2)}%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:${occ!==null&&occ>0.4?'#fff':'#444'}">${label}</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">${d.ag}/${d.sp||0}</div>
+      </div>`;
+    }).join("");
+
+    const uBadge = badgeUnid(t.unidade);
+    const avgLabel = avgOcc!==null ? (avgOcc*100).toFixed(1)+"%" : "—";
+    const modShort = t.modulo.length>42 ? t.modulo.slice(0,42)+"…" : t.modulo;
+
+    return `<div style="background:#fff;border:1px solid #E8EEF4;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:bold;font-size:12px;color:#1F4E79;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.turma}</div>
+          <div style="font-size:10px;color:#595959;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${modShort}</div>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;margin-left:8px;flex-shrink:0">
+          ${uBadge}
+          <span style="font-size:13px;font-weight:bold;color:${tcolor}" title="${TREND_LABEL[tr]}">${TREND_ICON[tr]}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:6px">${bars}</div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#595959;border-top:1px solid #eee;padding-top:6px;margin-top:2px">
+        <span>${t.days.length} dia${t.days.length>1?"s":""} · Média: <strong style="color:${occColor(avgOcc)}">${avgLabel}</strong></span>
+        <span style="color:${tcolor};font-weight:bold">${TREND_ICON[tr]} ${TREND_LABEL[tr]}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderSemanaTable(){
+  const q  = (document.getElementById("search-semana")?.value||"").toLowerCase();
+  const fu = document.getElementById("filter-unid-semana")?.value||"";
+  const fo = document.getElementById("filter-occ-semana")?.value||"";
+  const fs = document.getElementById("filter-sort-semana")?.value||"date";
+
+  let rows = DATA.filter(d=>d.week===selWeek);
+  if(q)  rows = rows.filter(d=>d.turma.toLowerCase().includes(q));
+  if(fu) rows = rows.filter(d=>d.unidade===fu);
+  if(fo){
+    rows = rows.filter(d=>{
+      const occ = d.sp>0 ? d.ag/d.sp : null;
+      if(fo==="high")   return occ!==null && occ>=0.85;
+      if(fo==="med")    return occ!==null && occ>=0.5 && occ<0.85;
+      if(fo==="low")    return occ!==null && occ>0 && occ<0.5;
+      if(fo==="zero")   return d.ag===0 && d.sp>0;
+      if(fo==="over")   return occ!==null && occ>1.0;
+      if(fo==="noslot") return d.sp===0;
+      return true;
+    });
+  }
+  const sortFn = {
+    "date":    (a,b)=>a.data.split("/").reverse().join("").localeCompare(b.data.split("/").reverse().join("")),
+    "occ-desc":(a,b)=>(b.sp>0?b.ag/b.sp:-1)-(a.sp>0?a.ag/a.sp:-1),
+    "occ-asc": (a,b)=>(a.sp>0?a.ag/a.sp:2)-(b.sp>0?b.ag/b.sp:2),
+    "ag-desc": (a,b)=>b.ag-a.ag,
+    "name":    (a,b)=>a.turma.localeCompare(b.turma),
+  };
+  rows.sort(sortFn[fs]||sortFn["date"]);
+
+  const tot = rows.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
+
+  const tbody = document.querySelector("#tbl-semana tbody");
+  tbody.innerHTML = rows.map((d,i)=>{
+    const o1=pct(d.ag,d.sp), o2=pct(d.ag,d.st);
+    const occ=d.sp>0?d.ag/d.sp:null;
+    const rowBg = i%2===0?"#fff":"#EBF3FA";
+    const occStyle=`font-weight:bold;color:${occ!==null?occColor(occ):'#999'}`;
+    return `<tr style="background:${rowBg}">
+      <td class="left">${d.turma}</td>
+      <td>${badgeUnid(d.unidade)}</td>
+      <td>${d.data}</td>
+      <td>${d.sp||"—"}</td><td>${d.se}</td><td>${d.st||"—"}</td><td>${d.ag}</td>
+      <td style="${occStyle}">${o1}</td>
+      <td>${o2}</td>
+    </tr>`;
+  }).join("");
+
+  const foot = document.getElementById("tbl-semana-foot");
+  foot.innerHTML = `<td class="left">TOTAL (${rows.length} de ${DATA.filter(d=>d.week===selWeek).length} práticas)</td><td></td><td></td>
+    <td>${fmtN(tot.sp)}</td><td>${fmtN(tot.se)}</td><td>${fmtN(tot.st)}</td><td>${fmtN(tot.ag)}</td>
+    <td>${pct(tot.ag,tot.sp)}</td><td>${pct(tot.ag,tot.st)}</td>`;
+}
+
+// ─── UNIDADE ──────────────────────────────────────────────────────────────────
+function buildUnidade(){
+  const uAll = aggBy(DATA.filter(d=>d.sp>0),["unidade"]);
+  const uMap={}; uAll.forEach(u=>uMap[u.unidade]=u);
+  const tot = DATA.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
+
+  document.getElementById("kpi-unidades").innerHTML = UNIDADES.map(u=>{
+    const v=uMap[u]||{sp:0,ag:0,st:0};
+    return `<div class="kpi" style="border-left-color:${U_COLORS[u]}">
+      <div class="label">${u}</div>
+      <div class="value" style="color:${U_COLORS[u]}">${pct(v.ag,v.sp)}</div>
+      <div class="sub">${fmtN(v.ag)} agend. / ${fmtN(v.sp)} slots</div>
+    </div>`;
+  }).join("");
+
+  // evolução semanal
+  const uwAgg = aggBy(DATA.filter(d=>d.sp>0),["unidade","week"]);
+  const uwMap={}; uwAgg.forEach(x=>{ if(!uwMap[x.unidade]) uwMap[x.unidade]={}; uwMap[x.unidade][x.week]=x; });
+
+  mkChart("chart-unid-evolucao",{type:"line",data:{labels:WEEKS,
+    datasets:UNIDADES.map(u=>({
+      label:u,
+      data:WEEKS.map(w=>uwMap[u]?.[w]? +(uwMap[u][w].ag/uwMap[u][w].sp*100).toFixed(1):null),
+      borderColor:U_COLORS[u],backgroundColor:U_COLORS[u]+"33",
+      tension:.3,fill:false,pointRadius:5,pointHoverRadius:7,spanGaps:true
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:11}}}},
+      scales:{y:{min:0,max:140,ticks:{callback:v=>v+"%"},grid:{color:"#eee"}},x:{grid:{display:false}}}}
+  });
+
+  // table
+  const uwAll = aggBy(DATA,["unidade","week"]);
+  uwAll.sort((a,b)=>{
+    const ui=UNIDADES.indexOf(a.unidade)-UNIDADES.indexOf(b.unidade);
+    if(ui!==0) return ui;
+    return WEEKS.indexOf(a.week)-WEEKS.indexOf(b.week);
+  });
+
+  const tbody = document.querySelector("#tbl-unidade tbody");
+  let prevU="", rowIdx=0;
+  tbody.innerHTML = uwAll.map(r=>{
+    const fill = UNIDADES.indexOf(r.unidade)%2===0?"#fff":"#EBF3FA";
+    const uLabel = r.unidade!==prevU ? badgeUnid(r.unidade) : "";
+    prevU=r.unidade;
+    const cnt = DATA.filter(d=>d.unidade===r.unidade&&d.week===r.week).length;
+    return `<tr style="background:${fill}">
+      <td style="text-align:left">${uLabel}</td><td>${r.week}</td>
+      <td>${fmtN(r.sp)}</td><td>${fmtN(r.se)}</td><td>${fmtN(r.st)}</td><td>${fmtN(r.ag)}</td>
+      <td style="font-weight:bold">${pct(r.ag,r.sp)}</td>
+      <td>${pct(r.ag,r.st)}</td><td>${cnt}</td>
+    </tr>`;
+  }).join("");
+
+  const foot=document.getElementById("tbl-unidade-foot");
+  foot.innerHTML=`<td class="left">TOTAL MÊS</td><td></td>
+    <td>${fmtN(tot.sp)}</td><td>${fmtN(tot.se)}</td><td>${fmtN(tot.st)}</td><td>${fmtN(tot.ag)}</td>
+    <td>${pct(tot.ag,tot.sp)}</td><td>${pct(tot.ag,tot.st)}</td><td>${DATA.length}</td>`;
+}
+
+// ─── SHARED HELPERS ───────────────────────────────────────────────────────────
+function getSpec(name){ return name.replace(/\s+(CPS|SP|ONL|BSB)\s+T\d+$/i,'').trim(); }
+
+// ─── SPECIALTY MULTI-SELECT ───────────────────────────────────────────────────
+window._selectedSpecs = new Set();
+
+function toggleSpecDropdown(){
+  const panel = document.getElementById("spec-dropdown-list");
+  const isOpen = panel.style.display !== "none";
+  // close mod dropdown if open
+  document.getElementById("mod-dropdown-list").style.display="none";
+  panel.style.display = isOpen ? "none" : "block";
+  if(!isOpen) document.getElementById("spec-search-input").focus();
+}
+
+function rebuildSpecDropdown(){
+  const fu = document.getElementById("filter-unid-turma").value;
+  const fw = document.getElementById("filter-week-turma").value;
+  let base = DATA;
+  if(fw) base = base.filter(d=>d.week===fw);
+  let candidates = aggBy(base,["turma","unidade","modulo"]);
+  if(fu) candidates = candidates.filter(t=>t.unidade===fu);
+  const allSpecs = [...new Set(candidates.map(t=>getSpec(t.turma)))].sort();
+  for(const s of [...window._selectedSpecs]){
+    if(!allSpecs.includes(s)) window._selectedSpecs.delete(s);
+  }
+  _renderSpecCheckboxList(allSpecs, "");
+  _updateSpecChips();
+  _updateSpecBtnLabel();
+}
+
+function _renderSpecCheckboxList(specs, query){
+  const container = document.getElementById("spec-checkbox-list");
+  const filtered = query ? specs.filter(s=>s.toLowerCase().includes(query.toLowerCase())) : specs;
+  if(!filtered.length){
+    container.innerHTML = `<div style="padding:8px 12px;color:#999;font-size:11px">Nenhuma especialidade encontrada</div>`;
+    return;
+  }
+  container.innerHTML = filtered.map(s=>{
+    const checked = window._selectedSpecs.has(s);
+    const safeS = s.replace(/"/g,"&quot;").replace(/'/g,"\\'");
+    return `<label onmouseover="this.style.background='#f0f6ff'" onmouseout="this.style.background='${checked?"#EBF3FA":""}'" style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:11px;background:${checked?"#EBF3FA":"transparent"}">
+      <input type="checkbox" ${checked?"checked":""} onchange="toggleSpec('${safeS}',this.checked)" style="accent-color:#1F4E79;flex-shrink:0">
+      <span>${s}</span>
+    </label>`;
+  }).join("");
+}
+
+function filterSpecDropdown(){
+  const q = document.getElementById("spec-search-input").value;
+  const fu = document.getElementById("filter-unid-turma").value;
+  const fw = document.getElementById("filter-week-turma").value;
+  let base = DATA;
+  if(fw) base = base.filter(d=>d.week===fw);
+  let candidates = aggBy(base,["turma","unidade","modulo"]);
+  if(fu) candidates = candidates.filter(t=>t.unidade===fu);
+  const allSpecs = [...new Set(candidates.map(t=>getSpec(t.turma)))].sort();
+  _renderSpecCheckboxList(allSpecs, q);
+}
+
+function toggleSpec(spec, checked){
+  if(checked) window._selectedSpecs.add(spec);
+  else window._selectedSpecs.delete(spec);
+  _updateSpecChips();
+  _updateSpecBtnLabel();
+  renderTurmaTable();
+}
+
+function _updateSpecBtnLabel(){
+  const lbl = document.getElementById("spec-btn-label");
+  const n = window._selectedSpecs.size;
+  lbl.textContent = n===0 ? "🏷️ Filtrar por especialidade…" : `🏷️ Especialidade: ${n} selecionada${n>1?"s":""}`;
+  document.getElementById("spec-dropdown-btn").style.borderColor = n>0 ? "#375623" : "#ccc";
+  document.getElementById("spec-dropdown-btn").style.fontWeight = n>0 ? "bold" : "normal";
+}
+
+function _updateSpecChips(){
+  const container = document.getElementById("spec-chips");
+  const specs = [...window._selectedSpecs].sort();
+  container.innerHTML = specs.map(s=>{
+    const safeS = s.replace(/'/g,"\\'").replace(/"/g,"&quot;");
+    const label = s.length>40 ? s.slice(0,38)+"…" : s;
+    return `<span title="${s}" style="display:inline-flex;align-items:center;gap:4px;background:#375623;color:#fff;padding:3px 8px;border-radius:12px;font-size:10px;max-width:240px">
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${label}</span>
+      <span onclick="toggleSpec('${safeS}',false);rebuildSpecDropdown()" style="cursor:pointer;font-size:12px;line-height:1;opacity:.8;flex-shrink:0" title="Remover">✕</span>
+    </span>`;
+  }).join("");
+}
+
+function clearSpecFilter(){
+  window._selectedSpecs.clear();
+  _updateSpecChips();
+  _updateSpecBtnLabel();
+  filterSpecDropdown();
+  renderTurmaTable();
+}
+
+// ─── MODULE MULTI-SELECT ──────────────────────────────────────────────────────
+window._selectedModules = new Set();
+
+function toggleModDropdown(){
+  const panel = document.getElementById("mod-dropdown-list");
+  const isOpen = panel.style.display !== "none";
+  // close spec dropdown if open
+  document.getElementById("spec-dropdown-list").style.display="none";
+  panel.style.display = isOpen ? "none" : "block";
+  if(!isOpen) document.getElementById("mod-search-input").focus();
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener("click", function(e){
+  const modWrap = document.getElementById("mod-dropdown-wrap");
+  if(modWrap && !modWrap.contains(e.target)) document.getElementById("mod-dropdown-list").style.display="none";
+  const specWrap = document.getElementById("spec-dropdown-wrap");
+  if(specWrap && !specWrap.contains(e.target)) document.getElementById("spec-dropdown-list").style.display="none";
+});
+
+function rebuildModuleDropdown(){
+  // Called after unidade/week filter change so lists stay in sync
+  const fu = document.getElementById("filter-unid-turma").value;
+  const fw = document.getElementById("filter-week-turma").value;
+  let base = DATA;
+  if(fw) base = base.filter(d=>d.week===fw);
+  let candidates = aggBy(base,["turma","unidade","modulo"]);
+  if(fu) candidates = candidates.filter(t=>t.unidade===fu);
+
+  // Rebuild specialty list
+  const allSpecs = [...new Set(candidates.map(t=>getSpec(t.turma)))].sort();
+  for(const s of [...window._selectedSpecs]){ if(!allSpecs.includes(s)) window._selectedSpecs.delete(s); }
+  _renderSpecCheckboxList(allSpecs, "");
+  _updateSpecChips();
+  _updateSpecBtnLabel();
+
+  // Rebuild module list (respect specialty filter)
+  let modCandidates = candidates;
+  if(window._selectedSpecs.size>0) modCandidates = modCandidates.filter(t=>window._selectedSpecs.has(getSpec(t.turma)));
+  const allMods = [...new Set(modCandidates.map(t=>t.modulo))].sort();
+  for(const m of [...window._selectedModules]){ if(!allMods.includes(m)) window._selectedModules.delete(m); }
+  _renderModCheckboxList(allMods, "");
+  _updateModChips();
+  _updateModBtnLabel();
+}
+
+function _renderModCheckboxList(mods, query){
+  const container = document.getElementById("mod-checkbox-list");
+  const filtered = query ? mods.filter(m=>m.toLowerCase().includes(query.toLowerCase())) : mods;
+  if(!filtered.length){
+    container.innerHTML = `<div style="padding:8px 12px;color:#999;font-size:11px">Nenhum módulo encontrado</div>`;
+    return;
+  }
+  container.innerHTML = filtered.map(m=>{
+    const checked = window._selectedModules.has(m);
+    const safeM = m.replace(/"/g,"&quot;");
+    return `<label onmouseover="this.style.background='#f0f6ff'" onmouseout="this.style.background='${checked?"#EBF3FA":""}'" style="display:flex;align-items:flex-start;gap:8px;padding:6px 12px;cursor:pointer;font-size:11px;line-height:1.3;background:${checked?"#EBF3FA":"transparent"}">
+      <input type="checkbox" ${checked?"checked":""} onchange="toggleModule('${safeM}',this.checked)" style="margin-top:2px;accent-color:#1F4E79;flex-shrink:0">
+      <span>${m}</span>
+    </label>`;
+  }).join("");
+}
+
+function filterModDropdown(){
+  const q = document.getElementById("mod-search-input").value;
+  const fu = document.getElementById("filter-unid-turma").value;
+  const fw = document.getElementById("filter-week-turma").value;
+  let base = DATA;
+  if(fw) base = base.filter(d=>d.week===fw);
+  let candidates = aggBy(base,["turma","unidade","modulo"]);
+  if(fu) candidates = candidates.filter(t=>t.unidade===fu);
+  const allMods = [...new Set(candidates.map(t=>t.modulo))].sort();
+  _renderModCheckboxList(allMods, q);
+}
+
+function toggleModule(mod, checked){
+  if(checked) window._selectedModules.add(mod);
+  else window._selectedModules.delete(mod);
+  _updateModChips();
+  _updateModBtnLabel();
+  renderTurmaTable();
+}
+
+function _updateModBtnLabel(){
+  const lbl = document.getElementById("mod-btn-label");
+  const n = window._selectedModules.size;
+  lbl.textContent = n === 0 ? "📚 Filtrar por módulo…" : `📚 Módulos: ${n} selecionado${n>1?"s":""}`;
+  document.getElementById("mod-dropdown-btn").style.borderColor = n>0 ? "#1F4E79" : "#ccc";
+  document.getElementById("mod-dropdown-btn").style.fontWeight = n>0 ? "bold" : "normal";
+}
+
+function _updateModChips(){
+  const container = document.getElementById("mod-chips");
+  const mods = [...window._selectedModules].sort();
+  container.innerHTML = mods.map(m=>{
+    const safeM = m.replace(/'/g,"\\'").replace(/"/g,"&quot;");
+    // Shorten label: take first 40 chars
+    const label = m.length>42 ? m.slice(0,40)+"…" : m;
+    return `<span title="${m}" style="display:inline-flex;align-items:center;gap:4px;background:#1F4E79;color:#fff;padding:3px 8px;border-radius:12px;font-size:10px;max-width:260px">
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${label}</span>
+      <span onclick="toggleModule('${safeM}',false);rebuildModDropdown()" style="cursor:pointer;font-size:12px;line-height:1;opacity:.8;flex-shrink:0" title="Remover">✕</span>
+    </span>`;
+  }).join("");
+}
+
+function clearModFilter(){
+  window._selectedModules.clear();
+  _updateModChips();
+  _updateModBtnLabel();
+  filterModDropdown();
+  renderTurmaTable();
+}
+
+// ─── TURMA TABLE ──────────────────────────────────────────────────────────────
+function renderTurmaTable(){
+  const q=(document.getElementById("search-turma").value||"").toLowerCase();
+  const fu=document.getElementById("filter-unid-turma").value;
+  const fw=document.getElementById("filter-week-turma").value;
+  const sort=document.getElementById("filter-sort-turma").value;
+
+  let base = DATA;
+  if(fw) base=base.filter(d=>d.week===fw);
+
+  let tAgg = aggBy(base,["turma","unidade","modulo"]);
+  if(q) tAgg=tAgg.filter(t=>t.turma.toLowerCase().includes(q)||t.modulo.toLowerCase().includes(q));
+  if(fu) tAgg=tAgg.filter(t=>t.unidade===fu);
+  // Multi-select specialty filter
+  if(window._selectedSpecs && window._selectedSpecs.size>0)
+    tAgg=tAgg.filter(t=>window._selectedSpecs.has(getSpec(t.turma)));
+  // Multi-select module filter
+  if(window._selectedModules && window._selectedModules.size>0)
+    tAgg=tAgg.filter(t=>window._selectedModules.has(t.modulo));
+
+  const sortFn = {
+    "occ-desc":(a,b)=>(b.sp>0?b.ag/b.sp:0)-(a.sp>0?a.ag/a.sp:0),
+    "occ-asc":(a,b)=>(a.sp>0?a.ag/a.sp:0)-(b.sp>0?b.ag/b.sp:0),
+    "name":(a,b)=>a.turma.localeCompare(b.turma),
+    "ag-desc":(a,b)=>b.ag-a.ag,
+  };
+  tAgg.sort(sortFn[sort]||sortFn["occ-desc"]);
+
+  const tot = tAgg.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag,count:a.count+d.count}),{sp:0,se:0,st:0,ag:0,count:0});
+
+  const tbody=document.querySelector("#tbl-turma tbody");
+  tbody.innerHTML=tAgg.map((t,i)=>{
+    const fill=i%2===0?"#fff":"#EBF3FA";
+    const occ=pctV(t.ag,t.sp);
+    const occ2=pctV(t.ag,t.st);
+    const bar=occ!==null?`<div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:${Math.min(occ*100,100)}%;background:${occColor(occ)}"></div></div>
+      <span style="font-weight:bold;color:${occColor(occ)};min-width:42px">${(occ*100).toFixed(1)}%</span></div>`:"<span style='color:#999'>—</span>";
+    return `<tr style="background:${fill};cursor:pointer" title="Clique para ver análise executiva"
+        onclick="selectTurmaExec('${t.turma.replace(/'/g,"\\'")}')">
+      <td class="left" style="color:#1F4E79;font-weight:500">${t.turma} <span style="font-size:10px;color:#2E75B6;opacity:.7">🔍</span></td>
+      <td>${badgeUnid(t.unidade)}</td>
+      <td class="left" style="max-width:240px;font-size:11px">${t.modulo}</td>
+      <td>${fmtN(t.sp)||"—"}</td><td>${fmtN(t.se)}</td><td>${fmtN(t.st)||"—"}</td><td>${fmtN(t.ag)}</td>
+      <td style="min-width:160px">${bar}</td>
+      <td>${occ2!==null?(occ2*100).toFixed(1)+"%":"—"}</td>
+      <td>${t.count}</td>
+    </tr>`;
+  }).join("");
+
+  const foot=document.getElementById("tbl-turma-foot");
+  foot.innerHTML=`<td class="left">TOTAL (${tAgg.length} turmas)</td><td></td><td></td>
+    <td>${fmtN(tot.sp)}</td><td>${fmtN(tot.se)}</td><td>${fmtN(tot.st)}</td><td>${fmtN(tot.ag)}</td>
+    <td style="font-weight:bold">${pct(tot.ag,tot.sp)}</td>
+    <td>${pct(tot.ag,tot.st)}</td><td>${tot.count}</td>`;
+
+  // Populate exec select — grouped by specialty, then individual turmas
+  const sel = document.getElementById("select-turma-exec");
+  const prevVal = sel.value;
+
+  // Build specialty groups from current filtered turmas
+  const specMap = {};
+  tAgg.forEach(t=>{
+    const sp = getSpec(t.turma);
+    if(!specMap[sp]) specMap[sp]={count:0, turmas:[]};
+    if(!specMap[sp].turmas.includes(t.turma)) specMap[sp].turmas.push(t.turma);
+    specMap[sp].count++;
+  });
+  const specs = Object.keys(specMap).sort();
+
+  // Build unique individual turmas (deduplicated)
+  const seenT = new Set();
+  const uniqueTurmas = tAgg.filter(t=>{ if(seenT.has(t.turma)) return false; seenT.add(t.turma); return true; });
+
+  sel.innerHTML =
+    `<option value="">🔍 Selecionar para análise executiva…</option>`
+    + `<optgroup label="── Por Especialidade (grupo) ──">`
+    + specs.map(sp=>{
+        const c=specMap[sp].count;
+        return `<option value="GROUP:${sp}">📊 ${sp} (${c} turma${c>1?"s":""})</option>`;
+      }).join("")
+    + `</optgroup>`
+    + `<optgroup label="── Por Turma Individual ──">`
+    + uniqueTurmas.map(t=>`<option value="TURMA:${t.turma}">↳ ${t.turma} (${t.unidade})</option>`).join("")
+    + `</optgroup>`;
+
+  if(prevVal && [...sel.options].some(o=>o.value===prevVal)) sel.value=prevVal;
+}
+
+function dispatchExecSelect(val){
+  if(!val) return;
+  if(val.startsWith("GROUP:")){
+    const spec = val.slice(6);
+    // set search to specialty name and trigger group analysis
+    document.getElementById("search-turma").value = spec;
+    renderTurmaTable();
+    showGroupExec();
+  } else if(val.startsWith("TURMA:")){
+    const name = val.slice(6);
+    showTurmaExec(name);
+  }
+}
+
+function selectTurmaExec(name){
+  const sel = document.getElementById("select-turma-exec");
+  const key = "TURMA:"+name;
+  if([...sel.options].some(o=>o.value===key)) sel.value=key;
+  showTurmaExec(name);
+}
+
+// ─── TURMA EXECUTIVE ANALYSIS ─────────────────────────────────────────────────
+function showTurmaExec(turmaName){
+  const panel = document.getElementById("exec-panel");
+  if(!turmaName){ panel.style.display="none"; return; }
+  panel.style.display="block";
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+
+  const rows = DATA.filter(d=>d.turma===turmaName)
+    .sort((a,b)=>a.data.split("/").reverse().join("").localeCompare(b.data.split("/").reverse().join("")));
+  if(!rows.length) return;
+
+  const unidade = rows[0].unidade;
+  const tot = rows.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
+  const validRows = rows.filter(d=>d.sp>0);
+  const avgOcc = validRows.length ? validRows.reduce((s,d)=>s+d.ag/d.sp,0)/validRows.length : 0;
+  const bestDay = validRows.length ? validRows.reduce((b,d)=>d.ag/d.sp>b.ag/b.sp?d:b) : null;
+  const worstDay= validRows.length ? validRows.reduce((b,d)=>d.ag/d.sp<b.ag/b.sp?d:b) : null;
+  const firstV = validRows[0]; const lastV = validRows[validRows.length-1];
+  const trendVal = firstV && lastV && firstV!==lastV ? lastV.ag/lastV.sp - firstV.ag/firstV.sp : 0;
+  const trendLbl = trendVal>0.07?"↑ Crescendo":trendVal<-0.07?"↓ Caindo":"→ Estável";
+  const trendCol = trendVal>0.07?"#375623":trendVal<-0.07?"#C00000":"#7F6000";
+  const overCount= validRows.filter(d=>d.ag>d.sp).length;
+  // modules per week
+  const weekModMap = {};
+  rows.forEach(d=>{ weekModMap[d.week]=d.modulo; });
+  const modulosUnicos = [...new Set(rows.map(d=>d.modulo))];
+
+  document.getElementById("exec-title").textContent = `Análise Executiva — ${turmaName} · ${unidade}`;
+
+  // KPIs
+  const occClass = avgOcc>=0.85?"green":avgOcc>=0.5?"orange":"red";
+  document.getElementById("exec-kpis").innerHTML = `
+    <div class="kpi"><div class="label">Unidade</div><div class="value" style="font-size:22px">${unidade}</div></div>
+    <div class="kpi"><div class="label">Dias de Prática</div><div class="value">${rows.length}</div><div class="sub">${validRows.length} com slots · ${rows.length-validRows.length} sem slots</div></div>
+    <div class="kpi"><div class="label">Slots Prática</div><div class="value">${fmtN(tot.sp)}</div><div class="sub">${fmtN(tot.se)} extras disponíveis</div></div>
+    <div class="kpi green"><div class="label">Agendamentos</div><div class="value">${fmtN(tot.ag)}</div><div class="sub">${fmtN(tot.st-tot.ag)} vagas não preenchidas</div></div>
+    <div class="kpi ${occClass}"><div class="label">Ocup. Média (base)</div><div class="value">${(avgOcc*100).toFixed(1)}%</div><div class="sub">Agend./Slots prática</div></div>
+    <div class="kpi" style="border-left-color:${trendCol}"><div class="label">Tendência</div><div class="value" style="font-size:18px;color:${trendCol}">${trendLbl}</div><div class="sub">${firstV&&lastV&&firstV!==lastV?((trendVal>0?"+":"")+((trendVal)*100).toFixed(1)+"pp primeiro→último"):"1 dia"}</div></div>
+    <div class="kpi ${overCount>0?'orange':''}"><div class="label">Dias c/ Overbooking</div><div class="value">${overCount}</div><div class="sub">de ${validRows.length} dias com slots</div></div>
+    <div class="kpi"><div class="label">Módulos no Mês</div><div class="value">${modulosUnicos.length}</div><div class="sub">${modulosUnicos.length>1?"Múltiplos módulos":"Módulo único"}</div></div>
+  `;
+
+  // Charts
+  const labels = rows.map(d=>d.data.slice(0,5));
+  const occData = rows.map(d=>d.sp>0?+(d.ag/d.sp*100).toFixed(1):null);
+  const bgColors= rows.map(d=>d.sp>0?occColor(d.ag/d.sp):"#E8EEF4");
+
+  mkChart("exec-chart-daily",{type:"bar",data:{labels,datasets:[{
+    label:"Ocupação %",data:occData,backgroundColor:bgColors,borderRadius:4,
+    datalabels:{display:true}}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y!==null?c.parsed.y+"%":"Sem slots"}}},
+      scales:{y:{min:0,max:Math.max(140,Math.max(...occData.filter(Boolean))+10),
+        ticks:{callback:v=>v+"%"},grid:{color:"#eee"}},x:{grid:{display:false}}}}
+  });
+
+  mkChart("exec-chart-vol",{type:"bar",data:{labels,datasets:[
+    {label:"Slots Prática",data:rows.map(d=>d.sp),backgroundColor:"#BDD7EE",borderRadius:3},
+    {label:"Slots Extras",data:rows.map(d=>d.se),backgroundColor:"#2E75B6",borderRadius:3},
+    {label:"Agendamentos",data:rows.map(d=>d.ag),backgroundColor:"#1F4E79",borderRadius:3,type:"line",
+      borderColor:"#1F4E79",pointRadius:4,fill:false,tension:.2}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:10}}}},
+      scales:{y:{grid:{color:"#eee"}},x:{grid:{display:false}}}}
+  });
+
+  // Weekly breakdown
+  const weekMap = {};
+  rows.forEach(d=>{
+    if(!weekMap[d.week]) weekMap[d.week]={sp:0,se:0,st:0,ag:0,days:0,modulo:d.modulo};
+    weekMap[d.week].sp+=d.sp; weekMap[d.week].se+=d.se;
+    weekMap[d.week].st+=d.st; weekMap[d.week].ag+=d.ag;
+    weekMap[d.week].days++;
+  });
+  let wtbl=`<table style="width:100%;border-collapse:collapse;font-size:11px">
+    <thead><tr>
+      <th style="background:#1F4E79;color:#fff;padding:7px 8px;text-align:left">Semana</th>
+      <th style="background:#1F4E79;color:#fff;padding:7px 8px;text-align:left">Módulo</th>
+      <th style="background:#1F4E79;color:#fff;padding:7px 8px">Dias</th>
+      <th style="background:#1F4E79;color:#fff;padding:7px 8px">Slots</th>
+      <th style="background:#1F4E79;color:#fff;padding:7px 8px">+Extra</th>
+      <th style="background:#1F4E79;color:#fff;padding:7px 8px">Agend.</th>
+      <th style="background:#1F4E79;color:#fff;padding:7px 8px">Ocupação</th>
+    </tr></thead><tbody>`;
+  let wi2=0;
+  WEEKS.filter(w=>weekMap[w]).forEach(w=>{
+    const v=weekMap[w]; const occ=v.sp>0?v.ag/v.sp:null;
+    const modShort=v.modulo.length>35?v.modulo.slice(0,35)+"…":v.modulo;
+    wtbl+=`<tr style="background:${wi2++%2===0?'#fff':'#EBF3FA'}">
+      <td style="padding:7px 8px;font-weight:bold;color:#1F4E79;white-space:nowrap">${w}</td>
+      <td style="padding:7px 8px;font-size:10px;color:#444">${modShort}</td>
+      <td style="padding:7px 8px;text-align:center">${v.days}</td>
+      <td style="padding:7px 8px;text-align:center">${v.sp}</td>
+      <td style="padding:7px 8px;text-align:center;color:#2E75B6">${v.se}</td>
+      <td style="padding:7px 8px;text-align:center;font-weight:bold">${v.ag}</td>
+      <td style="padding:7px 8px;text-align:center">
+        <span style="font-weight:bold;color:${occColor(occ)}">${occ!==null?(occ*100).toFixed(1)+"%":"—"}</span>
+      </td>
+    </tr>`;
+  });
+  // total row
+  const wtot=Object.values(weekMap).reduce((a,v)=>({sp:a.sp+v.sp,se:a.se+v.se,ag:a.ag+v.ag,days:a.days+v.days}),{sp:0,se:0,ag:0,days:0});
+  const wOcc=wtot.sp>0?wtot.ag/wtot.sp:null;
+  wtbl+=`<tr style="background:#BDD7EE;font-weight:bold">
+    <td style="padding:7px 8px;color:#1F4E79">TOTAL MÊS</td><td></td>
+    <td style="padding:7px 8px;text-align:center">${wtot.days}</td>
+    <td style="padding:7px 8px;text-align:center">${wtot.sp}</td>
+    <td style="padding:7px 8px;text-align:center;color:#2E75B6">${wtot.se}</td>
+    <td style="padding:7px 8px;text-align:center">${wtot.ag}</td>
+    <td style="padding:7px 8px;text-align:center;color:${occColor(wOcc)}">${wOcc!==null?(wOcc*100).toFixed(1)+"%":"—"}</td>
+  </tr>`;
+  wtbl+=`</tbody></table>`;
+  document.getElementById("exec-week-table").innerHTML=wtbl;
+
+  // Insights
+  const vagasAbertas = tot.st - tot.ag;
+  const semanasCriticas = WEEKS.filter(w=>weekMap[w]&&weekMap[w].sp>0&&weekMap[w].ag/weekMap[w].sp<0.5);
+  const semanasOk = WEEKS.filter(w=>weekMap[w]&&weekMap[w].sp>0&&weekMap[w].ag/weekMap[w].sp>=0.85);
+
+  const insightLines = [
+    `<b style="color:#1F4E79;font-size:13px">📌 ${turmaName}</b>`,
+    `<b>Unidade:</b> ${unidade} &nbsp;|&nbsp; <b>Mês:</b> Junho/2026`,
+    modulosUnicos.length>1
+      ? `<b>Módulos:</b> ${modulosUnicos.length} módulos no mês`
+      : `<b>Módulo:</b> ${modulosUnicos[0]}`,
+    `<hr style="border:none;border-top:1px solid #ddd;margin:6px 0">`,
+    `<b>📊 Resumo:</b>`,
+    `&nbsp;• <b>${fmtN(tot.ag)}</b> agendamentos em <b>${rows.length}</b> dias de prática`,
+    `&nbsp;• Ocupação média: <b style="color:${occColor(avgOcc)}">${(avgOcc*100).toFixed(1)}%</b>`,
+    `&nbsp;• <b>${vagasAbertas}</b> vaga(s) não preenchida(s) no mês`,
+    `<hr style="border:none;border-top:1px solid #ddd;margin:6px 0">`,
+    `<b>📈 Destaques:</b>`,
+    bestDay   ? `&nbsp;• Melhor dia: <b>${bestDay.data}</b> — <span style="color:${occColor(bestDay.ag/bestDay.sp)}">${(bestDay.ag/bestDay.sp*100).toFixed(1)}%</span> (${bestDay.ag}/${bestDay.sp})` : "",
+    worstDay  ? `&nbsp;• Dia mais fraco: <b>${worstDay.data}</b> — <span style="color:${occColor(worstDay.ag/worstDay.sp)}">${(worstDay.ag/worstDay.sp*100).toFixed(1)}%</span> (${worstDay.ag}/${worstDay.sp})` : "",
+    overCount>0 ? `&nbsp;• <b style="color:#ED7D31">${overCount} dia(s) com overbooking</b> (demanda > oferta)` : "&nbsp;• Sem dias de overbooking",
+    semanasOk.length  ? `&nbsp;• Semanas com ocup. ≥85%: <b style="color:#375623">${semanasOk.join(", ")}</b>` : "",
+    semanasCriticas.length ? `&nbsp;• ⚠️ Semanas críticas (&lt;50%): <b style="color:#C00000">${semanasCriticas.join(", ")}</b>` : "",
+    `<hr style="border:none;border-top:1px solid #ddd;margin:6px 0">`,
+    `<b>📉 Tendência:</b> <b style="color:${trendCol}">${trendLbl}</b>${firstV&&lastV&&firstV!==lastV?` &nbsp;(${(trendVal>0?"+":"")+((trendVal)*100).toFixed(1)}pp)`:""}`,
+  ].filter(l=>l!==undefined&&l!=="");
+  document.getElementById("exec-insights").innerHTML = insightLines.join("<br>");
+
+  // Store data for copy
+  window._execData = {turmaName, unidade, modulosUnicos, rows, tot, avgOcc, bestDay, worstDay, trendLbl, trendVal, overCount, weekMap, vagasAbertas, semanasCriticas, semanasOk};
+}
+
+function closeExec(){
+  document.getElementById("exec-panel").style.display="none";
+  document.getElementById("select-turma-exec").value="";
+}
+function closeGroupExec(){
+  document.getElementById("group-exec-panel").style.display="none";
+  document.getElementById("select-turma-exec").value="";
+}
+
+// ─── GROUP EXECUTIVE ANALYSIS ──────────────────────────────────────────────────
+function showGroupExec(){
+  const q  = (document.getElementById("search-turma").value||"").toLowerCase();
+  const fu = document.getElementById("filter-unid-turma").value;
+  const fw = document.getElementById("filter-week-turma").value;
+
+  let base = DATA;
+  if(fw) base = base.filter(d=>d.week===fw);
+
+  let tAgg = aggBy(base,["turma","unidade","modulo"]);
+  if(q)  tAgg = tAgg.filter(t=>t.turma.toLowerCase().includes(q)||t.modulo.toLowerCase().includes(q));
+  if(fu) tAgg = tAgg.filter(t=>t.unidade===fu);
+
+  if(!tAgg.length){ alert("Nenhuma turma encontrada para os filtros atuais."); return; }
+
+  const groupName = q ? q.charAt(0).toUpperCase()+q.slice(1) : (fu||"Todas as turmas");
+  const turmasNoGrupo = [...new Set(tAgg.map(t=>t.turma))];
+
+  // All raw rows for this group
+  let groupRows = DATA.filter(d=>turmasNoGrupo.includes(d.turma));
+  if(fw) groupRows = groupRows.filter(d=>d.week===fw);
+
+  const tot = groupRows.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
+  const validRows = groupRows.filter(d=>d.sp>0);
+  const avgOcc = validRows.length ? validRows.reduce((s,d)=>s+d.ag/d.sp,0)/validRows.length : 0;
+  const overDays = validRows.filter(d=>d.ag>d.sp).length;
+  const vagasAbertas = tot.st - tot.ag;
+
+  // Per-turma aggregation (full month)
+  const turmaStats = turmasNoGrupo.map(t=>{
+    const rows = groupRows.filter(d=>d.turma===t);
+    const unid = rows[0]?.unidade||"";
+    const v = rows.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
+    const validR = rows.filter(d=>d.sp>0);
+    const avgO = validR.length ? validR.reduce((s,d)=>s+d.ag/d.sp,0)/validR.length : 0;
+    const firstV=validR[0]; const lastV=validR[validR.length-1];
+    const trend = firstV&&lastV&&firstV!==lastV ? lastV.ag/lastV.sp-firstV.ag/firstV.sp : 0;
+    return {turma:t, unidade:unid, ...v, avgOcc:avgO, days:rows.length, trend};
+  }).sort((a,b)=>b.avgOcc-a.avgOcc);
+
+  // Weekly agg for group
+  const weekGrp={};
+  groupRows.forEach(d=>{
+    if(!weekGrp[d.week]) weekGrp[d.week]={sp:0,se:0,st:0,ag:0,days:0};
+    weekGrp[d.week].sp+=d.sp; weekGrp[d.week].se+=d.se;
+    weekGrp[d.week].st+=d.st; weekGrp[d.week].ag+=d.ag; weekGrp[d.week].days++;
+  });
+
+  // Unidade dist
+  const unidGrp={};
+  groupRows.forEach(d=>{ if(!unidGrp[d.unidade]) unidGrp[d.unidade]={sp:0,ag:0}; unidGrp[d.unidade].sp+=d.sp; unidGrp[d.unidade].ag+=d.ag; });
+
+  const panel = document.getElementById("group-exec-panel");
+  panel.style.display="block";
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+
+  document.getElementById("group-exec-title").textContent = `Análise do Grupo: ${groupName}${fu?" · "+fu:""} · Junho/2026`;
+
+  // KPIs
+  const occClass = avgOcc>=0.85?"green":avgOcc>=0.5?"orange":"red";
+  const turmasOk  = turmaStats.filter(t=>t.avgOcc>=0.85).length;
+  const turmasCrit= turmaStats.filter(t=>t.avgOcc<0.5).length;
+  document.getElementById("group-exec-kpis").innerHTML=`
+    <div class="kpi"><div class="label">Turmas no Grupo</div><div class="value">${turmasNoGrupo.length}</div><div class="sub">${turmasOk} com ≥85% · ${turmasCrit} críticas</div></div>
+    <div class="kpi"><div class="label">Dias de Prática</div><div class="value">${groupRows.length}</div><div class="sub">${validRows.length} com slots</div></div>
+    <div class="kpi"><div class="label">Slots Prática</div><div class="value">${fmtN(tot.sp)}</div><div class="sub">${fmtN(tot.se)} extras</div></div>
+    <div class="kpi green"><div class="label">Agendamentos</div><div class="value">${fmtN(tot.ag)}</div><div class="sub">${fmtN(vagasAbertas)} vagas abertas</div></div>
+    <div class="kpi ${occClass}"><div class="label">Ocup. Média</div><div class="value">${(avgOcc*100).toFixed(1)}%</div><div class="sub">Média das turmas</div></div>
+    <div class="kpi ${overDays>0?"orange":""}"><div class="label">Dias c/ Overbooking</div><div class="value">${overDays}</div><div class="sub">de ${validRows.length} dias</div></div>
+  `;
+
+  // Chart: ocupação por turma (horizontal bar)
+  const turmaLabels = turmaStats.map(t=>t.turma.length>20?t.turma.slice(0,20)+"…":t.turma);
+  mkChart("group-chart-turmas",{type:"bar",data:{
+    labels:turmaLabels,
+    datasets:[{label:"Ocup. Média %",
+      data:turmaStats.map(t=>+(t.avgOcc*100).toFixed(1)),
+      backgroundColor:turmaStats.map(t=>occColor(t.avgOcc)),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.x.toFixed(1)}% (${turmaStats[c.dataIndex].ag}/${turmaStats[c.dataIndex].sp} slots)`}}},
+      scales:{x:{min:0,max:Math.max(140,Math.max(...turmaStats.map(t=>t.avgOcc*100))+10),ticks:{callback:v=>v+"%"},grid:{color:"#eee"}},
+        y:{ticks:{font:{size:10}},grid:{display:false}}}}
+  });
+
+  // Chart: evolução semanal do grupo
+  const weeksPresent = WEEKS.filter(w=>weekGrp[w]);
+  mkChart("group-chart-semanas",{type:"line",data:{labels:weeksPresent,datasets:[
+    {label:"Ocupação %",data:weeksPresent.map(w=>weekGrp[w].sp>0?+(weekGrp[w].ag/weekGrp[w].sp*100).toFixed(1):null),
+      borderColor:"#375623",backgroundColor:"#37562333",fill:true,tension:.3,pointRadius:5,spanGaps:true,yAxisID:"y"},
+    {label:"Agendamentos",data:weeksPresent.map(w=>weekGrp[w].ag),
+      borderColor:"#2E75B6",backgroundColor:"transparent",tension:.3,pointRadius:4,borderDash:[4,3],spanGaps:true,yAxisID:"y2"}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:10}}}},
+      scales:{y:{min:0,max:140,ticks:{callback:v=>v+"%"},grid:{color:"#eee"},position:"left"},
+        y2:{position:"right",grid:{display:false},ticks:{color:"#2E75B6"}}}}
+  });
+
+  // Chart: distribuição por unidade
+  const unidKeys = Object.keys(unidGrp);
+  mkChart("group-chart-unid",{type:"doughnut",data:{
+    labels:unidKeys,
+    datasets:[{data:unidKeys.map(u=>unidGrp[u].ag),
+      backgroundColor:unidKeys.map(u=>U_COLORS[u]||"#999"),borderWidth:2,borderColor:"#fff"}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:"right",labels:{font:{size:11}}},
+        tooltip:{callbacks:{label:c=>`${c.label}: ${fmtN(c.parsed)} agend.`}}}}
+  });
+
+  // Ranking table
+  let rtbl=`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">
+    <thead><tr>
+      <th style="background:#375623;color:#fff;padding:7px 10px;text-align:left">#</th>
+      <th style="background:#375623;color:#fff;padding:7px 10px;text-align:left">Turma</th>
+      <th style="background:#375623;color:#fff;padding:7px 10px">Unid.</th>
+      <th style="background:#375623;color:#fff;padding:7px 10px">Dias</th>
+      <th style="background:#375623;color:#fff;padding:7px 10px">Slots</th>
+      <th style="background:#375623;color:#fff;padding:7px 10px">+Extra</th>
+      <th style="background:#375623;color:#fff;padding:7px 10px">Agend.</th>
+      <th style="background:#375623;color:#fff;padding:7px 10px">Ocup. Média</th>
+      <th style="background:#375623;color:#fff;padding:7px 10px">Tendência</th>
+      <th style="background:#375623;color:#fff;padding:7px 10px">Ação</th>
+    </tr></thead><tbody>`;
+  turmaStats.forEach((t,i)=>{
+    const fill=i%2===0?"#fff":"#EBF3FA";
+    const tc=trendColor(t.trend);
+    const ti=t.trend>0.07?"↑":t.trend<-0.07?"↓":"→";
+    const bar=`<div style="display:flex;align-items:center;gap:5px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:${Math.min(t.avgOcc*100,100)}%;background:${occColor(t.avgOcc)}"></div></div>
+      <span style="font-weight:bold;color:${occColor(t.avgOcc)};min-width:42px">${(t.avgOcc*100).toFixed(1)}%</span></div>`;
+    rtbl+=`<tr style="background:${fill}">
+      <td style="padding:6px 10px;font-weight:bold;color:#375623">${i+1}º</td>
+      <td style="padding:6px 10px;font-weight:500;color:#1F4E79">${t.turma}</td>
+      <td style="padding:6px 10px;text-align:center">${badgeUnid(t.unidade)}</td>
+      <td style="padding:6px 10px;text-align:center">${t.days}</td>
+      <td style="padding:6px 10px;text-align:center">${t.sp}</td>
+      <td style="padding:6px 10px;text-align:center;color:#2E75B6">${t.se}</td>
+      <td style="padding:6px 10px;text-align:center;font-weight:bold">${t.ag}</td>
+      <td style="padding:6px 10px;min-width:160px">${bar}</td>
+      <td style="padding:6px 10px;text-align:center;font-weight:bold;color:${tc}">${ti}</td>
+      <td style="padding:6px 10px;text-align:center">
+        <button onclick="selectTurmaExec('${t.turma.replace(/'/g,"\\'")}');closeGroupExec()"
+          style="padding:3px 8px;background:#1F4E79;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:10px">
+          🔍 Detalhar
+        </button>
+      </td>
+    </tr>`;
+  });
+  rtbl+=`</tbody></table></div>`;
+  document.getElementById("group-ranking-table").innerHTML=rtbl;
+
+  // Insights
+  const best  = turmaStats[0];
+  const worst = turmaStats[turmaStats.length-1];
+  const falling = turmaStats.filter(t=>t.trend<-0.07);
+  const growing = turmaStats.filter(t=>t.trend>0.07);
+  const semanasCriticas = WEEKS.filter(w=>weekGrp[w]&&weekGrp[w].sp>0&&weekGrp[w].ag/weekGrp[w].sp<0.5);
+  const semanasOk = WEEKS.filter(w=>weekGrp[w]&&weekGrp[w].sp>0&&weekGrp[w].ag/weekGrp[w].sp>=0.85);
+  document.getElementById("group-insights").innerHTML=[
+    `<b style="color:#375623;font-size:13px">📌 Grupo: ${groupName}</b>`,
+    `<b>Período:</b> Junho/2026 &nbsp;|&nbsp; <b>${turmasNoGrupo.length} turmas</b>`,
+    `<hr style="border:none;border-top:1px solid #ddd;margin:6px 0">`,
+    `<b>📊 Consolidado do Grupo:</b>`,
+    `&nbsp;• <b>${fmtN(tot.ag)}</b> agendamentos · <b>${fmtN(tot.sp)}</b> slots de prática`,
+    `&nbsp;• Ocupação média: <b style="color:${occColor(avgOcc)}">${(avgOcc*100).toFixed(1)}%</b>`,
+    `&nbsp;• <b>${fmtN(vagasAbertas)}</b> vagas não preenchidas no mês`,
+    `<hr style="border:none;border-top:1px solid #ddd;margin:6px 0">`,
+    `<b>🏆 Ranking:</b>`,
+    best  ? `&nbsp;• Melhor turma: <b>${best.turma}</b> (${(best.avgOcc*100).toFixed(1)}%)` : "",
+    worst ? `&nbsp;• Turma mais baixa: <b>${worst.turma}</b> (${(worst.avgOcc*100).toFixed(1)}%)` : "",
+    `&nbsp;• Turmas ≥85%: <b style="color:#375623">${turmasOk}</b> de ${turmasNoGrupo.length}`,
+    turmasCrit>0 ? `&nbsp;• ⚠️ Turmas críticas (&lt;50%): <b style="color:#C00000">${turmasCrit}</b>` : "",
+    `<hr style="border:none;border-top:1px solid #ddd;margin:6px 0">`,
+    `<b>📈 Tendências:</b>`,
+    growing.length ? `&nbsp;• ↑ Crescendo: <b style="color:#375623">${growing.map(t=>t.turma).join(", ")}</b>` : "",
+    falling.length ? `&nbsp;• ↓ Caindo: <b style="color:#C00000">${falling.map(t=>t.turma).join(", ")}</b>` : "",
+    semanasOk.length ? `&nbsp;• Semanas com ocup. ≥85%: <b>${semanasOk.join(", ")}</b>` : "",
+    semanasCriticas.length ? `&nbsp;• 🔴 Semanas críticas: <b style="color:#C00000">${semanasCriticas.join(", ")}</b>` : "",
+  ].filter(l=>l).join("<br>");
+
+  window._groupExecData = {groupName, turmasNoGrupo, turmaStats, tot, avgOcc, overDays, vagasAbertas, weekGrp, groupRows, turmasOk, turmasCrit, best, worst, falling, growing, semanasOk, semanasCriticas};
+}
+
+function trendColor(v){ return v>0.07?"#375623":v<-0.07?"#C00000":"#7F6000"; }
+
+function copyGroupToPPT(){
+  const d=window._groupExecData;
+  if(!d) return;
+  const lines=[
+    `ANÁLISE EXECUTIVA DO GRUPO — JUNHO/2026`,
+    `${"=".repeat(52)}`,
+    ``,
+    `Grupo:    ${d.groupName}`,
+    `Turmas:   ${d.turmasNoGrupo.length}`,
+    `Período:  Junho/2026`,
+    ``,
+    `RESUMO CONSOLIDADO`,
+    `-`.repeat(52),
+    `Total de agendamentos:  ${fmtN(d.tot.ag)}`,
+    `Slots de prática:       ${fmtN(d.tot.sp)}`,
+    `Slots extras:           ${fmtN(d.tot.se)}`,
+    `Vagas não preenchidas:  ${fmtN(d.vagasAbertas)}`,
+    `Ocupação média:         ${(d.avgOcc*100).toFixed(1)}%`,
+    `Turmas com ≥85%:        ${d.turmasOk} de ${d.turmasNoGrupo.length}`,
+    `Turmas críticas (<50%): ${d.turmasCrit} de ${d.turmasNoGrupo.length}`,
+    `Dias com overbooking:   ${d.overDays}`,
+    ``,
+    `RANKING DE TURMAS`,
+    `-`.repeat(52),
+    ...d.turmaStats.map((t,i)=>{
+      const tr=t.trend>0.07?"↑":t.trend<-0.07?"↓":"→";
+      return `${String(i+1).padStart(2)}. ${t.turma.padEnd(30)} ${t.unidade.padEnd(4)} | ${String(t.ag).padStart(4)} agend. | ${String((t.avgOcc*100).toFixed(1)+"%").padStart(7)} | ${tr}`;
+    }),
+    ``,
+    `EVOLUÇÃO SEMANAL`,
+    `-`.repeat(52),
+    ...WEEKS.filter(w=>d.weekGrp[w]).map(w=>{
+      const v=d.weekGrp[w]; const occ=v.sp>0?(v.ag/v.sp*100).toFixed(1)+"%":"—";
+      return `${w}  |  ${v.days} dias  |  Slots: ${v.sp}  |  Agend.: ${v.ag}  |  Ocup.: ${occ}`;
+    }),
+    ``,
+    `DESTAQUES`,
+    `-`.repeat(52),
+    d.best  ? `🏆 Melhor turma:    ${d.best.turma} — ${(d.best.avgOcc*100).toFixed(1)}%` : "",
+    d.worst ? `⚠️  Turma mais baixa: ${d.worst.turma} — ${(d.worst.avgOcc*100).toFixed(1)}%` : "",
+    d.growing.length ? `↑ Turmas crescendo: ${d.growing.map(t=>t.turma).join(", ")}` : "",
+    d.falling.length ? `↓ Turmas caindo:    ${d.falling.map(t=>t.turma).join(", ")}` : "",
+    d.semanasOk.length ? `✅ Semanas ≥85%: ${d.semanasOk.join(", ")}` : "",
+    d.semanasCriticas.length ? `🔴 Semanas críticas: ${d.semanasCriticas.join(", ")}` : "",
+    ``,
+    `Gerado em: ${new Date().toLocaleString("pt-BR")} — Dashboard Práticas SLMandic`,
+  ].filter(l=>l!==undefined&&l!=="").join("\n");
+
+  navigator.clipboard.writeText(lines).then(()=>{
+    const btn=document.querySelector("#group-exec-panel button");
+    const orig=btn.textContent;
+    btn.textContent="✅ Copiado!"; btn.style.background="#375623"; btn.style.color="#fff";
+    setTimeout(()=>{ btn.textContent=orig; btn.style.background="#FFC000"; btn.style.color="#1F4E79"; },2000);
+  });
+}
+
+function copyExecToPPT(){
+  const d = window._execData;
+  if(!d) return;
+  const lines = [
+    `ANÁLISE EXECUTIVA DE TURMA — JUNHO/2026`,
+    `${"=".repeat(52)}`,
+    ``,
+    `Turma:    ${d.turmaName}`,
+    `Unidade:  ${d.unidade}`,
+    d.modulosUnicos.length===1
+      ? `Módulo:   ${d.modulosUnicos[0]}`
+      : `Módulos:  ${d.modulosUnicos.length} módulos no mês`,
+    ...( d.modulosUnicos.length>1 ? d.modulosUnicos.map((m,i)=>`  ${i+1}. ${m}`) : [] ),
+    ``,
+    `RESUMO DO MÊS`,
+    `-`.repeat(30),
+    `Dias de prática:     ${d.rows.length} (${d.rows.filter(r=>r.sp>0).length} com slots)`,
+    `Slots de prática:    ${fmtN(d.tot.sp)}`,
+    `Slots extras:        ${fmtN(d.tot.se)}`,
+    `Slots totais:        ${fmtN(d.tot.st)}`,
+    `Agendamentos:        ${fmtN(d.tot.ag)}`,
+    `Vagas não preenchi.: ${fmtN(d.vagasAbertas)}`,
+    `Ocupação média:      ${(d.avgOcc*100).toFixed(1)}%`,
+    `Tendência:           ${d.trendLbl}${d.trendVal!==0?" ("+((d.trendVal>0?"+":"")+(d.trendVal*100).toFixed(1))+"pp)":""}`,
+    ``,
+    `DETALHAMENTO POR SEMANA`,
+    `-`.repeat(52),
+    ...WEEKS.filter(w=>d.weekMap[w]).map(w=>{
+      const v=d.weekMap[w]; const occ=v.sp>0?(v.ag/v.sp*100).toFixed(1)+"%":"—";
+      const mod=v.modulo.length>40?v.modulo.slice(0,40)+"…":v.modulo;
+      return `${w}  |  ${v.days}d  |  Slots: ${String(v.sp).padStart(3)}+${String(v.se).padStart(2)}  |  Agend.: ${String(v.ag).padStart(3)}  |  Ocup.: ${String(occ).padStart(6)}  |  ${mod}`;
+    }),
+    ``,
+    `DETALHAMENTO POR DIA`,
+    `-`.repeat(52),
+    ...d.rows.map(r=>{
+      const occ = r.sp>0?(r.ag/r.sp*100).toFixed(1)+"%":"Sem slots";
+      const over= r.sp>0&&r.ag>r.sp?" ⚠️ Overbooking":"";
+      return `${r.data}  |  ${r.week.slice(0,2)}  |  Slots: ${String(r.sp).padStart(3)}+${String(r.se).padStart(2)}  |  Agend.: ${String(r.ag).padStart(3)}  |  Ocup.: ${String(occ).padStart(6)}${over}`;
+    }),
+    ``,
+    `DESTAQUES E ALERTAS`,
+    `-`.repeat(52),
+    d.bestDay  ? `✅ Melhor dia:        ${d.bestDay.data} — ${(d.bestDay.ag/d.bestDay.sp*100).toFixed(1)}% (${d.bestDay.ag}/${d.bestDay.sp} agend.)` : "",
+    d.worstDay ? `⚠️  Dia mais fraco:    ${d.worstDay.data} — ${(d.worstDay.ag/d.worstDay.sp*100).toFixed(1)}% (${d.worstDay.ag}/${d.worstDay.sp} agend.)` : "",
+    `📊 Dias c/ overbooking: ${d.overCount} de ${d.rows.filter(r=>r.sp>0).length}`,
+    d.semanasOk.length ? `✅ Semanas ≥85%: ${d.semanasOk.join(", ")}` : "",
+    d.semanasCriticas.length ? `🔴 Semanas críticas (<50%): ${d.semanasCriticas.join(", ")}` : "",
+    ``,
+    `Gerado em: ${new Date().toLocaleString("pt-BR")} — Dashboard Práticas SLMandic`,
+  ].filter(l=>l!==undefined).join("\n");
+
+  navigator.clipboard.writeText(lines).then(()=>{
+    const btn = document.querySelector("#exec-panel button");
+    const orig = btn.textContent;
+    btn.textContent = "✅ Copiado!";
+    btn.style.background="#375623"; btn.style.color="#fff";
+    setTimeout(()=>{ btn.textContent=orig; btn.style.background="#FFC000"; btn.style.color="#1F4E79"; },2000);
+  });
+}
+
+// ─── MÓDULO ───────────────────────────────────────────────────────────────────
+function buildModulo(){
+  const fw=document.getElementById("filter-week-modulo").value;
+  const baseData = fw ? DATA.filter(d=>d.week===fw) : DATA;
+
+  renderModuloTable(baseData);
+
+  const mAgg = aggBy(baseData.filter(d=>d.sp>0),["modulo"]);
+  mAgg.sort((a,b)=>b.ag/b.sp - a.ag/a.sp);
+  const top10=mAgg.slice(0,10);
+  const bot10=[...mAgg].sort((a,b)=>a.ag/a.sp-b.ag/b.sp).slice(0,10);
+
+  const short=m=>m.length>30?m.slice(0,30)+"…":m;
+
+  mkChart("chart-mod-top",{type:"bar",data:{
+    labels:top10.map(m=>short(m.modulo)),
+    datasets:[{label:"Ocupação %",
+      data:top10.map(m=>+(m.ag/m.sp*100).toFixed(1)),
+      backgroundColor:top10.map(m=>occColor(m.ag/m.sp)),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",
+      plugins:{legend:{display:false}},
+      scales:{x:{min:0,max:150,ticks:{callback:v=>v+"%"},grid:{color:"#eee"}},
+        y:{ticks:{font:{size:9}},grid:{display:false}}}}
+  });
+
+  mkChart("chart-mod-bot",{type:"bar",data:{
+    labels:bot10.map(m=>short(m.modulo)),
+    datasets:[{label:"Ocupação %",
+      data:bot10.map(m=>+(m.ag/m.sp*100).toFixed(1)),
+      backgroundColor:bot10.map(m=>occColor(m.ag/m.sp)),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",
+      plugins:{legend:{display:false}},
+      scales:{x:{min:0,max:150,ticks:{callback:v=>v+"%"},grid:{color:"#eee"}},
+        y:{ticks:{font:{size:9}},grid:{display:false}}}}
+  });
+}
+
+function renderModuloTable(baseData){
+  const q=(document.getElementById("search-modulo").value||"").toLowerCase();
+  const fu=document.getElementById("filter-unid-modulo").value;
+  const fw=document.getElementById("filter-week-modulo").value;
+  const sort=document.getElementById("filter-sort-modulo").value;
+
+  let filtered = baseData || (fw ? DATA.filter(d=>d.week===fw) : DATA);
+  if(fu) filtered=filtered.filter(d=>d.unidade===fu);
+
+  let mAgg = aggBy(filtered,["modulo","unidade"]);
+  if(q) mAgg=mAgg.filter(m=>m.modulo.toLowerCase().includes(q));
+
+  const sortFn={
+    "occ-desc":(a,b)=>(b.sp>0?b.ag/b.sp:0)-(a.sp>0?a.ag/a.sp:0),
+    "occ-asc":(a,b)=>(a.sp>0?a.ag/a.sp:0)-(b.sp>0?b.ag/b.sp:0),
+    "name":(a,b)=>a.modulo.localeCompare(b.modulo),
+    "ag-desc":(a,b)=>b.ag-a.ag,
+  };
+  mAgg.sort(sortFn[sort]||sortFn["occ-desc"]);
+
+  const turmaCount={};
+  DATA.forEach(d=>{ const k=d.modulo+"|||"+d.unidade; if(!turmaCount[k]) turmaCount[k]=new Set(); turmaCount[k].add(d.turma); });
+
+  const tot=mAgg.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
+
+  const tbody=document.querySelector("#tbl-modulo tbody");
+  tbody.innerHTML=mAgg.map((m,i)=>{
+    const fill=i%2===0?"#fff":"#EBF3FA";
+    const occ=pctV(m.ag,m.sp);
+    const tc=filtered.filter(d=>d.modulo===m.modulo&&d.unidade===m.unidade);
+    const tSet=new Set(tc.map(d=>d.turma));
+    const bar=occ!==null?`<div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:${Math.min(occ*100,100)}%;background:${occColor(occ)}"></div></div>
+      <span style="font-weight:bold;color:${occColor(occ)};min-width:42px">${(occ*100).toFixed(1)}%</span></div>`:"<span style='color:#999'>—</span>";
+    return `<tr style="background:${fill}">
+      <td class="left" style="max-width:280px;font-size:11px">${m.modulo}</td>
+      <td>${badgeUnid(m.unidade)}</td>
+      <td>${fmtN(m.sp)||"—"}</td><td>${fmtN(m.st)||"—"}</td><td>${fmtN(m.ag)}</td>
+      <td style="min-width:160px">${bar}</td>
+      <td>${pctV(m.ag,m.st)!==null?(pctV(m.ag,m.st)*100).toFixed(1)+"%":"—"}</td>
+      <td>${tSet.size}</td>
+    </tr>`;
+  }).join("");
+
+  const foot=document.getElementById("tbl-modulo-foot");
+  foot.innerHTML=`<td class="left">TOTAL (${mAgg.length} módulos)</td><td></td>
+    <td>${fmtN(tot.sp)}</td><td>${fmtN(tot.st)}</td><td>${fmtN(tot.ag)}</td>
+    <td style="font-weight:bold">${pct(tot.ag,tot.sp)}</td>
+    <td>${pct(tot.ag,tot.st)}</td><td></td>`;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+buildMacro();
+</script>
+</body>
+</html>
