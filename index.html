@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acompanhamento Semanal de Práticas — Mai–Ago/2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --blue-dark: #1A2459;
@@ -132,14 +133,21 @@
 </head>
 <body>
 
-<div class="topbar">
+<div class="topbar" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
   <div>
     <div class="sub">Faculdade São Leopoldo Mandic</div>
     <h1>Acompanhamento Semanal de Práticas — Mai–Ago/2026</h1>
   </div>
-  <div style="text-align:right">
+  <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+    <label for="upload-xlsx" style="cursor:pointer;display:flex;align-items:center;gap:6px;background:#F5C518;color:#1A2459;font-weight:bold;font-size:12px;padding:8px 16px;border-radius:6px;white-space:nowrap;transition:background .15s" onmouseover="this.style.background='#e0b010'" onmouseout="this.style.background='#F5C518'">
+      📂 Atualizar dados
+    </label>
+    <input type="file" id="upload-xlsx" accept=".xlsx,.xls" style="display:none" onchange="handleUpload(this)">
+    <span id="upload-status" style="font-size:11px;color:rgba(255,255,255,.8);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span>
+  </div>
+  <div style="text-align:right;flex-shrink:0">
     <div class="sub">Última atualização</div>
-    <div style="font-size:13px;font-weight:bold">05/06/2026</div>
+    <div id="last-update" style="font-size:13px;font-weight:bold">17/06/2026</div>
   </div>
 </div>
 
@@ -1219,6 +1227,7 @@ const RAW = [
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 let WEEKS = ["S1","S2","S3","S4","S5"];
+function wKey(w){ return (w.match(/^S\d/)||[w])[0]; } // "S3 (15-21/06)" → "S3"
 const UNIDADES = ["CPS","SP","ONL","BSB"];
 const U_COLORS = { CPS:"#1A2459", SP:"#375623", ONL:"#7F6000", BSB:"#843C0C" };
 const U_FILLS  = { CPS:"#C5CBE8", SP:"#E2EFDA", ONL:"#FFF2CC", BSB:"#FCE4D6" };
@@ -1251,10 +1260,11 @@ function updateWeekLabels(){
 }
 function syncMesSelects(v){["filter-mes-macro","filter-mes-semana","filter-mes-unidade","filter-mes-turma","filter-mes-modulo"].forEach(id=>{const s=document.getElementById(id);if(s&&s.value!==v)s.value=v;});}
 function changeMes(v){curMes=v;syncMesSelects(v);updateWeekLabels();selWeek=null;buildMacro();buildSemana();buildUnidade();rebuildDropdowns();renderTurmaTable();buildModulo();}
-function initMesDropdowns(){
+function initMesDropdowns(rebuild){
   const meses=[...new Set(DATA.map(d=>d.data.split("/")[1]))].sort();
   ["filter-mes-macro","filter-mes-semana","filter-mes-unidade","filter-mes-turma","filter-mes-modulo"].forEach(id=>{
     const s=document.getElementById(id);if(!s)return;
+    if(rebuild){s.innerHTML='<option value="">Todos</option>';}
     meses.forEach(mm=>{const o=document.createElement("option");o.value=mm;o.textContent=getMesLabel(mm);s.appendChild(o);});
   });
 }
@@ -1331,8 +1341,8 @@ function buildMacro(){
   // Semana occ chart
   const wAgg = aggBy(_D, ["week"]);
   const wMap = {}; wAgg.forEach(w=>wMap[w.week]=w);
-  const wOcc = WEEKS.map(w => wMap[w] ? (wMap[w].sp>0 ? +(wMap[w].ag/wMap[w].sp*100).toFixed(1) : 0) : 0);
-  const wOccST = WEEKS.map(w => wMap[w] ? (wMap[w].st>0 ? +(wMap[w].ag/wMap[w].st*100).toFixed(1) : 0) : 0);
+  const wOcc = WEEKS.map(w => wMap[wKey(w)] ? (wMap[wKey(w)].sp>0 ? +(wMap[wKey(w)].ag/wMap[wKey(w)].sp*100).toFixed(1) : 0) : 0);
+  const wOccST = WEEKS.map(w => wMap[wKey(w)] ? (wMap[wKey(w)].st>0 ? +(wMap[wKey(w)].ag/wMap[wKey(w)].st*100).toFixed(1) : 0) : 0);
 
   mkChart("chart-semana-occ",{type:"bar",data:{labels:WEEKS.map(w=>w.replace("S","S")),
     datasets:[
@@ -1346,8 +1356,8 @@ function buildMacro(){
   // Volume chart
   mkChart("chart-semana-vol",{type:"bar",data:{labels:WEEKS,
     datasets:[
-      {label:"Slots Prática",data:WEEKS.map(w=>wMap[w]?.sp||0),backgroundColor:"#C5CBE8",borderRadius:3},
-      {label:"Agendamentos",data:WEEKS.map(w=>wMap[w]?.ag||0),backgroundColor:"#1A2459",borderRadius:3}
+      {label:"Slots Prática",data:WEEKS.map(w=>wMap[wKey(w)]?.sp||0),backgroundColor:"#C5CBE8",borderRadius:3},
+      {label:"Agendamentos",data:WEEKS.map(w=>wMap[wKey(w)]?.ag||0),backgroundColor:"#1A2459",borderRadius:3}
     ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}}},
       scales:{y:{ticks:{stepSize:100},grid:{color:"#eee"}},x:{grid:{display:false}}}}
@@ -1395,7 +1405,7 @@ function buildHeatmap(){
     html+=`<tr style="background:${bg}"><td style="padding:10px 14px;font-weight:bold;color:${U_COLORS[u]}">${u}</td>`;
     let tot_ag=0,tot_sp=0;
     WEEKS.forEach(w=>{
-      const v = map[u]?.[w];
+      const v = map[u]?.[wKey(w)];
       const occ = v && v.sp>0 ? v.ag/v.sp : null;
       const bg2 = occColor(occ);
       const tc = "#fff";
@@ -1640,7 +1650,7 @@ function buildUnidade(){
   mkChart("chart-unid-evolucao",{type:"line",data:{labels:WEEKS,
     datasets:UNIDADES.map(u=>({
       label:u,
-      data:WEEKS.map(w=>uwMap[u]?.[w]? +(uwMap[u][w].ag/uwMap[u][w].sp*100).toFixed(1):null),
+      data:WEEKS.map(w=>uwMap[u]?.[wKey(w)]? +(uwMap[u][wKey(w)].ag/uwMap[u][wKey(w)].sp*100).toFixed(1):null),
       borderColor:U_COLORS[u],backgroundColor:U_COLORS[u]+"33",
       tension:.3,fill:false,pointRadius:5,pointHoverRadius:7,spanGaps:true
     }))},
@@ -1650,11 +1660,11 @@ function buildUnidade(){
   });
 
   // table
-  const uwAll = aggBy(_DH,["unidade","week"]);
+  const uwAll = aggBy(_DU,["unidade","week"]);
   uwAll.sort((a,b)=>{
     const ui=UNIDADES.indexOf(a.unidade)-UNIDADES.indexOf(b.unidade);
     if(ui!==0) return ui;
-    return WEEKS.indexOf(a.week)-WEEKS.indexOf(b.week);
+    return WEEKS.map(wKey).indexOf(a.week)-WEEKS.map(wKey).indexOf(b.week);
   });
 
   const tbody = document.querySelector("#tbl-unidade tbody");
@@ -2540,6 +2550,102 @@ function renderModuloTable(baseData){
     <td>${fmtN(tot.sp)}</td><td>${fmtN(tot.st)}</td><td>${fmtN(tot.ag)}</td>
     <td style="font-weight:bold">${pct(tot.ag,tot.sp)}</td>
     <td>${pct(tot.ag,tot.st)}</td><td></td>`;
+}
+
+
+// ─── UPLOAD & PARSE EXCEL ────────────────────────────────────────────────────
+function handleUpload(input){
+  const file = input.files[0];
+  if(!file) return;
+  const status = document.getElementById("upload-status");
+  status.textContent = "⏳ Lendo " + file.name + "…";
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      const wb = XLSX.read(e.target.result, {type:"array", cellDates:true});
+      const abas = wb.SheetNames.filter(n => n.startsWith("Ocupação"));
+      if(!abas.length){ status.textContent = "❌ Nenhuma aba 'Ocupação' encontrada"; return; }
+
+      const rows = [];
+      abas.forEach(abaName => {
+        const ws = wb.Sheets[abaName];
+        const raw = XLSX.utils.sheet_to_json(ws, {header:1, defval:""});
+        // Detectar linha do cabeçalho (contém "Turma")
+        let headerRow = -1;
+        for(let i=0;i<Math.min(10,raw.length);i++){
+          if(raw[i].some(c=>String(c).trim()==="Turma")){ headerRow=i; break; }
+        }
+        if(headerRow<0) return;
+        const headers = raw[headerRow].map(h=>String(h).trim().toLowerCase());
+        const ci = {
+          turma: headers.findIndex(h=>h==="turma"),
+          unid:  headers.findIndex(h=>h==="unidade"),
+          mod:   headers.findIndex(h=>h.includes("módulo")||h.includes("modulo")),
+          data:  headers.findIndex(h=>h.includes("data")),
+          sp:    headers.findIndex(h=>h.includes("slots da prática")||h.includes("slots da pratica")),
+          se:    headers.findIndex(h=>h.includes("slots extras")||h.includes("extra")),
+          st:    headers.findIndex(h=>h.includes("slots totais")||h.includes("total")),
+          ag:    headers.findIndex(h=>h.includes("agendamento")||h.includes("agendado")),
+        };
+        for(let i=headerRow+1;i<raw.length;i++){
+          const r = raw[i];
+          const turma = String(r[ci.turma]||"").trim();
+          if(!turma || turma==="Total do mês" || turma==="Turma") continue;
+          const unid  = String(r[ci.unid]||"").trim();
+          const mod   = String(r[ci.mod]||"").trim();
+          let dataVal = r[ci.data];
+          let dataStr = "";
+          if(dataVal instanceof Date){
+            const d=String(dataVal.getDate()).padStart(2,"0");
+            const m=String(dataVal.getMonth()+1).padStart(2,"0");
+            const y=dataVal.getFullYear();
+            dataStr=`${d}/${m}/${y}`;
+          } else if(typeof dataVal==="number"){
+            // serial Excel
+            const d=XLSX.SSF.parse_date_code(dataVal);
+            if(d) dataStr=`${String(d.d).padStart(2,"0")}/${String(d.m).padStart(2,"0")}/${d.y}`;
+          } else { dataStr=String(dataVal||"").trim(); }
+          if(!dataStr) continue;
+          const toInt=v=>{const n=parseFloat(String(v).replace(",","."));return isNaN(n)?0:Math.round(n);};
+          const sp=toInt(r[ci.sp]), se=toInt(r[ci.se]);
+          const st=ci.st>=0?toInt(r[ci.st]):sp+se;
+          const ag=toInt(r[ci.ag]);
+          rows.push([turma, unid, mod, dataStr, sp, se, st, ag]);
+        }
+      });
+
+      if(!rows.length){ status.textContent = "❌ Nenhum dado válido encontrado"; return; }
+
+      // Atualizar DATA global
+      DATA = rows.map(r=>({turma:r[0],unidade:r[1],modulo:r[2],data:r[3],week:getWeek(r[3]),sp:r[4],se:r[5],st:r[6],ag:r[7]}));
+      curMes = "";
+      selWeek = null;
+      updateWeekLabels();
+      initMesDropdowns(true); // rebuild dropdowns
+      buildMacro();
+      buildSemana();
+      buildUnidade();
+      rebuildDropdowns();
+      renderTurmaTable();
+      buildModulo();
+
+      // Atualizar data de atualização
+      const hoje = new Date();
+      const dd=String(hoje.getDate()).padStart(2,"0");
+      const mm=String(hoje.getMonth()+1).padStart(2,"0");
+      const yy=hoje.getFullYear();
+      const el=document.getElementById("last-update");
+      if(el) el.textContent=`${dd}/${mm}/${yy}`;
+
+      status.textContent = `✅ ${rows.length} práticas carregadas`;
+      input.value = "";
+    } catch(err){
+      status.textContent = "❌ Erro: " + err.message;
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
