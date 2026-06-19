@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0039)https://tcm-18.github.io/agendas_pgmed/ -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acompanhamento Semanal de Práticas — Mai–Ago/2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -130,7 +130,7 @@
   /* SECTION TITLE */
   .section-title { font-size: 14px; font-weight: bold; color: var(--blue-dark); margin-bottom: 10px; margin-top: 6px; border-left: 4px solid var(--blue-mid); padding-left: 10px; }
 </style>
-</head>
+<meta id="dcngeagmmhegagicpcmpinaoklddcgon"></head>
 <body>
 
 <div class="topbar" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
@@ -139,7 +139,7 @@
     <h1>Acompanhamento Semanal de Práticas — Mai–Ago/2026</h1>
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
-    <label for="upload-xlsx" style="cursor:pointer;display:flex;align-items:center;gap:6px;background:#F5C518;color:#1A2459;font-weight:bold;font-size:12px;padding:8px 16px;border-radius:6px;white-space:nowrap;transition:background .15s" onmouseover="this.style.background='#e0b010'" onmouseout="this.style.background='#F5C518'">
+    <label for="upload-xlsx" style="cursor: pointer; display: flex; align-items: center; gap: 6px; background: rgb(245, 197, 24); color: rgb(26, 36, 89); font-weight: bold; font-size: 12px; padding: 8px 16px; border-radius: 6px; white-space: nowrap; transition: background 0.15s;" onmouseover="this.style.background=&#39;#e0b010&#39;" onmouseout="this.style.background=&#39;#F5C518&#39;">
       📂 Atualizar dados
     </label>
     <input type="file" id="upload-xlsx" accept=".xlsx,.xls" style="display:none" onchange="handleUpload(this)">
@@ -152,71 +152,163 @@
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="showPage('macro')">📊 Visão Macro</div>
-  <div class="tab" onclick="showPage('semana')">📅 Por Semana</div>
-  <div class="tab" onclick="showPage('unidade')">🏛️ Por Unidade</div>
-  <div class="tab" onclick="showPage('turma')">👥 Por Turma</div>
-  <div class="tab" onclick="showPage('modulo')">📚 Por Módulo</div>
+  <div class="tab" onclick="showPage('macro',this)">📊 Visão Macro</div>
+  <div class="tab active" onclick="showPage('semana',this)">📅 Por Semana</div>
+  <div class="tab" onclick="showPage('unidade',this)">🏛️ Por Unidade</div>
+  <div class="tab" onclick="showPage('turma',this)">👥 Por Turma</div>
+  <div class="tab" onclick="showPage('modulo',this)">📚 Por Módulo</div>
 </div>
 
 <!-- ═══════════════ MACRO ═══════════════ -->
-<div id="page-macro" class="page active">
+<div id="page-macro" class="page">
 
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
     <label style="font-size:12px;font-weight:bold;color:#1A2459">Mês:</label>
     <select id="filter-mes-macro" onchange="changeMes(this.value)" style="padding:5px 10px;border:1px solid #ccc;border-radius:5px;font-size:12px;background:#fff">
       <option value="">Todos</option>
-    </select>
+    <option value="05">Mai</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option></select>
   </div>
-  <div class="kpi-row" id="kpi-macro"></div>
+  <div class="kpi-row" id="kpi-macro">
+    <div class="kpi"><div class="label">Slots da Prática</div><div class="value">3.280</div><div class="sub">159 práticas com slots</div></div>
+    <div class="kpi"><div class="label">Slots Extras</div><div class="value">1.008</div><div class="sub">Overbooking disponível</div></div>
+    <div class="kpi"><div class="label">Slots Totais</div><div class="value">4.288</div><div class="sub">Prática + extras</div></div>
+    <div class="kpi green"><div class="label">Agendamentos</div><div class="value">3.694</div><div class="sub">Total do mês</div></div>
+    <div class="kpi orange"><div class="label">Ocupação (base)</div><div class="value">112.6%</div><div class="sub">Agend. / Slots prática</div></div>
+    <div class="kpi green"><div class="label">Ocupação (c/ extra)</div><div class="value">86.1%</div><div class="sub">Agend. / Slots totais</div></div>
+    <div class="kpi"><div class="label">Práticas s/ Slots</div><div class="value">12</div><div class="sub">Sem slots cadastrados</div></div>
+  </div>
 
   <div class="grid-2">
     <div class="card">
       <div class="card-header">Ocupação por Semana (base: slots da prática)</div>
-      <div class="card-body"><div class="chart-wrap"><canvas id="chart-semana-occ"></canvas></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-semana-occ" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
     </div>
     <div class="card">
       <div class="card-header">Agendamentos vs Slots — por Semana</div>
-      <div class="card-body"><div class="chart-wrap"><canvas id="chart-semana-vol"></canvas></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-semana-vol" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
     </div>
   </div>
 
   <div class="grid-2">
     <div class="card">
       <div class="card-header">Ocupação por Unidade</div>
-      <div class="card-body"><div class="chart-wrap"><canvas id="chart-unid-occ"></canvas></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-unid-occ" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
     </div>
     <div class="card">
       <div class="card-header">Distribuição de Práticas por Unidade</div>
-      <div class="card-body"><div class="chart-wrap"><canvas id="chart-unid-dist"></canvas></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-unid-dist" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
     </div>
   </div>
 
   <div class="card">
     <div class="card-header">Heatmap — Ocupação por Semana × Unidade</div>
-    <div class="card-body no-pad" id="heatmap-container"></div>
+    <div class="card-body no-pad" id="heatmap-container"><table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead><tr><th style="padding:10px 14px;background:#1A2459;color:#fff;text-align:left">Unidade</th><th style="padding:10px 8px;background:#1A2459;color:#fff;text-align:center;font-size:11px">S1 (01–07/06)</th><th style="padding:10px 8px;background:#1A2459;color:#fff;text-align:center;font-size:11px">S2 (08–14/06)</th><th style="padding:10px 8px;background:#1A2459;color:#fff;text-align:center;font-size:11px">S3 (15–21/06)</th><th style="padding:10px 8px;background:#1A2459;color:#fff;text-align:center;font-size:11px">S4 (22–28/06)</th><th style="padding:10px 8px;background:#1A2459;color:#fff;text-align:center;font-size:11px">S5 (29–30/06)</th><th style="padding:10px 8px;background:#1A2459;color:#fff;text-align:center">Total Mês</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:10px 14px;font-weight:bold;color:#1A2459">CPS</td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">106.1%
+          <div style="font-size:9px;opacity:.85">175/165</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#70AD47;color:#fff;min-width:64px">97.9%
+          <div style="font-size:9px;opacity:.85">420/429</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">111.1%
+          <div style="font-size:9px;opacity:.85">240/216</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#70AD47;color:#fff;min-width:64px">98.9%
+          <div style="font-size:9px;opacity:.85">279/282</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">135.3%
+          <div style="font-size:9px;opacity:.85">203/150</div>
+        </div></td><td style="padding:6px;text-align:center">
+      <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">
+        106.0%
+        <div style="font-size:9px;opacity:.85">1317/1242</div>
+      </div></td></tr><tr style="background:#F0F4F8"><td style="padding:10px 14px;font-weight:bold;color:#375623">SP</td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">112.0%
+          <div style="font-size:9px;opacity:.85">121/108</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">125.1%
+          <div style="font-size:9px;opacity:.85">668/534</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">111.7%
+          <div style="font-size:9px;opacity:.85">469/420</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">109.3%
+          <div style="font-size:9px;opacity:.85">590/540</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">123.3%
+          <div style="font-size:9px;opacity:.85">148/120</div>
+        </div></td><td style="padding:6px;text-align:center">
+      <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">
+        115.9%
+        <div style="font-size:9px;opacity:.85">1996/1722</div>
+      </div></td></tr><tr style="background:#fff"><td style="padding:10px 14px;font-weight:bold;color:#7F6000">ONL</td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">187.5%
+          <div style="font-size:9px;opacity:.85">15/8</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">287.5%
+          <div style="font-size:9px;opacity:.85">46/16</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">262.5%
+          <div style="font-size:9px;opacity:.85">63/24</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">187.5%
+          <div style="font-size:9px;opacity:.85">30/16</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#E8EEF4;color:#fff;min-width:64px">—
+          
+        </div></td><td style="padding:6px;text-align:center">
+      <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">
+        240.6%
+        <div style="font-size:9px;opacity:.85">154/64</div>
+      </div></td></tr><tr style="background:#F0F4F8"><td style="padding:10px 14px;font-weight:bold;color:#843C0C">BSB</td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#E8EEF4;color:#fff;min-width:64px">—
+          
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">111.1%
+          <div style="font-size:9px;opacity:.85">40/36</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#375623;color:#fff;min-width:64px">100.0%
+          <div style="font-size:9px;opacity:.85">162/162</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#C00000;color:#fff;min-width:64px">46.3%
+          <div style="font-size:9px;opacity:.85">25/54</div>
+        </div></td><td style="padding:6px;text-align:center">
+        <div class="heatmap-cell" style="background:#E8EEF4;color:#fff;min-width:64px">—
+          
+        </div></td><td style="padding:6px;text-align:center">
+      <div class="heatmap-cell" style="background:#70AD47;color:#fff;min-width:64px">
+        90.1%
+        <div style="font-size:9px;opacity:.85">227/252</div>
+      </div></td></tr></tbody></table></div>
   </div>
 
 </div>
 
 <!-- ═══════════════ SEMANA ═══════════════ -->
-<div id="page-semana" class="page">
+<div id="page-semana" class="page active">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
     <label style="font-size:12px;font-weight:bold;color:#1A2459">Mês:</label>
     <select id="filter-mes-semana" onchange="changeMes(this.value)" style="padding:5px 10px;border:1px solid #ccc;border-radius:5px;font-size:12px;background:#fff">
       <option value="">Todos</option>
-    </select>
+    <option value="05">Mai</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option></select>
   </div>
-  <div class="week-nav" id="week-nav"></div>
-  <div class="kpi-row" id="kpi-semana"></div>
+  <div class="week-nav" id="week-nav"><div class="week-pill " onclick="selectWeek(&#39;S1&#39;)">S1 (01–07/06)</div><div class="week-pill " onclick="selectWeek(&#39;S2&#39;)">S2 (08–14/06)</div><div class="week-pill " onclick="selectWeek(&#39;S3&#39;)">S3 (15–21/06)</div><div class="week-pill active" onclick="selectWeek(&#39;S4&#39;)">S4 (22–28/06)</div><div class="week-pill " onclick="selectWeek(&#39;S5&#39;)">S5 (29–30/06)</div></div>
+  <div class="kpi-row" id="kpi-semana">
+    <div class="kpi"><div class="label">Práticas</div><div class="value">49</div><div class="sub">43 com slots</div></div>
+    <div class="kpi"><div class="label">Slots Prática</div><div class="value">892</div></div>
+    <div class="kpi"><div class="label">Slots Extras</div><div class="value">334</div></div>
+    <div class="kpi green"><div class="label">Agendamentos</div><div class="value">924</div></div>
+    <div class="kpi orange"><div class="label">Ocupação (base)</div><div class="value">103.6%</div></div>
+    <div class="kpi"><div class="label">Ocupação (total)</div><div class="value">75.4%</div></div>
+  </div>
   <div class="grid-2">
     <div class="card">
       <div class="card-header">Ocupação por Unidade — Semana Selecionada</div>
-      <div class="card-body"><div class="chart-wrap"><canvas id="chart-sw-unid"></canvas></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-sw-unid" style="box-sizing: border-box; display: block; height: 220px; width: 888px;" width="888" height="220"></canvas></div></div>
     </div>
     <div class="card">
       <div class="card-header">Turmas com Maior e Menor Ocupação</div>
-      <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-sw-turmas"></canvas></div></div>
+      <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-sw-turmas" style="box-sizing: border-box; display: block; height: 280px; width: 888px;" width="888" height="280"></canvas></div></div>
     </div>
   </div>
 
@@ -244,7 +336,194 @@
         <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#C00000;margin-right:4px"></span>&lt; 50%</span>
         <span style="margin-left:12px;color:#595959">Tendência: <strong style="color:#375623">↑ Crescendo</strong> · <strong style="color:#C00000">↓ Caindo</strong> · <strong style="color:#7F6000">→ Estável</strong></span>
       </div>
-      <div id="daily-cards-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px"></div>
+      <div id="daily-cards-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px"><div style="background:#fff;border:1px solid #E8EEF4;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:bold;font-size:12px;color:#1A2459;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Dermatologia CPS T06</div>
+          <div style="font-size:10px;color:#595959;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">M4 - Farmacologia Dermatológica e Estética</div>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;margin-left:8px;flex-shrink:0">
+          <span class="badge badge-cps">CPS</span>
+          <span style="font-size:13px;font-weight:bold;color:#C00000" title="Caindo">↓</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:6px"><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">22/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#ED7D31;height:43.39250493096647%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#fff">56%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">22/39</div>
+      </div><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">23/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#ED7D31;height:45.36489151873768%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#fff">59%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">23/39</div>
+      </div><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">24/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#C00000;height:11.834319526627219%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#444">15%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">6/39</div>
+      </div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#595959;border-top:1px solid #eee;padding-top:6px;margin-top:2px">
+        <span>3 dias · Média: <strong style="color:#C00000">43.6%</strong></span>
+        <span style="color:#C00000;font-weight:bold">↓ Caindo</span>
+      </div>
+    </div><div style="background:#fff;border:1px solid #E8EEF4;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:bold;font-size:12px;color:#1A2459;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Dermatologia CPS T09</div>
+          <div style="font-size:10px;color:#595959;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">M2 - Avaliação Estética e Planejamento Ter…</div>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;margin-left:8px;flex-shrink:0">
+          <span class="badge badge-cps">CPS</span>
+          <span style="font-size:13px;font-weight:bold;color:#7F6000" title="Estável">→</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:6px"><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">25/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#375623;height:100%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#fff">133%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">52/39</div>
+      </div><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">26/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#375623;height:100%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#fff">136%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">53/39</div>
+      </div><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">27/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#375623;height:100%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#fff">133%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">52/39</div>
+      </div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#595959;border-top:1px solid #eee;padding-top:6px;margin-top:2px">
+        <span>3 dias · Média: <strong style="color:#375623">134.2%</strong></span>
+        <span style="color:#7F6000;font-weight:bold">→ Estável</span>
+      </div>
+    </div><div style="background:#fff;border:1px solid #E8EEF4;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:bold;font-size:12px;color:#1A2459;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Endocrinologia CPS T03</div>
+          <div style="font-size:10px;color:#595959;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">M3 - Diabetes Mellitus Tipo 1 e Tipo 2</div>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;margin-left:8px;flex-shrink:0">
+          <span class="badge badge-cps">CPS</span>
+          <span style="font-size:13px;font-weight:bold;color:#C00000" title="Caindo">↓</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:6px"><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">23/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#375623;height:100%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#fff">208%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">25/12</div>
+      </div><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">24/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#375623;height:100%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#fff">200%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">24/12</div>
+      </div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#595959;border-top:1px solid #eee;padding-top:6px;margin-top:2px">
+        <span>2 dias · Média: <strong style="color:#375623">204.2%</strong></span>
+        <span style="color:#C00000;font-weight:bold">↓ Caindo</span>
+      </div>
+    </div><div style="background:#fff;border:1px solid #E8EEF4;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:bold;font-size:12px;color:#1A2459;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Neuropediatria CPS T02</div>
+          <div style="font-size:10px;color:#595959;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">M5 - Transtornos do Sono, Traumatismo Cran…</div>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;margin-left:8px;flex-shrink:0">
+          <span class="badge badge-cps">CPS</span>
+          <span style="font-size:13px;font-weight:bold;color:#7F6000" title="Estável">→</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:6px"><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">27/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#70AD47;height:70.51282051282051%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#fff">92%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">11/12</div>
+      </div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#595959;border-top:1px solid #eee;padding-top:6px;margin-top:2px">
+        <span>1 dia · Média: <strong style="color:#70AD47">91.7%</strong></span>
+        <span style="color:#7F6000;font-weight:bold">→ Estável</span>
+      </div>
+    </div><div style="background:#fff;border:1px solid #E8EEF4;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:bold;font-size:12px;color:#1A2459;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Neuropediatria CPS T03</div>
+          <div style="font-size:10px;color:#595959;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">M4 - Neurologia da Prematuridade e das Enc…</div>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;margin-left:8px;flex-shrink:0">
+          <span class="badge badge-cps">CPS</span>
+          <span style="font-size:13px;font-weight:bold;color:#7F6000" title="Estável">→</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:6px"><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">27/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#70AD47;height:70.51282051282051%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#fff">92%</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">11/12</div>
+      </div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#595959;border-top:1px solid #eee;padding-top:6px;margin-top:2px">
+        <span>1 dia · Média: <strong style="color:#70AD47">91.7%</strong></span>
+        <span style="color:#7F6000;font-weight:bold">→ Estável</span>
+      </div>
+    </div><div style="background:#fff;border:1px solid #E8EEF4;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:bold;font-size:12px;color:#1A2459;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Oftalmologia CPS T01</div>
+          <div style="font-size:10px;color:#595959;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">M22 - Oftalmologia cirúrgica II</div>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center;margin-left:8px;flex-shrink:0">
+          <span class="badge badge-cps">CPS</span>
+          <span style="font-size:13px;font-weight:bold;color:#7F6000" title="Estável">→</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:6px"><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">25/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#E8EEF4;height:0%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#444">—</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">0/0</div>
+      </div><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">26/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#E8EEF4;height:0%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#444">—</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">0/0</div>
+      </div><div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:#595959;text-align:center;margin-bottom:3px">27/06</div>
+        <div style="background:#E8EEF4;border-radius:4px;height:52px;position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#E8EEF4;height:0%;border-radius:4px;transition:height .3s"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#444">—</div>
+        </div>
+        <div style="font-size:10px;color:#595959;text-align:center;margin-top:3px">0/0</div>
+      </div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#595959;border-top:1px solid #eee;padding-top:6px;margin-top:2px">
+        <span>3 dias · Média: <strong style="color:#E8EEF4">—</strong></span>
+        <span style="color:#7F6000;font-weight:bold">→ Estável</span>
+      </div>
+    </div></div>
     </div>
   </div>
 
@@ -282,8 +561,353 @@
           <th>Slots Prática</th><th>Slots Extras</th><th>Slots Totais</th>
           <th>Agendamentos</th><th>Ocupação</th><th>Ocup. Overbooking</th>
         </tr></thead>
-        <tbody></tbody>
-        <tfoot><tr id="tbl-semana-foot"></tr></tfoot>
+        <tbody><tr style="background:#fff">
+      <td class="left">Dermatologia CPS T06</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>22/06/2026</td>
+      <td>39</td><td>8</td><td>47</td><td>22</td>
+      <td style="font-weight:bold;color:#ED7D31">56.4%</td>
+      <td>46.8%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia SP T20</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>22/06/2026</td>
+      <td>—</td><td>0</td><td>—</td><td>0</td>
+      <td style="font-weight:bold;color:#999">—</td>
+      <td>—</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Oftalmologia SP T05</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>22/06/2026</td>
+      <td>24</td><td>5</td><td>29</td><td>21</td>
+      <td style="font-weight:bold;color:#70AD47">87.5%</td>
+      <td>72.4%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Psiquiatria SP T02</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>22/06/2026</td>
+      <td>24</td><td>5</td><td>29</td><td>17</td>
+      <td style="font-weight:bold;color:#F5C518">70.8%</td>
+      <td>58.6%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Tricologia SP T02</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>22/06/2026</td>
+      <td>18</td><td>6</td><td>24</td><td>24</td>
+      <td style="font-weight:bold;color:#375623">133.3%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia CPS T06</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>23/06/2026</td>
+      <td>39</td><td>8</td><td>47</td><td>23</td>
+      <td style="font-weight:bold;color:#ED7D31">59.0%</td>
+      <td>48.9%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Endocrinologia CPS T03</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>23/06/2026</td>
+      <td>12</td><td>13</td><td>25</td><td>25</td>
+      <td style="font-weight:bold;color:#375623">208.3%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia SP T20</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>23/06/2026</td>
+      <td>—</td><td>0</td><td>—</td><td>0</td>
+      <td style="font-weight:bold;color:#999">—</td>
+      <td>—</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Oftalmologia SP T05</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>23/06/2026</td>
+      <td>24</td><td>5</td><td>29</td><td>13</td>
+      <td style="font-weight:bold;color:#ED7D31">54.2%</td>
+      <td>44.8%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Psiquiatria SP T02</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>23/06/2026</td>
+      <td>24</td><td>5</td><td>29</td><td>7</td>
+      <td style="font-weight:bold;color:#C00000">29.2%</td>
+      <td>24.1%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Tricologia SP T02</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>23/06/2026</td>
+      <td>18</td><td>8</td><td>26</td><td>26</td>
+      <td style="font-weight:bold;color:#375623">144.4%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia CPS T06</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>24/06/2026</td>
+      <td>39</td><td>7</td><td>46</td><td>6</td>
+      <td style="font-weight:bold;color:#C00000">15.4%</td>
+      <td>13.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Endocrinologia CPS T03</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>24/06/2026</td>
+      <td>12</td><td>13</td><td>25</td><td>24</td>
+      <td style="font-weight:bold;color:#375623">200.0%</td>
+      <td>96.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia SP T20</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>24/06/2026</td>
+      <td>—</td><td>0</td><td>—</td><td>0</td>
+      <td style="font-weight:bold;color:#999">—</td>
+      <td>—</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Oftalmologia SP T05</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>24/06/2026</td>
+      <td>24</td><td>4</td><td>28</td><td>14</td>
+      <td style="font-weight:bold;color:#ED7D31">58.3%</td>
+      <td>50.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Psiquiatria SP T02</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>24/06/2026</td>
+      <td>24</td><td>4</td><td>28</td><td>17</td>
+      <td style="font-weight:bold;color:#F5C518">70.8%</td>
+      <td>60.7%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Tricologia SP T02</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>24/06/2026</td>
+      <td>18</td><td>10</td><td>28</td><td>28</td>
+      <td style="font-weight:bold;color:#375623">155.6%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Psiquiatria BSB T01</td>
+      <td><span class="badge badge-bsb">BSB</span></td>
+      <td>24/06/2026</td>
+      <td>18</td><td>7</td><td>25</td><td>25</td>
+      <td style="font-weight:bold;color:#375623">138.9%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Endocrinologia ONL T05</td>
+      <td><span class="badge badge-onl">ONL</span></td>
+      <td>24/06/2026</td>
+      <td>8</td><td>20</td><td>28</td><td>10</td>
+      <td style="font-weight:bold;color:#375623">125.0%</td>
+      <td>35.7%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia CPS T09</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>25/06/2026</td>
+      <td>39</td><td>25</td><td>64</td><td>52</td>
+      <td style="font-weight:bold;color:#375623">133.3%</td>
+      <td>81.3%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Oftalmologia CPS T01</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>25/06/2026</td>
+      <td>—</td><td>0</td><td>—</td><td>0</td>
+      <td style="font-weight:bold;color:#999">—</td>
+      <td>—</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia SP T10</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>25/06/2026</td>
+      <td>24</td><td>9</td><td>33</td><td>33</td>
+      <td style="font-weight:bold;color:#375623">137.5%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Dermatologia SP T17</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>25/06/2026</td>
+      <td>12</td><td>2</td><td>14</td><td>11</td>
+      <td style="font-weight:bold;color:#70AD47">91.7%</td>
+      <td>78.6%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia SP T19</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>25/06/2026</td>
+      <td>12</td><td>4</td><td>16</td><td>16</td>
+      <td style="font-weight:bold;color:#375623">133.3%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Endocrinologia SP T04</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>25/06/2026</td>
+      <td>24</td><td>7</td><td>31</td><td>27</td>
+      <td style="font-weight:bold;color:#375623">112.5%</td>
+      <td>87.1%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Oftalmologia SP T04</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>25/06/2026</td>
+      <td>24</td><td>5</td><td>29</td><td>27</td>
+      <td style="font-weight:bold;color:#375623">112.5%</td>
+      <td>93.1%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Tricologia SP T01</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>25/06/2026</td>
+      <td>18</td><td>12</td><td>30</td><td>30</td>
+      <td style="font-weight:bold;color:#375623">166.7%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia BSB T01</td>
+      <td><span class="badge badge-bsb">BSB</span></td>
+      <td>25/06/2026</td>
+      <td>12</td><td>3</td><td>15</td><td>0</td>
+      <td style="font-weight:bold;color:#C00000">0.0%</td>
+      <td>0.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Psiquiatria ONL T04</td>
+      <td><span class="badge badge-onl">ONL</span></td>
+      <td>25/06/2026</td>
+      <td>8</td><td>19</td><td>27</td><td>20</td>
+      <td style="font-weight:bold;color:#375623">250.0%</td>
+      <td>74.1%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia CPS T09</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>26/06/2026</td>
+      <td>39</td><td>18</td><td>57</td><td>53</td>
+      <td style="font-weight:bold;color:#375623">135.9%</td>
+      <td>93.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Oftalmologia CPS T01</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>26/06/2026</td>
+      <td>—</td><td>0</td><td>—</td><td>0</td>
+      <td style="font-weight:bold;color:#999">—</td>
+      <td>—</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia SP T10</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>26/06/2026</td>
+      <td>24</td><td>5</td><td>29</td><td>29</td>
+      <td style="font-weight:bold;color:#375623">120.8%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Dermatologia SP T17</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>26/06/2026</td>
+      <td>12</td><td>2</td><td>14</td><td>5</td>
+      <td style="font-weight:bold;color:#C00000">41.7%</td>
+      <td>35.7%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia SP T19</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>26/06/2026</td>
+      <td>12</td><td>1</td><td>13</td><td>14</td>
+      <td style="font-weight:bold;color:#375623">116.7%</td>
+      <td>107.7%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Endocrinologia SP T04</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>26/06/2026</td>
+      <td>24</td><td>10</td><td>34</td><td>28</td>
+      <td style="font-weight:bold;color:#375623">116.7%</td>
+      <td>82.4%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Oftalmologia SP T04</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>26/06/2026</td>
+      <td>24</td><td>5</td><td>29</td><td>26</td>
+      <td style="font-weight:bold;color:#375623">108.3%</td>
+      <td>89.7%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Tricologia SP T01</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>26/06/2026</td>
+      <td>18</td><td>7</td><td>25</td><td>25</td>
+      <td style="font-weight:bold;color:#375623">138.9%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia BSB T01</td>
+      <td><span class="badge badge-bsb">BSB</span></td>
+      <td>26/06/2026</td>
+      <td>12</td><td>2</td><td>14</td><td>0</td>
+      <td style="font-weight:bold;color:#C00000">0.0%</td>
+      <td>0.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Dermatologia CPS T09</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>27/06/2026</td>
+      <td>39</td><td>13</td><td>52</td><td>52</td>
+      <td style="font-weight:bold;color:#375623">133.3%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Neuropediatria CPS T02</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>27/06/2026</td>
+      <td>12</td><td>4</td><td>16</td><td>11</td>
+      <td style="font-weight:bold;color:#70AD47">91.7%</td>
+      <td>68.8%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Neuropediatria CPS T03</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>27/06/2026</td>
+      <td>12</td><td>5</td><td>17</td><td>11</td>
+      <td style="font-weight:bold;color:#70AD47">91.7%</td>
+      <td>64.7%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Oftalmologia CPS T01</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>27/06/2026</td>
+      <td>—</td><td>0</td><td>—</td><td>0</td>
+      <td style="font-weight:bold;color:#999">—</td>
+      <td>—</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Dermatologia SP T10</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>27/06/2026</td>
+      <td>24</td><td>8</td><td>32</td><td>32</td>
+      <td style="font-weight:bold;color:#375623">133.3%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Dermatologia SP T17</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>27/06/2026</td>
+      <td>12</td><td>1</td><td>13</td><td>5</td>
+      <td style="font-weight:bold;color:#C00000">41.7%</td>
+      <td>38.5%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Dermatologia SP T19</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>27/06/2026</td>
+      <td>12</td><td>8</td><td>20</td><td>20</td>
+      <td style="font-weight:bold;color:#375623">166.7%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Oftalmologia SP T04</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>27/06/2026</td>
+      <td>24</td><td>4</td><td>28</td><td>28</td>
+      <td style="font-weight:bold;color:#375623">116.7%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Psiquiatria SP T04</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>27/06/2026</td>
+      <td>24</td><td>13</td><td>37</td><td>37</td>
+      <td style="font-weight:bold;color:#375623">154.2%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left">Tricologia SP T01</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>27/06/2026</td>
+      <td>18</td><td>12</td><td>30</td><td>30</td>
+      <td style="font-weight:bold;color:#375623">166.7%</td>
+      <td>100.0%</td>
+    </tr><tr style="background:#fff">
+      <td class="left">Dermatologia BSB T01</td>
+      <td><span class="badge badge-bsb">BSB</span></td>
+      <td>27/06/2026</td>
+      <td>12</td><td>2</td><td>14</td><td>0</td>
+      <td style="font-weight:bold;color:#C00000">0.0%</td>
+      <td>0.0%</td>
+    </tr></tbody>
+        <tfoot><tr id="tbl-semana-foot"><td class="left">TOTAL (49 de 49 práticas)</td><td></td><td></td>
+    <td>892</td><td>334</td><td>1.226</td><td>924</td>
+    <td>103.6%</td><td>75.4%</td></tr></tfoot>
       </table></div>
     </div>
   </div>
@@ -295,12 +919,28 @@
     <label style="font-size:12px;font-weight:bold;color:#1A2459">Mês:</label>
     <select id="filter-mes-unidade" onchange="changeMes(this.value)" style="padding:5px 10px;border:1px solid #ccc;border-radius:5px;font-size:12px;background:#fff">
       <option value="">Todos</option>
-    </select>
+    <option value="05">Mai</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option></select>
   </div>
-  <div class="kpi-row" id="kpi-unidades"></div>
+  <div class="kpi-row" id="kpi-unidades"><div class="kpi" style="border-left-color:#1A2459">
+      <div class="label">CPS</div>
+      <div class="value" style="color:#1A2459">106.0%</div>
+      <div class="sub">1.317 agend. / 1.242 slots</div>
+    </div><div class="kpi" style="border-left-color:#375623">
+      <div class="label">SP</div>
+      <div class="value" style="color:#375623">115.9%</div>
+      <div class="sub">1.996 agend. / 1.722 slots</div>
+    </div><div class="kpi" style="border-left-color:#7F6000">
+      <div class="label">ONL</div>
+      <div class="value" style="color:#7F6000">240.6%</div>
+      <div class="sub">154 agend. / 64 slots</div>
+    </div><div class="kpi" style="border-left-color:#843C0C">
+      <div class="label">BSB</div>
+      <div class="value" style="color:#843C0C">90.1%</div>
+      <div class="sub">227 agend. / 252 slots</div>
+    </div></div>
   <div class="card" style="margin-bottom:16px">
     <div class="card-header">Evolução Semanal por Unidade</div>
-    <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-unid-evolucao"></canvas></div></div>
+    <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-unid-evolucao" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas></div></div>
   </div>
   <div class="card">
     <div class="card-header">Resumo por Unidade × Semana</div>
@@ -311,8 +951,95 @@
           <th>Slots Prática</th><th>Slots Extras</th><th>Slots Totais</th>
           <th>Agendamentos</th><th>Ocupação</th><th>Ocup. Overbooking</th><th>Práticas</th>
         </tr></thead>
-        <tbody></tbody>
-        <tfoot><tr id="tbl-unidade-foot"></tr></tfoot>
+        <tbody><tr style="background:#fff">
+      <td style="text-align:left"><span class="badge badge-cps">CPS</span></td><td>S1</td>
+      <td>165</td><td>20</td><td>185</td><td>175</td>
+      <td style="font-weight:bold">106.1%</td>
+      <td>94.6%</td><td>5</td>
+    </tr><tr style="background:#fff">
+      <td style="text-align:left"></td><td>S2</td>
+      <td>429</td><td>37</td><td>466</td><td>420</td>
+      <td style="font-weight:bold">97.9%</td>
+      <td>90.1%</td><td>16</td>
+    </tr><tr style="background:#fff">
+      <td style="text-align:left"></td><td>S3</td>
+      <td>216</td><td>58</td><td>274</td><td>240</td>
+      <td style="font-weight:bold">111.1%</td>
+      <td>87.6%</td><td>14</td>
+    </tr><tr style="background:#fff">
+      <td style="text-align:left"></td><td>S4</td>
+      <td>282</td><td>114</td><td>396</td><td>279</td>
+      <td style="font-weight:bold">98.9%</td>
+      <td>70.5%</td><td>13</td>
+    </tr><tr style="background:#fff">
+      <td style="text-align:left"></td><td>S5</td>
+      <td>150</td><td>59</td><td>209</td><td>203</td>
+      <td style="font-weight:bold">135.3%</td>
+      <td>97.1%</td><td>6</td>
+    </tr><tr style="background:#EEF0F8">
+      <td style="text-align:left"><span class="badge badge-sp">SP</span></td><td>S1</td>
+      <td>108</td><td>18</td><td>126</td><td>121</td>
+      <td style="font-weight:bold">112.0%</td>
+      <td>96.0%</td><td>9</td>
+    </tr><tr style="background:#EEF0F8">
+      <td style="text-align:left"></td><td>S2</td>
+      <td>534</td><td>153</td><td>687</td><td>668</td>
+      <td style="font-weight:bold">125.1%</td>
+      <td>97.2%</td><td>25</td>
+    </tr><tr style="background:#EEF0F8">
+      <td style="text-align:left"></td><td>S3</td>
+      <td>420</td><td>145</td><td>565</td><td>469</td>
+      <td style="font-weight:bold">111.7%</td>
+      <td>83.0%</td><td>26</td>
+    </tr><tr style="background:#EEF0F8">
+      <td style="text-align:left"></td><td>S4</td>
+      <td>540</td><td>167</td><td>707</td><td>590</td>
+      <td style="font-weight:bold">109.3%</td>
+      <td>83.5%</td><td>30</td>
+    </tr><tr style="background:#EEF0F8">
+      <td style="text-align:left"></td><td>S5</td>
+      <td>120</td><td>40</td><td>160</td><td>148</td>
+      <td style="font-weight:bold">123.3%</td>
+      <td>92.5%</td><td>6</td>
+    </tr><tr style="background:#fff">
+      <td style="text-align:left"><span class="badge badge-onl">ONL</span></td><td>S1</td>
+      <td>8</td><td>7</td><td>15</td><td>15</td>
+      <td style="font-weight:bold">187.5%</td>
+      <td>100.0%</td><td>1</td>
+    </tr><tr style="background:#fff">
+      <td style="text-align:left"></td><td>S2</td>
+      <td>16</td><td>30</td><td>46</td><td>46</td>
+      <td style="font-weight:bold">287.5%</td>
+      <td>100.0%</td><td>2</td>
+    </tr><tr style="background:#fff">
+      <td style="text-align:left"></td><td>S3</td>
+      <td>24</td><td>60</td><td>84</td><td>63</td>
+      <td style="font-weight:bold">262.5%</td>
+      <td>75.0%</td><td>3</td>
+    </tr><tr style="background:#fff">
+      <td style="text-align:left"></td><td>S4</td>
+      <td>16</td><td>39</td><td>55</td><td>30</td>
+      <td style="font-weight:bold">187.5%</td>
+      <td>54.5%</td><td>2</td>
+    </tr><tr style="background:#EEF0F8">
+      <td style="text-align:left"><span class="badge badge-bsb">BSB</span></td><td>S2</td>
+      <td>36</td><td>1</td><td>37</td><td>40</td>
+      <td style="font-weight:bold">111.1%</td>
+      <td>108.1%</td><td>3</td>
+    </tr><tr style="background:#EEF0F8">
+      <td style="text-align:left"></td><td>S3</td>
+      <td>162</td><td>46</td><td>208</td><td>162</td>
+      <td style="font-weight:bold">100.0%</td>
+      <td>77.9%</td><td>6</td>
+    </tr><tr style="background:#EEF0F8">
+      <td style="text-align:left"></td><td>S4</td>
+      <td>54</td><td>14</td><td>68</td><td>25</td>
+      <td style="font-weight:bold">46.3%</td>
+      <td>36.8%</td><td>4</td>
+    </tr></tbody>
+        <tfoot><tr id="tbl-unidade-foot"><td class="left">TOTAL MÊS</td><td></td>
+    <td>3.280</td><td>1.008</td><td>4.288</td><td>3.694</td>
+    <td>112.6%</td><td>86.1%</td><td>171</td></tr></tfoot>
       </table></div>
     </div>
   </div>
@@ -326,7 +1053,7 @@
     <label style="font-size:12px;font-weight:bold;color:#1A2459">Mês:</label>
     <select id="filter-mes-turma" onchange="changeMes(this.value)" style="padding:5px 10px;border:1px solid #ccc;border-radius:5px;font-size:12px;background:#fff">
       <option value="">Todos</option>
-    </select>
+    <option value="05">Mai</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option></select>
   </div>
 <div class="filter-bar" style="margin-bottom:8px">
     <input id="search-turma" type="text" placeholder="Buscar turma…" oninput="renderTurmaTable()" style="flex:1.5">
@@ -334,11 +1061,7 @@
       <option value="">Todas as unidades</option>
       <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
     </select>
-    <select id="filter-week-turma" onchange="renderTurmaTable();rebuildModuleDropdown()">
-      <option value="">Todas as semanas</option>
-      <option>S1 (01–07/06)</option><option>S2 (08–14/06)</option>
-      <option>S3 (15–21/06)</option><option>S4 (22–28/06)</option><option>S5 (29–30/06)</option>
-    </select>
+    <select id="filter-week-turma" onchange="renderTurmaTable();rebuildModuleDropdown()"><option value="">Todas as semanas</option><option value="S1">S1 (01–07/06)</option><option value="S2">S2 (08–14/06)</option><option value="S3">S3 (15–21/06)</option><option value="S4">S4 (22–28/06)</option><option value="S5">S5 (29–30/06)</option></select>
     <select id="filter-sort-turma" onchange="renderTurmaTable()">
       <option value="occ-desc">Ordenar: Maior Ocupação</option>
       <option value="occ-asc">Ordenar: Menor Ocupação</option>
@@ -358,15 +1081,13 @@
 
     <!-- Specialty multi-select -->
     <div style="position:relative" id="spec-dropdown-wrap">
-      <button id="spec-dropdown-btn" onclick="toggleSpecDropdown()"
-        style="padding:6px 12px;border:1px solid #ccc;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;white-space:nowrap;min-width:190px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <button id="spec-dropdown-btn" onclick="toggleSpecDropdown()" style="padding:6px 12px;border:1px solid #ccc;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;white-space:nowrap;min-width:190px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px">
         <span id="spec-btn-label">🏷️ Filtrar por especialidade…</span>
         <span>▾</span>
       </button>
       <div id="spec-dropdown-list" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:1000;background:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.15);min-width:300px;max-height:320px;overflow-y:auto;padding:6px 0">
         <div style="padding:6px 10px;border-bottom:1px solid #eee;display:flex;gap:8px">
-          <input id="spec-search-input" type="text" placeholder="Buscar especialidade…" oninput="filterSpecDropdown()"
-            style="flex:1;padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:11px">
+          <input id="spec-search-input" type="text" placeholder="Buscar especialidade…" oninput="filterSpecDropdown()" style="flex:1;padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:11px">
           <button onclick="clearSpecFilter()" style="padding:4px 8px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;font-size:11px;cursor:pointer">Limpar</button>
         </div>
         <div id="spec-checkbox-list" style="padding:4px 0"></div>
@@ -375,15 +1096,13 @@
 
     <!-- Module multi-select -->
     <div style="position:relative" id="mod-dropdown-wrap">
-      <button id="mod-dropdown-btn" onclick="toggleModDropdown()"
-        style="padding:6px 12px;border:1px solid #ccc;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;white-space:nowrap;min-width:190px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <button id="mod-dropdown-btn" onclick="toggleModDropdown()" style="padding:6px 12px;border:1px solid #ccc;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;white-space:nowrap;min-width:190px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px">
         <span id="mod-btn-label">📚 Filtrar por módulo…</span>
         <span>▾</span>
       </button>
       <div id="mod-dropdown-list" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.15);min-width:380px;max-height:320px;overflow-y:auto;padding:6px 0">
         <div style="padding:6px 10px;border-bottom:1px solid #eee;display:flex;gap:8px">
-          <input id="mod-search-input" type="text" placeholder="Buscar módulo…" oninput="filterModDropdown()"
-            style="flex:1;padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:11px">
+          <input id="mod-search-input" type="text" placeholder="Buscar módulo…" oninput="filterModDropdown()" style="flex:1;padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:11px">
           <button onclick="clearModFilter()" style="padding:4px 8px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;font-size:11px;cursor:pointer">Limpar</button>
         </div>
         <div id="mod-checkbox-list" style="padding:4px 0"></div>
@@ -492,7 +1211,7 @@
     <label style="font-size:12px;font-weight:bold;color:#1A2459">Mês:</label>
     <select id="filter-mes-modulo" onchange="changeMes(this.value)" style="padding:5px 10px;border:1px solid #ccc;border-radius:5px;font-size:12px;background:#fff">
       <option value="">Todos</option>
-    </select>
+    <option value="05">Mai</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option></select>
   </div>
 <div class="filter-bar">
     <input id="search-modulo" type="text" placeholder="Buscar módulo…" oninput="renderModuloTable()">
@@ -500,11 +1219,7 @@
       <option value="">Todas as unidades</option>
       <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
     </select>
-    <select id="filter-week-modulo" onchange="buildModulo()">
-      <option value="">Todas as semanas</option>
-      <option>S1 (01–07/06)</option><option>S2 (08–14/06)</option>
-      <option>S3 (15–21/06)</option><option>S4 (22–28/06)</option><option>S5 (29–30/06)</option>
-    </select>
+    <select id="filter-week-modulo" onchange="buildModulo()"><option value="">Todas as semanas</option><option value="S1">S1 (01–07/06)</option><option value="S2">S2 (08–14/06)</option><option value="S3">S3 (15–21/06)</option><option value="S4">S4 (22–28/06)</option><option value="S5">S5 (29–30/06)</option></select>
     <select id="filter-sort-modulo" onchange="renderModuloTable()">
       <option value="occ-desc">Ordenar: Maior Ocupação</option>
       <option value="occ-asc">Ordenar: Menor Ocupação</option>
@@ -515,11 +1230,11 @@
   <div class="grid-2">
     <div class="card">
       <div class="card-header">Top 10 Módulos — Maior Ocupação</div>
-      <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-mod-top"></canvas></div></div>
+      <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-mod-top" width="888" height="280" style="display: block; box-sizing: border-box; height: 280px; width: 888px;"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-header">Top 10 Módulos — Menor Ocupação (com slots > 0)</div>
-      <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-mod-bot"></canvas></div></div>
+      <div class="card-header">Top 10 Módulos — Menor Ocupação (com slots &gt; 0)</div>
+      <div class="card-body"><div class="chart-wrap tall"><canvas id="chart-mod-bot" width="888" height="280" style="display: block; box-sizing: border-box; height: 280px; width: 888px;"></canvas></div></div>
     </div>
   </div>
   <div class="card">
@@ -531,8 +1246,552 @@
           <th>Slots Prática</th><th>Slots Totais</th>
           <th>Agendamentos</th><th>Ocupação</th><th>Ocup. Overbooking</th><th>Turmas</th>
         </tr></thead>
-        <tbody></tbody>
-        <tfoot><tr id="tbl-modulo-foot"></tr></tfoot>
+        <tbody><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M5 - Transtornos Relacionados ao uso de Substâncias</td>
+      <td><span class="badge badge-onl">ONL</span></td>
+      <td>8</td><td>24</td><td>24</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">300.0%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M11 - Emergências Psiquiátricas II</td>
+      <td><span class="badge badge-onl">ONL</span></td>
+      <td>8</td><td>22</td><td>22</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">275.0%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M4 - Espectro da Esquizofrenia e Outros Transtornos Psicóticos</td>
+      <td><span class="badge badge-onl">ONL</span></td>
+      <td>8</td><td>27</td><td>20</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">250.0%</span></div></td>
+      <td>74.1%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M8 - Osteometabolismo</td>
+      <td><span class="badge badge-onl">ONL</span></td>
+      <td>16</td><td>56</td><td>39</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">243.8%</span></div></td>
+      <td>69.6%</td>
+      <td>2</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M3 - Diabetes Mellitus</td>
+      <td><span class="badge badge-onl">ONL</span></td>
+      <td>16</td><td>56</td><td>34</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">212.5%</span></div></td>
+      <td>60.7%</td>
+      <td>2</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M3 - Diabetes Mellitus Tipo 1 e Tipo 2</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>24</td><td>50</td><td>49</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">204.2%</span></div></td>
+      <td>98.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M11 - Hipófise e Hipotálamo: Patologias e Terapêutica</td>
+      <td><span class="badge badge-onl">ONL</span></td>
+      <td>8</td><td>15</td><td>15</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">187.5%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M5 - Tratamento de unha encravada</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>36</td><td>66</td><td>66</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">183.3%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>54</td><td>85</td><td>85</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">157.4%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M4 - Transtornos de ansiedade I</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>24</td><td>37</td><td>37</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">154.2%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M3 - Técnicas de Aplicação de Toxina Botulínica na Face</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>24</td><td>37</td><td>37</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">154.2%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M5 - Transtornos do neurodesenvolvimento II - Transtorno de déficit de atenção e hiperatividade (TDAH)</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>12</td><td>18</td><td>18</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">150.0%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M13 - Tratamentos corporais para flacidez, gordura localizada e estrais</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>36</td><td>53</td><td>53</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">147.2%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M3 - Técnicas de Aplicação de Toxina Botulínica na Face</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>108</td><td>171</td><td>157</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">145.4%</span></div></td>
+      <td>91.8%</td>
+      <td>3</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>36</td><td>52</td><td>52</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">144.4%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M2 - Nutrição e Suplementação em Tricologia</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>54</td><td>78</td><td>78</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">144.4%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M3 - Ácido Hialurônico I – preenchimento básico, MD Codes, proporções faciais</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>12</td><td>17</td><td>17</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">141.7%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>78</td><td>110</td><td>110</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">141.0%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M14 - Preenchimento Glúteo</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>36</td><td>52</td><td>50</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">138.9%</span></div></td>
+      <td>96.2%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M3 - Transtornos do humor II – Transtorno afetivo bipolar</td>
+      <td><span class="badge badge-bsb">BSB</span></td>
+      <td>18</td><td>25</td><td>25</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">138.9%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M4 - Transtornos de ansiedade I</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>24</td><td>33</td><td>33</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">137.5%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M4 - Transtornos do humor II</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>97</td><td>98</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">136.1%</span></div></td>
+      <td>101.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>117</td><td>173</td><td>157</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">134.2%</span></div></td>
+      <td>90.8%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>36</td><td>45</td><td>48</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">133.3%</span></div></td>
+      <td>106.7%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M7 - Urgências em diabetes</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>72</td><td>96</td><td>96</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">133.3%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M12 - Introdução à Oftalmologia II</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>48</td><td>66</td><td>64</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">133.3%</span></div></td>
+      <td>97.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>94</td><td>94</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">130.6%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M18 - Estética Genital Feminina</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>36</td><td>46</td><td>46</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">127.8%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M14 - Preenchimento Glúteo</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>60</td><td>83</td><td>76</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">126.7%</span></div></td>
+      <td>91.6%</td>
+      <td>2</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M8 - Cirurgia Pediátrica e Hematologia/Oncologia</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>48</td><td>60</td><td>60</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">125.0%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>89</td><td>87</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">120.8%</span></div></td>
+      <td>97.8%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M4 - Plástica Ocular, Vias Lacrimais e Órbita I</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>72</td><td>85</td><td>85</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">118.1%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M13 - Transtornos da personalidade</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>72</td><td>85</td><td>84</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">116.7%</span></div></td>
+      <td>98.8%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M12 - Nutrologia Aplicada à Cirurgia Bariátrica</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>12</td><td>18</td><td>14</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">116.7%</span></div></td>
+      <td>77.8%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M7 - Saúde Mental e Adolescência</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>48</td><td>62</td><td>56</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">116.7%</span></div></td>
+      <td>90.3%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M3 - Diabetes Mellitus Tipo 1 e Tipo 2</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>48</td><td>65</td><td>55</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">114.6%</span></div></td>
+      <td>84.6%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M9 - Retina e Vítreo I</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>86</td><td>81</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">112.5%</span></div></td>
+      <td>94.2%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)</td>
+      <td><span class="badge badge-bsb">BSB</span></td>
+      <td>36</td><td>37</td><td>40</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">111.1%</span></div></td>
+      <td>108.1%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>87</td><td>78</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">108.3%</span></div></td>
+      <td>89.7%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>108</td><td>146</td><td>115</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">106.5%</span></div></td>
+      <td>78.8%</td>
+      <td>3</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M5 - Diabetes tipo 2</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>48</td><td>61</td><td>51</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">106.3%</span></div></td>
+      <td>83.6%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M4 - Farmacologia Dermatológica e Estética</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>234</td><td>267</td><td>246</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">105.1%</span></div></td>
+      <td>92.1%</td>
+      <td>2</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>72</td><td>74</td><td>74</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">102.8%</span></div></td>
+      <td>100.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados</td>
+      <td><span class="badge badge-bsb">BSB</span></td>
+      <td>117</td><td>131</td><td>117</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">100.0%</span></div></td>
+      <td>89.3%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M11 - Hipopituitarismo</td>
+      <td><span class="badge badge-bsb">BSB</span></td>
+      <td>45</td><td>77</td><td>45</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">100.0%</span></div></td>
+      <td>58.4%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M7 - TEA e diferenciais</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>12</td><td>15</td><td>12</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:100%;background:#375623"></div></div>
+      <span style="font-weight:bold;color:#375623;min-width:42px">100.0%</span></div></td>
+      <td>80.0%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M6 - Diabetes gestacional e outros tipos de diabetes</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>86</td><td>71</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:98.61111111111111%;background:#70AD47"></div></div>
+      <span style="font-weight:bold;color:#70AD47;min-width:42px">98.6%</span></div></td>
+      <td>82.6%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M4 - Diabetes tipo 1, bomba de insulina</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>73</td><td>68</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:94.44444444444444%;background:#70AD47"></div></div>
+      <span style="font-weight:bold;color:#70AD47;min-width:42px">94.4%</span></div></td>
+      <td>93.2%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M5 - Transtornos do Sono, Traumatismo Cranioencefálico, COMA e Morte Encefálica</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>12</td><td>16</td><td>11</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:91.66666666666666%;background:#70AD47"></div></div>
+      <span style="font-weight:bold;color:#70AD47;min-width:42px">91.7%</span></div></td>
+      <td>68.8%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M4 - Neurologia da Prematuridade e das Encefalopatias Neonatais</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>12</td><td>17</td><td>11</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:91.66666666666666%;background:#70AD47"></div></div>
+      <span style="font-weight:bold;color:#70AD47;min-width:42px">91.7%</span></div></td>
+      <td>64.7%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>72</td><td>72</td><td>64</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:88.88888888888889%;background:#70AD47"></div></div>
+      <span style="font-weight:bold;color:#70AD47;min-width:42px">88.9%</span></div></td>
+      <td>88.9%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M5 - Neonatologia</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>96</td><td>111</td><td>82</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:85.41666666666666%;background:#70AD47"></div></div>
+      <span style="font-weight:bold;color:#70AD47;min-width:42px">85.4%</span></div></td>
+      <td>73.9%</td>
+      <td>2</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>87</td><td>52</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:72.22222222222221%;background:#F5C518"></div></div>
+      <span style="font-weight:bold;color:#F5C518;min-width:42px">72.2%</span></div></td>
+      <td>59.8%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M4 - Farmacologia Dermatológica e Estética</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>351</td><td>382</td><td>246</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:70.08547008547008%;background:#F5C518"></div></div>
+      <span style="font-weight:bold;color:#F5C518;min-width:42px">70.1%</span></div></td>
+      <td>64.4%</td>
+      <td>3</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M5 - Estrabismo I</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>86</td><td>48</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:66.66666666666666%;background:#ED7D31"></div></div>
+      <span style="font-weight:bold;color:#ED7D31;min-width:42px">66.7%</span></div></td>
+      <td>55.8%</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M8 - Compreensão do conteúdo e discussão de casos clínicos I</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>72</td><td>86</td><td>41</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:56.94444444444444%;background:#ED7D31"></div></div>
+      <span style="font-weight:bold;color:#ED7D31;min-width:42px">56.9%</span></div></td>
+      <td>47.7%</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M11 - Oftalmologia cirúrgica I</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>0</td><td>0</td><td>0</td>
+      <td style="min-width:160px"><span style="color:#999">—</span></td>
+      <td>—</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>0</td><td>0</td><td>0</td>
+      <td style="min-width:160px"><span style="color:#999">—</span></td>
+      <td>—</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face</td>
+      <td><span class="badge badge-sp">SP</span></td>
+      <td>0</td><td>0</td><td>0</td>
+      <td style="min-width:160px"><span style="color:#999">—</span></td>
+      <td>—</td>
+      <td>1</td>
+    </tr><tr style="background:#EEF0F8">
+      <td class="left" style="max-width:280px;font-size:11px">M22 - Oftalmologia cirúrgica II</td>
+      <td><span class="badge badge-cps">CPS</span></td>
+      <td>0</td><td>0</td><td>0</td>
+      <td style="min-width:160px"><span style="color:#999">—</span></td>
+      <td>—</td>
+      <td>1</td>
+    </tr><tr style="background:#fff">
+      <td class="left" style="max-width:280px;font-size:11px">M13 - Tratamentos corporais para flacidez, gordura localizada e estrais</td>
+      <td><span class="badge badge-bsb">BSB</span></td>
+      <td>36</td><td>43</td><td>0</td>
+      <td style="min-width:160px"><div style="display:flex;align-items:center;gap:6px">
+      <div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:0%;background:#C00000"></div></div>
+      <span style="font-weight:bold;color:#C00000;min-width:42px">0.0%</span></div></td>
+      <td>0.0%</td>
+      <td>1</td>
+    </tr></tbody>
+        <tfoot><tr id="tbl-modulo-foot"><td class="left">TOTAL (61 módulos)</td><td></td>
+    <td>3.280</td><td>4.288</td><td>3.694</td>
+    <td style="font-weight:bold">112.6%</td>
+    <td>86.1%</td><td></td></tr></tfoot>
       </table></div>
     </div>
   </div>
@@ -788,75 +2047,75 @@ const RAW = [
   ["Endocrinologia SP T02","SP","M6 - Diabetes gestacional e outros tipos de diabetes","16/06/2026",24,5,29,29],
   ["Oftalmologia SP T06","SP","M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I","16/06/2026",24,0,24,21],
   ["Dermatologia BSB T03","BSB","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","16/06/2026",39,0,39,38],
-  ["Dermatologia CPS T03","CPS","M14 - Preenchimento Glúteo","17/06/2026",12,6,18,16],
-  ["Endocrinologia CPS T02","CPS","M7 - Urgências em diabetes","17/06/2026",24,9,33,32],
+  ["Dermatologia CPS T03","CPS","M14 - Preenchimento Glúteo","17/06/2026",12,4,16,16],
+  ["Endocrinologia CPS T02","CPS","M7 - Urgências em diabetes","17/06/2026",24,8,32,32],
   ["Dermatologia SP T08","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","17/06/2026",12,5,17,17],
   ["Dermatologia SP T18","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","17/06/2026",12,3,15,15],
-  ["Endocrinologia SP T02","SP","M6 - Diabetes gestacional e outros tipos de diabetes","17/06/2026",24,6,30,15],
-  ["Oftalmologia SP T06","SP","M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I","17/06/2026",24,8,32,26],
-  ["Dermatologia BSB T03","BSB","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","17/06/2026",39,7,46,33],
-  ["Endocrinologia ONL T02","ONL","M8 - Osteometabolismo","17/06/2026",8,20,28,15],
+  ["Endocrinologia SP T02","SP","M6 - Diabetes gestacional e outros tipos de diabetes","17/06/2026",24,0,24,15],
+  ["Oftalmologia SP T06","SP","M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I","17/06/2026",24,2,26,26],
+  ["Dermatologia BSB T03","BSB","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","17/06/2026",39,0,39,33],
+  ["Endocrinologia ONL T02","ONL","M8 - Osteometabolismo","17/06/2026",8,5,13,15],
   ["Dermatologia CPS T02","CPS","M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética","18/06/2026",0,0,0,0],
-  ["Pediatria CPS T05","CPS","M5 - Neonatologia","18/06/2026",24,7,31,22],
-  ["Dermatologia SP T06","SP","M14 - Preenchimento Glúteo","18/06/2026",12,4,16,12],
-  ["Dermatologia SP T15","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","18/06/2026",12,2,14,11],
-  ["Dermatologia SP T21","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","18/06/2026",12,8,20,12],
-  ["Nutrologia SP T01","SP","M12 - Nutrologia Aplicada à Cirurgia Bariátrica","18/06/2026",12,6,18,14],
-  ["Oftalmologia SP T02","SP","M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II","18/06/2026",24,6,30,21],
-  ["Endocrinologia BSB T01","BSB","M11 - Hipopituitarismo","18/06/2026",15,15,30,12],
-  ["Endocrinologia ONL T03","ONL","M8 - Osteometabolismo","18/06/2026",8,20,28,24],
-  ["Endocrinologia ONL T04","ONL","M3 - Diabetes Mellitus","18/06/2026",8,20,28,24],
+  ["Pediatria CPS T05","CPS","M5 - Neonatologia","18/06/2026",24,1,25,25],
+  ["Dermatologia SP T06","SP","M14 - Preenchimento Glúteo","18/06/2026",12,1,13,13],
+  ["Dermatologia SP T15","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","18/06/2026",12,2,14,14],
+  ["Dermatologia SP T21","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","18/06/2026",12,3,15,15],
+  ["Nutrologia SP T01","SP","M12 - Nutrologia Aplicada à Cirurgia Bariátrica","18/06/2026",12,5,17,17],
+  ["Oftalmologia SP T02","SP","M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II","18/06/2026",24,0,24,22],
+  ["Endocrinologia BSB T01","BSB","M11 - Hipopituitarismo","18/06/2026",15,0,15,12],
+  ["Endocrinologia ONL T03","ONL","M8 - Osteometabolismo","18/06/2026",8,16,24,24],
+  ["Endocrinologia ONL T04","ONL","M3 - Diabetes Mellitus","18/06/2026",8,16,24,24],
   ["Dermatologia CPS T02","CPS","M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética","19/06/2026",0,0,0,0],
-  ["Pediatria CPS T05","CPS","M5 - Neonatologia","19/06/2026",24,7,31,12],
-  ["Dermatologia SP T06","SP","M14 - Preenchimento Glúteo","19/06/2026",12,6,18,16],
-  ["Dermatologia SP T15","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","19/06/2026",12,4,16,11],
-  ["Dermatologia SP T21","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","19/06/2026",12,13,25,20],
-  ["Oftalmologia SP T02","SP","M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II","19/06/2026",24,5,29,11],
-  ["Endocrinologia BSB T01","BSB","M11 - Hipopituitarismo","19/06/2026",15,8,23,17],
+  ["Pediatria CPS T05","CPS","M5 - Neonatologia","19/06/2026",24,7,31,13],
+  ["Dermatologia SP T06","SP","M14 - Preenchimento Glúteo","19/06/2026",12,4,16,13],
+  ["Dermatologia SP T15","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","19/06/2026",12,4,16,12],
+  ["Dermatologia SP T21","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","19/06/2026",12,10,22,14],
+  ["Oftalmologia SP T02","SP","M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II","19/06/2026",24,5,29,17],
+  ["Endocrinologia BSB T01","BSB","M11 - Hipopituitarismo","19/06/2026",15,7,22,12],
   ["Dermatologia CPS T02","CPS","M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética","20/06/2026",0,0,0,0],
-  ["Neuropediatria CPS T01","CPS","M7 - TEA e diferenciais","20/06/2026",12,3,15,12],
+  ["Neuropediatria CPS T01","CPS","M7 - TEA e diferenciais","20/06/2026",12,3,15,11],
   ["Dermatologia SP T06","SP","M14 - Preenchimento Glúteo","20/06/2026",12,4,16,15],
-  ["Dermatologia SP T15","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","20/06/2026",12,4,16,13],
-  ["Dermatologia SP T21","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","20/06/2026",12,10,22,20],
-  ["Oftalmologia SP T02","SP","M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II","20/06/2026",24,4,28,20],
-  ["Endocrinologia BSB T01","BSB","M11 - Hipopituitarismo","20/06/2026",15,9,24,16],
-  ["Dermatologia One SP T01","SP","M3 - Ácido Hialurônico I – preenchimento básico, MD Codes, proporções faciais","21/06/2026",12,5,17,17],
-  ["Dermatologia CPS T06","CPS","M4 - Farmacologia Dermatológica e Estética","22/06/2026",39,8,47,22],
+  ["Dermatologia SP T15","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","20/06/2026",12,5,17,15],
+  ["Dermatologia SP T21","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","20/06/2026",12,16,28,22],
+  ["Oftalmologia SP T02","SP","M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II","20/06/2026",24,5,29,26],
+  ["Endocrinologia BSB T01","BSB","M11 - Hipopituitarismo","20/06/2026",15,8,23,12],
+  ["Dermatologia One SP T01","SP","M3 - Ácido Hialurônico I – preenchimento básico, MD Codes, proporções faciais","21/06/2026",12,4,16,14],
+  ["Dermatologia CPS T06","CPS","M4 - Farmacologia Dermatológica e Estética","22/06/2026",39,8,47,33],
   ["Dermatologia SP T20","SP","M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face","22/06/2026",0,0,0,0],
   ["Oftalmologia SP T05","SP","M5 - Estrabismo I","22/06/2026",24,5,29,21],
-  ["Psiquiatria SP T02","SP","M8 - Compreensão do conteúdo e discussão de casos clínicos I","22/06/2026",24,5,29,17],
-  ["Tricologia SP T02","SP","M2 - Nutrição e Suplementação em Tricologia","22/06/2026",18,6,24,24],
-  ["Dermatologia CPS T06","CPS","M4 - Farmacologia Dermatológica e Estética","23/06/2026",39,8,47,23],
-  ["Endocrinologia CPS T03","CPS","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","23/06/2026",12,13,25,25],
+  ["Psiquiatria SP T02","SP","M8 - Compreensão do conteúdo e discussão de casos clínicos I","22/06/2026",24,5,29,22],
+  ["Tricologia SP T02","SP","M2 - Nutrição e Suplementação em Tricologia","22/06/2026",18,7,25,25],
+  ["Dermatologia CPS T06","CPS","M4 - Farmacologia Dermatológica e Estética","23/06/2026",39,8,47,33],
+  ["Endocrinologia CPS T03","CPS","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","23/06/2026",12,13,25,23],
   ["Dermatologia SP T20","SP","M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face","23/06/2026",0,0,0,0],
   ["Oftalmologia SP T05","SP","M5 - Estrabismo I","23/06/2026",24,5,29,13],
-  ["Psiquiatria SP T02","SP","M8 - Compreensão do conteúdo e discussão de casos clínicos I","23/06/2026",24,5,29,7],
+  ["Psiquiatria SP T02","SP","M8 - Compreensão do conteúdo e discussão de casos clínicos I","23/06/2026",24,5,29,9],
   ["Tricologia SP T02","SP","M2 - Nutrição e Suplementação em Tricologia","23/06/2026",18,8,26,26],
-  ["Dermatologia CPS T06","CPS","M4 - Farmacologia Dermatológica e Estética","24/06/2026",39,7,46,6],
-  ["Endocrinologia CPS T03","CPS","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","24/06/2026",12,13,25,24],
+  ["Dermatologia CPS T06","CPS","M4 - Farmacologia Dermatológica e Estética","24/06/2026",39,7,46,19],
+  ["Endocrinologia CPS T03","CPS","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","24/06/2026",12,13,25,25],
   ["Dermatologia SP T20","SP","M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face","24/06/2026",0,0,0,0],
-  ["Oftalmologia SP T05","SP","M5 - Estrabismo I","24/06/2026",24,4,28,14],
-  ["Psiquiatria SP T02","SP","M8 - Compreensão do conteúdo e discussão de casos clínicos I","24/06/2026",24,4,28,17],
+  ["Oftalmologia SP T05","SP","M5 - Estrabismo I","24/06/2026",24,4,28,16],
+  ["Psiquiatria SP T02","SP","M8 - Compreensão do conteúdo e discussão de casos clínicos I","24/06/2026",24,4,28,20],
   ["Tricologia SP T02","SP","M2 - Nutrição e Suplementação em Tricologia","24/06/2026",18,10,28,28],
   ["Psiquiatria BSB T01","BSB","M3 - Transtornos do humor II – Transtorno afetivo bipolar","24/06/2026",18,7,25,25],
-  ["Endocrinologia ONL T05","ONL","M3 - Diabetes Mellitus","24/06/2026",8,20,28,10],
-  ["Dermatologia CPS T09","CPS","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","25/06/2026",39,25,64,52],
+  ["Endocrinologia ONL T05","ONL","M3 - Diabetes Mellitus","24/06/2026",8,20,28,20],
+  ["Dermatologia CPS T09","CPS","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","25/06/2026",39,24,63,50],
   ["Oftalmologia CPS T01","CPS","M22 - Oftalmologia cirúrgica II","25/06/2026",0,0,0,0],
   ["Dermatologia SP T10","SP","M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)","25/06/2026",24,9,33,33],
-  ["Dermatologia SP T17","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","25/06/2026",12,2,14,11],
+  ["Dermatologia SP T17","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","25/06/2026",12,2,14,12],
   ["Dermatologia SP T19","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","25/06/2026",12,4,16,16],
-  ["Endocrinologia SP T04","SP","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","25/06/2026",24,7,31,27],
-  ["Oftalmologia SP T04","SP","M9 - Retina e Vítreo I","25/06/2026",24,5,29,27],
+  ["Endocrinologia SP T04","SP","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","25/06/2026",24,7,31,28],
+  ["Oftalmologia SP T04","SP","M9 - Retina e Vítreo I","25/06/2026",24,5,29,29],
   ["Tricologia SP T01","SP","M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo","25/06/2026",18,12,30,30],
   ["Dermatologia BSB T01","BSB","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","25/06/2026",12,3,15,0],
   ["Psiquiatria ONL T04","ONL","M4 - Espectro da Esquizofrenia e Outros Transtornos Psicóticos","25/06/2026",8,19,27,20],
   ["Dermatologia CPS T09","CPS","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","26/06/2026",39,18,57,53],
   ["Oftalmologia CPS T01","CPS","M22 - Oftalmologia cirúrgica II","26/06/2026",0,0,0,0],
   ["Dermatologia SP T10","SP","M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)","26/06/2026",24,5,29,29],
-  ["Dermatologia SP T17","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","26/06/2026",12,2,14,5],
+  ["Dermatologia SP T17","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","26/06/2026",12,2,14,11],
   ["Dermatologia SP T19","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","26/06/2026",12,1,13,14],
-  ["Endocrinologia SP T04","SP","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","26/06/2026",24,10,34,28],
-  ["Oftalmologia SP T04","SP","M9 - Retina e Vítreo I","26/06/2026",24,5,29,26],
+  ["Endocrinologia SP T04","SP","M3 - Diabetes Mellitus Tipo 1 e Tipo 2","26/06/2026",24,10,34,30],
+  ["Oftalmologia SP T04","SP","M9 - Retina e Vítreo I","26/06/2026",24,5,29,28],
   ["Tricologia SP T01","SP","M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo","26/06/2026",18,7,25,25],
   ["Dermatologia BSB T01","BSB","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","26/06/2026",12,2,14,0],
   ["Dermatologia CPS T09","CPS","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","27/06/2026",39,13,52,52],
@@ -864,7 +2123,7 @@ const RAW = [
   ["Neuropediatria CPS T03","CPS","M4 - Neurologia da Prematuridade e das Encefalopatias Neonatais","27/06/2026",12,5,17,11],
   ["Oftalmologia CPS T01","CPS","M22 - Oftalmologia cirúrgica II","27/06/2026",0,0,0,0],
   ["Dermatologia SP T10","SP","M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)","27/06/2026",24,8,32,32],
-  ["Dermatologia SP T17","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","27/06/2026",12,1,13,5],
+  ["Dermatologia SP T17","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","27/06/2026",12,1,13,13],
   ["Dermatologia SP T19","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","27/06/2026",12,8,20,20],
   ["Oftalmologia SP T04","SP","M9 - Retina e Vítreo I","27/06/2026",24,4,28,28],
   ["Psiquiatria SP T04","SP","M4 - Transtornos de ansiedade I","27/06/2026",24,13,37,37],
@@ -872,13 +2131,13 @@ const RAW = [
   ["Dermatologia BSB T01","BSB","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","27/06/2026",12,2,14,0],
   ["Dermatologia CPS T05","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","29/06/2026",39,21,60,60],
   ["Dermatologia CPS T08","CPS","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","29/06/2026",12,9,21,21],
-  ["Pediatria CPS T03","CPS","M7 - Saúde Mental e Adolescência","29/06/2026",24,7,31,29],
+  ["Pediatria CPS T03","CPS","M7 - Saúde Mental e Adolescência","29/06/2026",24,7,31,31],
   ["Dermatologia SP T07","SP","M14 - Preenchimento Glúteo","29/06/2026",12,8,20,20],
   ["Endocrinologia SP T03","SP","M5 - Diabetes tipo 2","29/06/2026",24,7,31,26],
-  ["Oftalmologia SP T03","SP","M12 - Introdução à Oftalmologia II","29/06/2026",24,11,35,33],
+  ["Oftalmologia SP T03","SP","M12 - Introdução à Oftalmologia II","29/06/2026",24,11,35,35],
   ["Dermatologia CPS T05","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","30/06/2026",39,11,50,50],
   ["Dermatologia CPS T08","CPS","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","30/06/2026",12,4,16,16],
-  ["Pediatria CPS T03","CPS","M7 - Saúde Mental e Adolescência","30/06/2026",24,7,31,27],
+  ["Pediatria CPS T03","CPS","M7 - Saúde Mental e Adolescência","30/06/2026",24,7,31,30],
   ["Dermatologia SP T07","SP","M14 - Preenchimento Glúteo","30/06/2026",12,1,13,13],
   ["Endocrinologia SP T03","SP","M5 - Diabetes tipo 2","30/06/2026",24,6,30,25],
   ["Oftalmologia SP T03","SP","M12 - Introdução à Oftalmologia II","30/06/2026",24,7,31,31],
@@ -887,26 +2146,26 @@ const RAW = [
   ["Dermatologia SP T07","SP","M14 - Preenchimento Glúteo","01/07/2026",12,3,15,15],
   ["Endocrinologia SP T03","SP","M5 - Diabetes tipo 2","01/07/2026",24,6,30,16],
   ["Oftalmologia SP T03","SP","M12 - Introdução à Oftalmologia II","01/07/2026",24,8,32,32],
-  ["Endocrinologia ONL T07","ONL","M2 - Abordagem Clínica em Endocrinologia","01/07/2026",8,18,26,8],
+  ["Endocrinologia ONL T07","ONL","M2 - Abordagem Clínica em Endocrinologia","01/07/2026",8,18,26,10],
   ["Dermatologia CPS T07","CPS","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","02/07/2026",12,6,18,18],
   ["Psiquiatria CPS T03","CPS","M4 - Transtornos do humor II","02/07/2026",24,17,41,41],
   ["Dermatologia SP T05","SP","M17 - Tratamentos Capilares","02/07/2026",18,6,24,24],
   ["Dermatologia SP T09","SP","M12 - Peelings Químicos","02/07/2026",24,14,38,39],
-  ["Dermatologia SP T12","SP","M4 - Farmacologia Dermatológica e Estética","02/07/2026",39,8,47,23],
+  ["Dermatologia SP T12","SP","M4 - Farmacologia Dermatológica e Estética","02/07/2026",39,8,47,35],
   ["Dermatologia CPS T07","CPS","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","03/07/2026",12,2,14,13],
   ["Psiquiatria CPS T03","CPS","M4 - Transtornos do humor II","03/07/2026",24,30,54,54],
   ["Dermatologia SP T05","SP","M17 - Tratamentos Capilares","03/07/2026",18,3,21,21],
-  ["Dermatologia SP T09","SP","M12 - Peelings Químicos","03/07/2026",24,10,34,31],
-  ["Dermatologia SP T12","SP","M4 - Farmacologia Dermatológica e Estética","03/07/2026",39,8,47,13],
+  ["Dermatologia SP T09","SP","M12 - Peelings Químicos","03/07/2026",24,10,34,32],
+  ["Dermatologia SP T12","SP","M4 - Farmacologia Dermatológica e Estética","03/07/2026",39,8,47,22],
   ["Dermatologia CPS T07","CPS","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","04/07/2026",12,3,15,15],
   ["Neuropediatria CPS T04","CPS","M1 - Neurodesenvolvimento e exame neurólogico","04/07/2026",12,9,21,21],
   ["Psiquiatria CPS T03","CPS","M4 - Transtornos do humor II","04/07/2026",24,33,57,57],
   ["Dermatologia SP T05","SP","M17 - Tratamentos Capilares","04/07/2026",18,4,22,22],
   ["Dermatologia SP T09","SP","M12 - Peelings Químicos","04/07/2026",24,9,33,33],
-  ["Dermatologia SP T12","SP","M4 - Farmacologia Dermatológica e Estética","04/07/2026",39,7,46,7],
+  ["Dermatologia SP T12","SP","M4 - Farmacologia Dermatológica e Estética","04/07/2026",39,7,46,16],
   ["Oftalmologia CPS T02","CPS","M5 - Estrabismo I","06/07/2026",24,11,35,34],
   ["Psiquiatria CPS T02","CPS","M14 - Transtornos somatoformes, dissociativos e conversivos","06/07/2026",24,13,37,37],
-  ["Dermatologia Cirurgica SP T01","SP","M6 - Tratamento de cicatrizes","06/07/2026",12,6,18,16],
+  ["Dermatologia Cirurgica SP T01","SP","M6 - Tratamento de cicatrizes","06/07/2026",12,7,19,17],
   ["Dermatologia SP T04","SP","M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores","06/07/2026",12,8,20,20],
   ["Dermatologia SP T14","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","06/07/2026",12,4,16,16],
   ["Oftalmologia CPS T02","CPS","M5 - Estrabismo I","07/07/2026",24,0,24,17],
@@ -921,34 +2180,34 @@ const RAW = [
   ["Dermatologia SP T04","SP","M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores","08/07/2026",12,5,17,17],
   ["Dermatologia SP T14","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","08/07/2026",12,4,16,16],
   ["Dermatologia SP T13","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","09/07/2026",12,4,16,16],
-  ["Dermatologia SP T16","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","09/07/2026",12,2,14,0],
-  ["Dermatologia SP T21","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","09/07/2026",12,2,14,2],
-  ["Oftalmologia SP T02","SP","M15 - Plástica Ocular, Vias Lacrimais e Órbita II","09/07/2026",24,5,29,6],
+  ["Dermatologia SP T16","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","09/07/2026",12,2,14,7],
+  ["Dermatologia SP T21","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","09/07/2026",12,2,14,9],
+  ["Oftalmologia SP T02","SP","M15 - Plástica Ocular, Vias Lacrimais e Órbita II","09/07/2026",24,5,29,10],
   ["Psiquiatria SP T03","SP","M5 - Transtornos de ansiedade I","09/07/2026",24,13,37,38],
   ["Dermatologia BSB T01","BSB","M14 - Preenchimento Glúteo","09/07/2026",12,2,14,3],
   ["Dermatologia BSB T02","BSB","M4 - Farmacologia Dermatológica e Estética","09/07/2026",39,8,47,6],
   ["Oftalmologia BSB T01","BSB","M8 - Glaucoma I","09/07/2026",18,1,19,11],
   ["Dermatologia SP T13","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","10/07/2026",12,4,16,16],
   ["Dermatologia SP T16","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","10/07/2026",12,2,14,0],
-  ["Dermatologia SP T21","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","10/07/2026",12,2,14,0],
+  ["Dermatologia SP T21","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","10/07/2026",12,2,14,2],
   ["Oftalmologia SP T02","SP","M15 - Plástica Ocular, Vias Lacrimais e Órbita II","10/07/2026",24,5,29,5],
   ["Psiquiatria SP T03","SP","M5 - Transtornos de ansiedade I","10/07/2026",24,21,45,45],
   ["Dermatologia BSB T01","BSB","M14 - Preenchimento Glúteo","10/07/2026",12,1,13,1],
-  ["Dermatologia BSB T02","BSB","M4 - Farmacologia Dermatológica e Estética","10/07/2026",39,8,47,2],
+  ["Dermatologia BSB T02","BSB","M4 - Farmacologia Dermatológica e Estética","10/07/2026",39,8,47,3],
   ["Oftalmologia BSB T01","BSB","M8 - Glaucoma I","10/07/2026",18,1,19,8],
   ["Neuropediatria CPS T01","CPS","M8 - Transtornos do Processamento Sensorial e da Regulação Emocional; Cefaleia na Infância","11/07/2026",12,10,22,20],
   ["Dermatologia SP T13","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","11/07/2026",12,2,14,14],
-  ["Dermatologia SP T16","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","11/07/2026",12,1,13,1],
-  ["Dermatologia SP T21","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","11/07/2026",12,1,13,3],
-  ["Oftalmologia SP T02","SP","M15 - Plástica Ocular, Vias Lacrimais e Órbita II","11/07/2026",24,4,28,1],
+  ["Dermatologia SP T16","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","11/07/2026",12,1,13,4],
+  ["Dermatologia SP T21","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","11/07/2026",12,1,13,4],
+  ["Oftalmologia SP T02","SP","M15 - Plástica Ocular, Vias Lacrimais e Órbita II","11/07/2026",24,4,28,2],
   ["Psiquiatria Infantil SP T01","SP","M6 - Transtornos do neurodesenvolvimento III - Transtorno do desenvolvimento intelectual (TDI), transtornos da comunicação, transtornos motores e transtornos específicos da aprendizagem","11/07/2026",12,5,17,11],
   ["Psiquiatria SP T03","SP","M5 - Transtornos de ansiedade I","11/07/2026",24,22,46,46],
   ["Dermatologia BSB T01","BSB","M14 - Preenchimento Glúteo","11/07/2026",12,1,13,0],
   ["Dermatologia BSB T02","BSB","M4 - Farmacologia Dermatológica e Estética","11/07/2026",39,7,46,4],
-  ["Oftalmologia BSB T01","BSB","M8 - Glaucoma I","11/07/2026",18,0,18,6],
+  ["Oftalmologia BSB T01","BSB","M8 - Glaucoma I","11/07/2026",18,0,18,7],
   ["Dermatologia CPS T03","CPS","M15 - Complicações em Procedimentos Dermatológicos Injetáveis","13/07/2026",12,2,14,1],
   ["Endocrinologia CPS T02","CPS","M3 - Obesidade e síndrome metabólica","13/07/2026",24,18,42,42],
-  ["Dermatologia SP T08","SP","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)","13/07/2026",24,20,44,43],
+  ["Dermatologia SP T08","SP","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)","13/07/2026",24,20,44,44],
   ["Dermatologia SP T11","SP","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","13/07/2026",39,0,39,18],
   ["Oftalmologia SP T06","SP","M4 - Plástica Ocular, Vias Lacrimais e Órbita I","13/07/2026",24,5,29,1],
   ["Dermatologia BSB T03","BSB","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","13/07/2026",12,2,14,14],
@@ -959,25 +2218,25 @@ const RAW = [
   ["Oftalmologia SP T06","SP","M4 - Plástica Ocular, Vias Lacrimais e Órbita I","14/07/2026",24,5,29,0],
   ["Dermatologia BSB T03","BSB","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","14/07/2026",12,2,14,12],
   ["Dermatologia CPS T03","CPS","M15 - Complicações em Procedimentos Dermatológicos Injetáveis","15/07/2026",12,1,13,0],
-  ["Endocrinologia CPS T02","CPS","M3 - Obesidade e síndrome metabólica","15/07/2026",24,14,38,38],
+  ["Endocrinologia CPS T02","CPS","M3 - Obesidade e síndrome metabólica","15/07/2026",24,15,39,39],
   ["Dermatologia SP T08","SP","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)","15/07/2026",24,12,36,36],
   ["Dermatologia SP T11","SP","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","15/07/2026",39,0,39,12],
   ["Oftalmologia SP T06","SP","M4 - Plástica Ocular, Vias Lacrimais e Órbita I","15/07/2026",24,4,28,3],
-  ["Dermatologia BSB T03","BSB","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","15/07/2026",12,1,13,9],
+  ["Dermatologia BSB T03","BSB","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","15/07/2026",12,1,13,11],
   ["Psiquiatria ONL T05","ONL","M4 - Espectro da Esquizofrenia e Outros Transtornos Psicóticos","15/07/2026",8,19,27,0],
   ["Endocrinologia CPS T01","CPS","M13 - Síndrome de Cushing","16/07/2026",24,5,29,20],
-  ["Pediatria CPS T05","CPS","M4 - Infectologia e Neurologia","16/07/2026",24,7,31,19],
+  ["Pediatria CPS T05","CPS","M4 - Infectologia e Neurologia","16/07/2026",24,7,31,22],
   ["Dermatologia SP T06","SP","M15 - Complicações em Procedimentos Dermatológicos Injetáveis","16/07/2026",12,2,14,0],
-  ["Dermatologia SP T15","SP","M4 - Farmacologia Dermatológica e Estética","16/07/2026",39,8,47,4],
+  ["Dermatologia SP T15","SP","M4 - Farmacologia Dermatológica e Estética","16/07/2026",39,8,47,13],
   ["Dermatologia SP T19","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","16/07/2026",12,2,14,0],
   ["Endocrinologia SP T05","SP","M1 - Doenças da Tireoide","16/07/2026",24,8,32,32],
-  ["Endocrinologia BSB T01","BSB","M8 - Exames de imagem em endocrinologia/ testes funcionais","16/07/2026",15,15,30,24],
+  ["Endocrinologia BSB T01","BSB","M8 - Exames de imagem em endocrinologia/ testes funcionais","16/07/2026",15,15,30,26],
   ["Endocrinologia ONL T06","ONL","M5 - Obesidade","16/07/2026",8,18,26,0],
   ["Psiquiatria ONL T02","ONL","M8 - Transtorno Obsessivo Compulsivo e Transtornos relacionados","16/07/2026",8,19,27,0],
   ["Endocrinologia CPS T01","CPS","M13 - Síndrome de Cushing","17/07/2026",24,5,29,18],
-  ["Pediatria CPS T05","CPS","M4 - Infectologia e Neurologia","17/07/2026",24,7,31,14],
+  ["Pediatria CPS T05","CPS","M4 - Infectologia e Neurologia","17/07/2026",24,7,31,20],
   ["Dermatologia SP T06","SP","M15 - Complicações em Procedimentos Dermatológicos Injetáveis","17/07/2026",12,2,14,0],
-  ["Dermatologia SP T15","SP","M4 - Farmacologia Dermatológica e Estética","17/07/2026",39,8,47,1],
+  ["Dermatologia SP T15","SP","M4 - Farmacologia Dermatológica e Estética","17/07/2026",39,8,47,5],
   ["Dermatologia SP T19","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","17/07/2026",12,2,14,0],
   ["Endocrinologia SP T05","SP","M1 - Doenças da Tireoide","17/07/2026",24,6,30,30],
   ["Endocrinologia BSB T01","BSB","M8 - Exames de imagem em endocrinologia/ testes funcionais","17/07/2026",15,18,33,28],
@@ -986,21 +2245,21 @@ const RAW = [
   ["Dermatologia SP T06","SP","M15 - Complicações em Procedimentos Dermatológicos Injetáveis","18/07/2026",12,1,13,1],
   ["Dermatologia SP T15","SP","M4 - Farmacologia Dermatológica e Estética","18/07/2026",39,7,46,1],
   ["Dermatologia SP T19","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","18/07/2026",12,1,13,0],
-  ["Endocrinologia BSB T01","BSB","M8 - Exames de imagem em endocrinologia/ testes funcionais","18/07/2026",15,13,28,23],
+  ["Endocrinologia BSB T01","BSB","M8 - Exames de imagem em endocrinologia/ testes funcionais","18/07/2026",15,13,28,25],
   ["Dermatologia One SP T01","SP","M4 - Dermatologia Clínica Inestética – melasma, acne, cicatriz, rosácea","19/07/2026",39,16,55,55],
-  ["Pediatria CPS T04","CPS","M4 - Infectologia e Neurologia","20/07/2026",24,7,31,9],
+  ["Pediatria CPS T04","CPS","M4 - Infectologia e Neurologia","20/07/2026",24,7,31,12],
   ["Dermatologia SP T20","SP","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","20/07/2026",39,8,47,43],
   ["Endocrinologia SP T02","SP","M7 - Urgências em diabetes","20/07/2026",24,7,31,12],
-  ["Oftalmologia SP T05","SP","M6 - Córnea I","20/07/2026",24,5,29,10],
+  ["Oftalmologia SP T05","SP","M6 - Córnea I","20/07/2026",24,5,29,11],
   ["Tricologia SP T02","SP","M3 - Alopecias não cicatriciais, classificação e tratamento","20/07/2026",18,7,25,25],
-  ["Endocrinologia CPS T03","CPS","M4 - Interpretação de Exames Laboratoriais em Endocrinologia","21/07/2026",12,36,48,48],
-  ["Pediatria CPS T04","CPS","M4 - Infectologia e Neurologia","21/07/2026",24,7,31,2],
+  ["Endocrinologia CPS T03","CPS","M4 - Interpretação de Exames Laboratoriais em Endocrinologia","21/07/2026",12,39,51,51],
+  ["Pediatria CPS T04","CPS","M4 - Infectologia e Neurologia","21/07/2026",24,7,31,6],
   ["Dermatologia SP T20","SP","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","21/07/2026",39,8,47,35],
   ["Endocrinologia SP T02","SP","M7 - Urgências em diabetes","21/07/2026",24,6,30,2],
   ["Oftalmologia SP T05","SP","M6 - Córnea I","21/07/2026",24,5,29,3],
   ["Tricologia SP T02","SP","M3 - Alopecias não cicatriciais, classificação e tratamento","21/07/2026",18,7,25,25],
   ["Endocrinologia CPS T03","CPS","M4 - Interpretação de Exames Laboratoriais em Endocrinologia","22/07/2026",12,31,43,43],
-  ["Dermatologia SP T20","SP","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","22/07/2026",39,7,46,22],
+  ["Dermatologia SP T20","SP","M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados","22/07/2026",39,7,46,28],
   ["Endocrinologia SP T02","SP","M7 - Urgências em diabetes","22/07/2026",24,6,30,3],
   ["Oftalmologia SP T05","SP","M6 - Córnea I","22/07/2026",24,4,28,3],
   ["Tricologia SP T02","SP","M3 - Alopecias não cicatriciais, classificação e tratamento","22/07/2026",18,6,24,24],
@@ -1009,9 +2268,9 @@ const RAW = [
   ["Dermatologia CPS T09","CPS","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","23/07/2026",12,6,18,18],
   ["Dermatologia SP T17","SP","M4 - Farmacologia Dermatológica e Estética","23/07/2026",39,8,47,1],
   ["Endocrinologia SP T04","SP","M4 - Interpretação de Exames Laboratoriais em Endocrinologia","23/07/2026",24,11,35,35],
-  ["Nutrologia SP T01","SP","M1 - Nutrologia Esportiva: Performance e Composição Corporal","23/07/2026",12,6,18,18],
+  ["Nutrologia SP T01","SP","M1 - Nutrologia Esportiva: Performance e Composição Corporal","23/07/2026",12,7,19,19],
   ["Oftalmologia SP T04","SP","M10 - Úvea, Tumor e Neuroftalmo I","23/07/2026",24,5,29,13],
-  ["Dermatologia CPS T04","CPS","M12 - Peelings Químicos","24/07/2026",24,10,34,28],
+  ["Dermatologia CPS T04","CPS","M12 - Peelings Químicos","24/07/2026",24,10,34,30],
   ["Dermatologia CPS T09","CPS","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","24/07/2026",12,5,17,17],
   ["Dermatologia SP T17","SP","M4 - Farmacologia Dermatológica e Estética","24/07/2026",39,8,47,0],
   ["Endocrinologia SP T04","SP","M4 - Interpretação de Exames Laboratoriais em Endocrinologia","24/07/2026",24,12,36,36],
@@ -1021,7 +2280,7 @@ const RAW = [
   ["Neuropediatria CPS T03","CPS","M5 - Transtornos do Sono, Traumatismo Cranioencefálico, COMA e Morte Encefálica","25/07/2026",12,13,25,24],
   ["Dermatologia SP T17","SP","M4 - Farmacologia Dermatológica e Estética","25/07/2026",39,7,46,0],
   ["Oftalmologia SP T04","SP","M10 - Úvea, Tumor e Neuroftalmo I","25/07/2026",24,4,28,3],
-  ["Psiquiatria SP T04","SP","M5 - Transtornos relacionados a traumas e estressores","25/07/2026",24,5,29,17],
+  ["Psiquiatria SP T04","SP","M5 - Transtornos relacionados a traumas e estressores","25/07/2026",24,5,29,19],
   ["Dermatologia CPS T06","CPS","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","27/07/2026",12,3,15,13],
   ["Pediatria CPS T06","CPS","M1 - Pneumologia","27/07/2026",24,7,31,3],
   ["Dermatologia SP T18","SP","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","27/07/2026",12,2,14,0],
@@ -1041,14 +2300,14 @@ const RAW = [
   ["Dermatologia SP T22","SP","M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face","30/07/2026",0,0,0,0],
   ["Tricologia SP T01","SP","M7 - Tratamentos capilares com MMP, microagulhamento e lasers capilares e ledterapia aplicados á tricologia\"","30/07/2026",18,4,22,21],
   ["Oftalmologia BSB T01","BSB","M10 - Úvea, Tumor e Neuroftalmo I","30/07/2026",18,1,19,11],
-  ["Psiquiatria CPS T03","CPS","M5 - Transtornos de ansiedade I","31/07/2026",24,6,30,15],
-  ["Dermatologia SP T10","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","31/07/2026",12,2,14,10],
+  ["Psiquiatria CPS T03","CPS","M5 - Transtornos de ansiedade I","31/07/2026",24,6,30,20],
+  ["Dermatologia SP T10","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","31/07/2026",12,2,14,11],
   ["Dermatologia SP T12","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","31/07/2026",12,3,15,15],
   ["Dermatologia SP T22","SP","M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face","31/07/2026",0,0,0,0],
   ["Tricologia SP T01","SP","M7 - Tratamentos capilares com MMP, microagulhamento e lasers capilares e ledterapia aplicados á tricologia\"","31/07/2026",18,6,24,21],
   ["Oftalmologia BSB T01","BSB","M10 - Úvea, Tumor e Neuroftalmo I","31/07/2026",18,0,18,3],
   ["Neuropediatria CPS T04","CPS","M2 - TDAH e diferenciais","01/08/2026",12,6,18,18],
-  ["Psiquiatria CPS T03","CPS","M5 - Transtornos de ansiedade I","01/08/2026",24,5,29,22],
+  ["Psiquiatria CPS T03","CPS","M5 - Transtornos de ansiedade I","01/08/2026",24,5,29,24],
   ["Dermatologia SP T10","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","01/08/2026",12,1,13,11],
   ["Dermatologia SP T12","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","01/08/2026",12,3,15,15],
   ["Dermatologia SP T22","SP","M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face","01/08/2026",0,0,0,0],
@@ -1072,21 +2331,21 @@ const RAW = [
   ["Psiquiatria CPS T04","CPS","M6 - Espectro da esquizofrenia e outros transtornos psicóticos","05/08/2026",24,6,30,5],
   ["Dermatologia SP T07","SP","M15 - Complicações em Procedimentos Dermatológicos Injetáveis","05/08/2026",12,1,13,0],
   ["Endocrinologia SP T03","SP","M6 - Diabetes gestacional e outros tipos de diabetes","05/08/2026",24,6,30,0],
-  ["Oftalmologia SP T03","SP","M13 - Refração e Visão Subnormal II","05/08/2026",24,4,28,19],
+  ["Oftalmologia SP T03","SP","M13 - Refração e Visão Subnormal II","05/08/2026",24,4,28,22],
   ["Endocrinologia ONL T07","ONL","M3 - Diabetes Mellitus","05/08/2026",8,18,26,0],
   ["Dermatologia CPS T04","CPS","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","06/08/2026",12,3,15,6],
-  ["Dermatologia CPS T07","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","06/08/2026",39,8,47,22],
+  ["Dermatologia CPS T07","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","06/08/2026",39,8,47,24],
   ["Dermatologia SP T05","SP","M18 - Estética Genital Feminina","06/08/2026",12,3,15,14],
   ["Dermatologia SP T09","SP","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","06/08/2026",12,3,15,9],
   ["Psiquiatria SP T03","SP","M6 - Transtornos relacionados a traumas e estressores","06/08/2026",24,5,29,7],
   ["Dermatologia BSB T01","BSB","M15 - Complicações em Procedimentos Dermatológicos Injetáveis","06/08/2026",12,2,14,0],
-  ["Dermatologia BSB T02","BSB","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","06/08/2026",12,2,14,3],
+  ["Dermatologia BSB T02","BSB","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","06/08/2026",12,2,14,4],
   ["Endocrinologia ONL T04","ONL","M11 - Hipófise e Hipotálamo: Patologias e Terapêutica","06/08/2026",8,18,26,0],
   ["Dermatologia CPS T04","CPS","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","07/08/2026",12,2,14,2],
-  ["Dermatologia CPS T07","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","07/08/2026",39,8,47,3],
-  ["Dermatologia SP T05","SP","M18 - Estética Genital Feminina","07/08/2026",12,2,14,9],
+  ["Dermatologia CPS T07","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","07/08/2026",39,8,47,4],
+  ["Dermatologia SP T05","SP","M18 - Estética Genital Feminina","07/08/2026",12,2,14,10],
   ["Dermatologia SP T09","SP","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","07/08/2026",12,2,14,3],
-  ["Psiquiatria SP T03","SP","M6 - Transtornos relacionados a traumas e estressores","07/08/2026",24,5,29,1],
+  ["Psiquiatria SP T03","SP","M6 - Transtornos relacionados a traumas e estressores","07/08/2026",24,5,29,2],
   ["Dermatologia BSB T01","BSB","M15 - Complicações em Procedimentos Dermatológicos Injetáveis","07/08/2026",12,2,14,0],
   ["Dermatologia BSB T02","BSB","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","07/08/2026",12,2,14,0],
   ["Dermatologia CPS T04","CPS","M13 - Tratamentos corporais para flacidez, gordura localizada e estrais","08/08/2026",12,2,14,4],
@@ -1114,7 +2373,7 @@ const RAW = [
   ["Dermatologia Cirurgica SP T01","SP","M7 - Sutura especial e técnicas especiais","12/08/2026",12,5,17,15],
   ["Dermatologia SP T04","SP","M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética","12/08/2026",0,0,0,0],
   ["Oftalmologia SP T06","SP","M5 - Estrabismo I","12/08/2026",24,4,28,0],
-  ["Tricologia SP T02","SP","M4 - Alopecias cicatriciais, classificação e tratamento","12/08/2026",18,4,22,6],
+  ["Tricologia SP T02","SP","M4 - Alopecias cicatriciais, classificação e tratamento","12/08/2026",18,4,22,7],
   ["Endocrinologia ONL T05","ONL","M11 - Hipófise e Hipotálamo: Patologias e Terapêutica","12/08/2026",8,18,26,0],
   ["Endocrinologia CPS T01","CPS","M14 - Crescimento, Endocrinologia pediátrica básica","13/08/2026",24,5,29,15],
   ["Pediatria CPS T05","CPS","M6 - Nutrologia e Endocrinologia","13/08/2026",24,7,31,23],
@@ -1122,7 +2381,7 @@ const RAW = [
   ["Dermatologia SP T15","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","13/08/2026",12,2,14,12],
   ["Dermatologia SP T21","SP","M4 - Farmacologia Dermatológica e Estética","13/08/2026",39,8,47,0],
   ["Oftalmologia SP T02","SP","M16 - Estrabismo II","13/08/2026",24,5,29,0],
-  ["Endocrinologia BSB T01","BSB","M9 - Adenomas hipofisários","13/08/2026",15,0,15,5],
+  ["Endocrinologia BSB T01","BSB","M9 - Adenomas hipofisários","13/08/2026",15,0,15,6],
   ["Psiquiatria ONL T03","ONL","M8 - Transtorno Obsessivo Compulsivo e Transtornos relacionados","13/08/2026",8,19,27,0],
   ["Endocrinologia CPS T01","CPS","M14 - Crescimento, Endocrinologia pediátrica básica","14/08/2026",24,5,29,5],
   ["Pediatria CPS T05","CPS","M6 - Nutrologia e Endocrinologia","14/08/2026",24,7,31,11],
@@ -1132,15 +2391,15 @@ const RAW = [
   ["Oftalmologia SP T02","SP","M16 - Estrabismo II","14/08/2026",24,5,29,0],
   ["Endocrinologia BSB T01","BSB","M9 - Adenomas hipofisários","14/08/2026",15,0,15,1],
   ["Endocrinologia CPS T01","CPS","M14 - Crescimento, Endocrinologia pediátrica básica","15/08/2026",24,5,29,10],
-  ["Neuropediatria CPS T02","CPS","M7 - TEA e diferenciais","15/08/2026",12,2,14,11],
+  ["Neuropediatria CPS T02","CPS","M7 - TEA e diferenciais","15/08/2026",12,2,14,12],
   ["Dermatologia SP T13","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","15/08/2026",12,1,13,1],
-  ["Dermatologia SP T15","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","15/08/2026",12,1,13,11],
+  ["Dermatologia SP T15","SP","M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face","15/08/2026",12,1,13,12],
   ["Dermatologia SP T21","SP","M4 - Farmacologia Dermatológica e Estética","15/08/2026",39,7,46,0],
   ["Oftalmologia SP T02","SP","M16 - Estrabismo II","15/08/2026",24,4,28,0],
-  ["Endocrinologia BSB T01","BSB","M9 - Adenomas hipofisários","15/08/2026",15,0,15,2],
+  ["Endocrinologia BSB T01","BSB","M9 - Adenomas hipofisários","15/08/2026",15,0,15,3],
   ["Dermatologia CPS T03","CPS","M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)","17/08/2026",12,2,14,0],
   ["Pediatria CPS T04","CPS","M6 - Nutrologia e Endocrinologia","17/08/2026",24,7,31,8],
-  ["Dermatologia SP T08","SP","M12 - Peelings Químicos","17/08/2026",24,10,34,12],
+  ["Dermatologia SP T08","SP","M12 - Peelings Químicos","17/08/2026",24,10,34,13],
   ["Dermatologia SP T11","SP","M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne","17/08/2026",39,8,47,6],
   ["Dermatologia SP T18","SP","M4 - Farmacologia Dermatológica e Estética","17/08/2026",39,8,47,0],
   ["Endocrinologia SP T02","SP","M8 - Exames de imagem em endocrinologia/ testes funcionais","17/08/2026",24,7,31,25],
@@ -1150,23 +2409,23 @@ const RAW = [
   ["Dermatologia SP T08","SP","M12 - Peelings Químicos","18/08/2026",24,10,34,3],
   ["Dermatologia SP T11","SP","M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne","18/08/2026",39,8,47,2],
   ["Dermatologia SP T18","SP","M4 - Farmacologia Dermatológica e Estética","18/08/2026",39,8,47,0],
-  ["Endocrinologia SP T02","SP","M8 - Exames de imagem em endocrinologia/ testes funcionais","18/08/2026",24,6,30,20],
+  ["Endocrinologia SP T02","SP","M8 - Exames de imagem em endocrinologia/ testes funcionais","18/08/2026",24,6,30,23],
   ["Dermatologia BSB T03","BSB","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","18/08/2026",12,2,14,0],
   ["Dermatologia CPS T03","CPS","M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)","19/08/2026",12,1,13,1],
   ["Dermatologia SP T08","SP","M12 - Peelings Químicos","19/08/2026",24,9,33,4],
   ["Dermatologia SP T11","SP","M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne","19/08/2026",39,7,46,1],
   ["Dermatologia SP T18","SP","M4 - Farmacologia Dermatológica e Estética","19/08/2026",39,7,46,0],
-  ["Endocrinologia SP T02","SP","M8 - Exames de imagem em endocrinologia/ testes funcionais","19/08/2026",24,6,30,10],
-  ["Dermatologia BSB T03","BSB","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","19/08/2026",12,1,13,0],
+  ["Endocrinologia SP T02","SP","M8 - Exames de imagem em endocrinologia/ testes funcionais","19/08/2026",24,6,30,17],
+  ["Dermatologia BSB T03","BSB","M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)","19/08/2026",12,1,13,2],
   ["Endocrinologia ONL T02","ONL","M12 - Endocrinologia do Crescimento e Desenvolvimento","19/08/2026",8,18,26,0],
-  ["Dermatologia CPS T09","CPS","M4 - Farmacologia Dermatológica e Estética","20/08/2026",39,8,47,0],
+  ["Dermatologia CPS T09","CPS","M4 - Farmacologia Dermatológica e Estética","20/08/2026",39,8,47,2],
   ["Dermatologia SP T06","SP","M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)","20/08/2026",12,2,14,0],
   ["Dermatologia SP T16","SP","M4 - Farmacologia Dermatológica e Estética","20/08/2026",39,8,47,0],
   ["Dermatologia SP T19","SP","M4 - Farmacologia Dermatológica e Estética","20/08/2026",39,8,47,0],
   ["Endocrinologia SP T05","SP","M2 - Obesidade e Síndrome Metabólica","20/08/2026",24,7,31,31],
-  ["Nutrologia SP T01","SP","M2 - Nutrologia e Saúde Gastrointestinal","20/08/2026",12,2,14,9],
+  ["Nutrologia SP T01","SP","M2 - Nutrologia e Saúde Gastrointestinal","20/08/2026",12,2,14,14],
   ["Endocrinologia ONL T03","ONL","M5 - Obesidade","20/08/2026",8,18,26,0],
-  ["Dermatologia CPS T09","CPS","M4 - Farmacologia Dermatológica e Estética","21/08/2026",39,8,47,0],
+  ["Dermatologia CPS T09","CPS","M4 - Farmacologia Dermatológica e Estética","21/08/2026",39,8,47,5],
   ["Dermatologia SP T06","SP","M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)","21/08/2026",12,2,14,2],
   ["Dermatologia SP T16","SP","M4 - Farmacologia Dermatológica e Estética","21/08/2026",39,8,47,0],
   ["Dermatologia SP T19","SP","M4 - Farmacologia Dermatológica e Estética","21/08/2026",39,8,47,0],
@@ -1179,7 +2438,7 @@ const RAW = [
   ["Dermatologia SP T19","SP","M4 - Farmacologia Dermatológica e Estética","22/08/2026",39,7,46,0],
   ["Psiquiatria SP T04","SP","M6 - Espectro da esquizofrenia e outros transtornos psicóticos","22/08/2026",24,5,29,0],
   ["Dermatologia One SP T01","SP","M5 - Laser I – conceitos, fototipos, rejuvenescimento e melasma","23/08/2026",24,6,30,30],
-  ["Dermatologia CPS T06","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","24/08/2026",39,8,47,0],
+  ["Dermatologia CPS T06","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","24/08/2026",39,8,47,1],
   ["Pediatria CPS T06","CPS","M2 - Emergências e Terapia Intensiva","24/08/2026",24,7,31,0],
   ["Dermatologia SP T14","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","24/08/2026",12,2,14,0],
   ["Dermatologia SP T20","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","24/08/2026",12,2,14,14],
@@ -1189,13 +2448,13 @@ const RAW = [
   ["Endocrinologia CPS T03","CPS","M5 - Endocrinologia da Criança e do Adolescente","25/08/2026",12,0,12,1],
   ["Pediatria CPS T06","CPS","M2 - Emergências e Terapia Intensiva","25/08/2026",24,7,31,1],
   ["Dermatologia SP T14","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","25/08/2026",12,2,14,0],
-  ["Dermatologia SP T20","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","25/08/2026",12,2,14,12],
+  ["Dermatologia SP T20","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","25/08/2026",12,2,14,14],
   ["Oftalmologia SP T05","SP","M7 - Catarata I","25/08/2026",24,5,29,3],
   ["Psiquiatria SP T02","SP","M10 - Transtorno por uso de substâncias II","25/08/2026",24,5,29,0],
   ["Dermatologia CPS T06","CPS","M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne","26/08/2026",39,7,46,0],
   ["Endocrinologia CPS T03","CPS","M5 - Endocrinologia da Criança e do Adolescente","26/08/2026",12,0,12,2],
   ["Dermatologia SP T14","SP","M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","26/08/2026",12,1,13,0],
-  ["Dermatologia SP T20","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","26/08/2026",12,1,13,12],
+  ["Dermatologia SP T20","SP","M3 - Técnicas de Aplicação de Toxina Botulínica na Face","26/08/2026",12,1,13,13],
   ["Oftalmologia SP T05","SP","M7 - Catarata I","26/08/2026",24,4,28,4],
   ["Psiquiatria SP T02","SP","M10 - Transtorno por uso de substâncias II","26/08/2026",24,4,28,0],
   ["Psiquiatria BSB T01","BSB","M5 - Transtornos relacionados a traumas e estressores","26/08/2026",18,0,18,6],
@@ -1310,11 +2569,11 @@ function mkChart(id, cfg){
 }
 
 // ─── PAGE NAVIGATION ─────────────────────────────────────────────────────────
-function showPage(name){
+function showPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  event.target.classList.add('active');
+  if(el) el.classList.add('active');
   if(name==='macro') buildMacro();
   if(name==='semana') buildSemana();
   if(name==='unidade') buildUnidade();
@@ -2651,6 +3910,13 @@ function handleUpload(input){
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 initMesDropdowns();
 buildMacro();
+buildSemana();
+buildUnidade();
+rebuildModuleDropdown();
+rebuildSpecDropdown();
+renderTurmaTable();
+buildModulo();
 </script>
-</body>
-</html>
+
+
+</body></html>
