@@ -1082,6 +1082,31 @@
     </button>
   </div>
 
+  <!-- ROW 1b: unit quick-filter pills -->
+  <div id="unit-pills" style="display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+    <span style="font-size:11px;font-weight:bold;color:#666;margin-right:2px">Unidade:</span>
+    <button class="unit-pill active" data-u="" onclick="setUnitPill(this,'')"
+      style="padding:4px 14px;border-radius:20px;border:2px solid #888;background:#fff;color:#444;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
+      Todas
+    </button>
+    <button class="unit-pill" data-u="CPS" onclick="setUnitPill(this,'CPS')"
+      style="padding:4px 14px;border-radius:20px;border:2px solid #1A2459;background:#fff;color:#1A2459;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
+      CPS
+    </button>
+    <button class="unit-pill" data-u="SP" onclick="setUnitPill(this,'SP')"
+      style="padding:4px 14px;border-radius:20px;border:2px solid #375623;background:#fff;color:#375623;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
+      SP
+    </button>
+    <button class="unit-pill" data-u="ONL" onclick="setUnitPill(this,'ONL')"
+      style="padding:4px 14px;border-radius:20px;border:2px solid #7F6000;background:#fff;color:#7F6000;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
+      ONL
+    </button>
+    <button class="unit-pill" data-u="BSB" onclick="setUnitPill(this,'BSB')"
+      style="padding:4px 14px;border-radius:20px;border:2px solid #843C0C;background:#fff;color:#843C0C;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
+      BSB
+    </button>
+  </div>
+
   <!-- ROW 2: specialty + module multi-selects -->
   <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;flex-wrap:wrap">
 
@@ -1220,13 +1245,13 @@
     <option value="05">Mai</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option></select>
   </div>
 <div class="filter-bar">
-    <input id="search-modulo" type="text" placeholder="Buscar módulo…" oninput="renderModuloTable()">
-    <select id="filter-unid-modulo" onchange="renderModuloTable()">
+    <input id="search-modulo" type="text" placeholder="Buscar módulo…" oninput="buildModulo()">
+    <select id="filter-unid-modulo" onchange="buildModulo()">
       <option value="">Todas as unidades</option>
       <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
     </select>
     <select id="filter-week-modulo" onchange="buildModulo()"><option value="">Todas as semanas</option><option value="S1">S1 (01–07/06)</option><option value="S2">S2 (08–14/06)</option><option value="S3">S3 (15–21/06)</option><option value="S4">S4 (22–28/06)</option><option value="S5">S5 (29–30/06)</option></select>
-    <select id="filter-sort-modulo" onchange="renderModuloTable()">
+    <select id="filter-sort-modulo" onchange="buildModulo()">
       <option value="occ-desc">Ordenar: Maior Ocupação</option>
       <option value="occ-asc">Ordenar: Menor Ocupação</option>
       <option value="name">Ordenar: Nome</option>
@@ -1891,6 +1916,48 @@ function mkChart(id, cfg){
   if(!ctx) return;
   charts[id] = new Chart(ctx, cfg);
 }
+
+// ─── UNIT PILL FILTER ────────────────────────────────────────────────────────
+const U_BG = {CPS:"#1A2459",SP:"#375623",ONL:"#7F6000",BSB:"#843C0C"};
+function setUnitPill(btn, unit){
+  // Update pill styles
+  document.querySelectorAll('.unit-pill').forEach(p => {
+    const u = p.dataset.u;
+    const col = u ? (U_BG[u]||"#888") : "#888";
+    p.style.background = "#fff";
+    p.style.color = col;
+    p.style.border = "2px solid " + col;
+  });
+  const selCol = unit ? (U_BG[unit]||"#888") : "#888";
+  btn.style.background = selCol;
+  btn.style.color = "#fff";
+  btn.style.border = "2px solid " + selCol;
+
+  // Sync dropdown and re-render
+  const sel = document.getElementById("filter-unid-turma");
+  if(sel){ sel.value = unit; }
+  renderTurmaTable();
+  rebuildModuleDropdown();
+}
+
+// Sync pill when dropdown changes
+(function patchUnidDropdown(){
+  const sel = document.getElementById("filter-unid-turma");
+  if(!sel) return;
+  const orig = sel.onchange;
+  sel.addEventListener("change", function(){
+    const u = this.value;
+    document.querySelectorAll(".unit-pill").forEach(p => {
+      const pu = p.dataset.u;
+      const col = pu ? (U_BG[pu]||"#888") : "#888";
+      if(pu === u){
+        p.style.background = col; p.style.color="#fff"; p.style.border="2px solid "+col;
+      } else {
+        p.style.background="#fff"; p.style.color=col; p.style.border="2px solid "+col;
+      }
+    });
+  });
+})();
 
 // ─── PAGE NAVIGATION ─────────────────────────────────────────────────────────
 function showPage(name,el){
@@ -3083,7 +3150,10 @@ function copyExecToPPT(){
 // ─── MÓDULO ───────────────────────────────────────────────────────────────────
 function buildModulo(){
   const fw=document.getElementById("filter-week-modulo").value;
-  const _DM2=getD();const baseData = fw ? _DM2.filter(d=>d.week===fw) : _DM2;
+  const fu=document.getElementById("filter-unid-modulo").value;
+  const _DM2=getD();
+  let baseData = fw ? _DM2.filter(d=>d.week===fw) : _DM2;
+  if(fu) baseData = baseData.filter(d=>d.unidade===fu);
 
   renderModuloTable(baseData);
 
@@ -3123,8 +3193,9 @@ function renderModuloTable(baseData){
   const fw=document.getElementById("filter-week-modulo").value;
   const sort=document.getElementById("filter-sort-modulo").value;
 
-  let filtered = baseData || (fw ? _DM2.filter(d=>d.week===fw) : _DM2);
-  if(fu) filtered=filtered.filter(d=>d.unidade===fu);
+  let filtered = baseData || (() => {
+    let d=getD(); if(fw) d=d.filter(x=>x.week===fw); if(fu) d=d.filter(x=>x.unidade===fu); return d;
+  })();
 
   let mAgg = aggBy(filtered,["modulo","unidade"]);
   if(q) mAgg=mAgg.filter(m=>m.modulo.toLowerCase().includes(q));
