@@ -147,7 +147,7 @@
   </div>
   <div style="text-align:right;flex-shrink:0">
     <div class="sub">Última atualização</div>
-    <div id="last-update" style="font-size:13px;font-weight:bold">22/06/2026</div>
+    <div id="last-update" style="font-size:13px;font-weight:bold">23/06/2026</div>
   </div>
 </div>
 
@@ -280,12 +280,6 @@
         90.1%
         <div style="font-size:9px;opacity:.85">227/252</div>
       </div></td></tr></tbody></table></div>
-  </div>
-
-
-  <div class="card" style="margin-top:16px">
-    <div class="card-header">Ocupação por Mês</div>
-    <div class="card-body"><div class="chart-wrap"><canvas id="chart-mes-occ"></canvas></div></div>
   </div>
 
 </div>
@@ -1082,31 +1076,6 @@
     </button>
   </div>
 
-  <!-- ROW 1b: unit quick-filter pills -->
-  <div id="unit-pills" style="display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap">
-    <span style="font-size:11px;font-weight:bold;color:#666;margin-right:2px">Unidade:</span>
-    <button class="unit-pill active" data-u="" onclick="setUnitPill(this,'')"
-      style="padding:4px 14px;border-radius:20px;border:2px solid #888;background:#fff;color:#444;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
-      Todas
-    </button>
-    <button class="unit-pill" data-u="CPS" onclick="setUnitPill(this,'CPS')"
-      style="padding:4px 14px;border-radius:20px;border:2px solid #1A2459;background:#fff;color:#1A2459;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
-      CPS
-    </button>
-    <button class="unit-pill" data-u="SP" onclick="setUnitPill(this,'SP')"
-      style="padding:4px 14px;border-radius:20px;border:2px solid #375623;background:#fff;color:#375623;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
-      SP
-    </button>
-    <button class="unit-pill" data-u="ONL" onclick="setUnitPill(this,'ONL')"
-      style="padding:4px 14px;border-radius:20px;border:2px solid #7F6000;background:#fff;color:#7F6000;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
-      ONL
-    </button>
-    <button class="unit-pill" data-u="BSB" onclick="setUnitPill(this,'BSB')"
-      style="padding:4px 14px;border-radius:20px;border:2px solid #843C0C;background:#fff;color:#843C0C;font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s">
-      BSB
-    </button>
-  </div>
-
   <!-- ROW 2: specialty + module multi-selects -->
   <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;flex-wrap:wrap">
 
@@ -1245,13 +1214,13 @@
     <option value="05">Mai</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option></select>
   </div>
 <div class="filter-bar">
-    <input id="search-modulo" type="text" placeholder="Buscar módulo…" oninput="buildModulo()">
-    <select id="filter-unid-modulo" onchange="buildModulo()">
+    <input id="search-modulo" type="text" placeholder="Buscar módulo…" oninput="renderModuloTable()">
+    <select id="filter-unid-modulo" onchange="renderModuloTable()">
       <option value="">Todas as unidades</option>
       <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
     </select>
     <select id="filter-week-modulo" onchange="buildModulo()"><option value="">Todas as semanas</option><option value="S1">S1 (01–07/06)</option><option value="S2">S2 (08–14/06)</option><option value="S3">S3 (15–21/06)</option><option value="S4">S4 (22–28/06)</option><option value="S5">S5 (29–30/06)</option></select>
-    <select id="filter-sort-modulo" onchange="buildModulo()">
+    <select id="filter-sort-modulo" onchange="renderModuloTable()">
       <option value="occ-desc">Ordenar: Maior Ocupação</option>
       <option value="occ-asc">Ordenar: Menor Ocupação</option>
       <option value="name">Ordenar: Nome</option>
@@ -1830,7 +1799,690 @@
 
 <script>
 // ─── RAW DATA ─────────────────────────────────────────────────────────────────
-const RAW = [["Dermatologia CPS T05", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "04/05/2026", 12, 9, 21, 21], ["Dermatologia CPS T08", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "04/05/2026", 39, 0, 39, 29], ["Pediatria CPS T03", "CPS", "M6 - Nutrologia e Endocrinologia", "04/05/2026", 24, 0, 24, 20], ["Dermatologia SP T07", "SP", "M12 - Peelings Químicos", "04/05/2026", 24, 7, 31, 31], ["Endocrinologia SP T03", "SP", "M3 - Obesidade e síndrome metabólica", "04/05/2026", 24, 0, 24, 23], ["Oftalmologia SP T03", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "04/05/2026", 24, 3, 27, 27], ["Dermatologia CPS T05", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "05/05/2026", 12, 11, 23, 23], ["Dermatologia CPS T08", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "05/05/2026", 39, 0, 39, 36], ["Pediatria CPS T03", "CPS", "M6 - Nutrologia e Endocrinologia", "05/05/2026", 24, 0, 24, 23], ["Dermatologia SP T07", "SP", "M12 - Peelings Químicos", "05/05/2026", 24, 0, 24, 11], ["Endocrinologia SP T03", "SP", "M3 - Obesidade e síndrome metabólica", "05/05/2026", 24, 3, 27, 28], ["Oftalmologia SP T03", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "05/05/2026", 24, 9, 33, 33], ["Dermatologia CPS T05", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "06/05/2026", 12, 2, 14, 14], ["Dermatologia CPS T08", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "06/05/2026", 39, 0, 39, 34], ["Pediatria CPS T03", "CPS", "M6 - Nutrologia e Endocrinologia", "06/05/2026", 24, 2, 26, 26], ["Dermatologia SP T07", "SP", "M12 - Peelings Químicos", "06/05/2026", 24, 0, 24, 16], ["Endocrinologia SP T03", "SP", "M3 - Obesidade e síndrome metabólica", "06/05/2026", 24, 8, 32, 32], ["Oftalmologia SP T03", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "06/05/2026", 24, 5, 29, 29], ["Dermatologia CPS T02", "CPS", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "07/05/2026", 12, 13, 25, 25], ["Dermatologia CPS T07", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "07/05/2026", 12, 17, 29, 29], ["Dermatologia SP T05", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "07/05/2026", 12, 1, 13, 13], ["Dermatologia SP T09", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "07/05/2026", 12, 10, 22, 22], ["Dermatologia SP T19", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "07/05/2026", 39, 9, 48, 48], ["Psiquiatria SP T03", "SP", "M3 - Transtornos do humor I", "07/05/2026", 24, 1, 25, 25], ["Dermatologia BSB T01", "BSB", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "07/05/2026", 12, 0, 12, 9], ["Dermatologia BSB T02", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "07/05/2026", 12, 0, 12, 12], ["Psiquiatria ONL T05", "ONL", "M6 - Transtornos Relacionados a traumas e a Estressores", "07/05/2026", 24, 0, 24, 0], ["Dermatologia CPS T02", "CPS", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "08/05/2026", 12, 13, 25, 25], ["Dermatologia CPS T07", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "08/05/2026", 12, 15, 27, 27], ["Dermatologia SP T05", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "08/05/2026", 12, 0, 12, 6], ["Dermatologia SP T09", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "08/05/2026", 12, 5, 17, 17], ["Dermatologia SP T19", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "08/05/2026", 39, 0, 39, 35], ["Psiquiatria SP T03", "SP", "M3 - Transtornos do humor I", "08/05/2026", 24, 4, 28, 29], ["Dermatologia BSB T01", "BSB", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "08/05/2026", 12, 0, 12, 6], ["Dermatologia BSB T02", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "08/05/2026", 12, 0, 12, 12], ["Dermatologia CPS T02", "CPS", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "09/05/2026", 12, 11, 23, 23], ["Dermatologia CPS T07", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "09/05/2026", 12, 15, 27, 27], ["Neuropediatria CPS T01", "CPS", "M6 - Distúrbios de movimento e paralisia cerebral", "09/05/2026", 12, 10, 22, 22], ["Dermatologia SP T05", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "09/05/2026", 12, 0, 12, 8], ["Dermatologia SP T09", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "09/05/2026", 12, 0, 12, 12], ["Dermatologia SP T19", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "09/05/2026", 39, 6, 45, 46], ["Psiquiatria Infantil SP T01", "SP", "M4 - Transtornos do neurodesenvolvimento I - Transtorno do espectro autista (TEA)", "09/05/2026", 12, 11, 23, 23], ["Psiquiatria SP T03", "SP", "M3 - Transtornos do humor I", "09/05/2026", 24, 6, 30, 30], ["Dermatologia BSB T01", "BSB", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "09/05/2026", 12, 0, 12, 7], ["Dermatologia BSB T02", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "09/05/2026", 12, 1, 13, 13], ["Oftalmologia CPS T02", "CPS", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "11/05/2026", 24, 1, 25, 25], ["Psiquiatria CPS T02", "CPS", "M12 - Transtorno Obsessivo Compulsivo e transtornos relacionados", "11/05/2026", 24, 6, 30, 30], ["Dermatologia Cirurgica SP T01", "SP", "M4 - Lesões pré-malignas e métodos destrutivos", "11/05/2026", 12, 5, 17, 17], ["Dermatologia SP T04", "SP", "M17 - Tratamentos Capilares", "11/05/2026", 18, 0, 18, 17], ["Dermatologia SP T14", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "11/05/2026", 12, 8, 20, 20], ["Oftalmologia SP T06", "SP", "M2 - Refração e Visão Subnormal I", "11/05/2026", 24, 0, 24, 25], ["Oftalmologia CPS T02", "CPS", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "12/05/2026", 24, 5, 29, 29], ["Psiquiatria CPS T02", "CPS", "M12 - Transtorno Obsessivo Compulsivo e transtornos relacionados", "12/05/2026", 24, 0, 24, 24], ["Dermatologia Cirurgica SP T01", "SP", "M4 - Lesões pré-malignas e métodos destrutivos", "12/05/2026", 12, 2, 14, 14], ["Dermatologia SP T04", "SP", "M17 - Tratamentos Capilares", "12/05/2026", 18, 0, 18, 7], ["Dermatologia SP T14", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "12/05/2026", 12, 0, 12, 12], ["Oftalmologia SP T06", "SP", "M2 - Refração e Visão Subnormal I", "12/05/2026", 24, 0, 24, 24], ["Oftalmologia CPS T02", "CPS", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "13/05/2026", 24, 4, 28, 28], ["Psiquiatria CPS T02", "CPS", "M12 - Transtorno Obsessivo Compulsivo e transtornos relacionados", "13/05/2026", 24, 2, 26, 26], ["Psiquiatria CPS T04", "CPS", "M3 - Transtornos do humor II – Transtorno afetivo bipolar", "13/05/2026", 24, 3, 27, 27], ["Dermatologia Cirurgica SP T01", "SP", "M4 - Lesões pré-malignas e métodos destrutivos", "13/05/2026", 12, 5, 17, 17], ["Dermatologia SP T04", "SP", "M17 - Tratamentos Capilares", "13/05/2026", 18, 0, 18, 5], ["Dermatologia SP T14", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "13/05/2026", 12, 0, 12, 9], ["Oftalmologia SP T06", "SP", "M2 - Refração e Visão Subnormal I", "13/05/2026", 24, 0, 24, 16], ["Dermatologia CPS T04", "CPS", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "14/05/2026", 12, 1, 13, 13], ["Endocrinologia CPS T01", "CPS", "M11 - Hipopituitarismo", "14/05/2026", 24, 6, 30, 31], ["Pediatria CPS T02", "CPS", "M8 - Cirurgia Pediátrica e Hematologia/Oncologia", "14/05/2026", 24, 0, 24, 8], ["Dermatologia SP T12", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "14/05/2026", 12, 0, 12, 11], ["Dermatologia SP T15", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "14/05/2026", 12, 5, 17, 17], ["Oftalmologia SP T02", "SP", "M13 - Refração e Visão Subnormal II", "14/05/2026", 24, 0, 24, 21], ["Endocrinologia BSB T01", "BSB", "M7 - Urgências em diabetes", "14/05/2026", 24, 0, 24, 17], ["Endocrinologia ONL T06", "ONL", "M4 - Tireoide: Distúrbios e Manejo Clínico", "14/05/2026", 24, 0, 24, 0], ["Psiquiatria ONL T02", "ONL", "M6 - Transtornos Relacionados a traumas e a Estressores", "14/05/2026", 24, 0, 24, 0], ["Dermatologia CPS T04", "CPS", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "15/05/2026", 12, 2, 14, 14], ["Endocrinologia CPS T01", "CPS", "M11 - Hipopituitarismo", "15/05/2026", 24, 3, 27, 27], ["Pediatria CPS T02", "CPS", "M8 - Cirurgia Pediátrica e Hematologia/Oncologia", "15/05/2026", 24, 0, 24, 6], ["Dermatologia SP T12", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "15/05/2026", 12, 1, 13, 13], ["Dermatologia SP T15", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "15/05/2026", 12, 2, 14, 14], ["Oftalmologia SP T02", "SP", "M13 - Refração e Visão Subnormal II", "15/05/2026", 24, 0, 24, 22], ["Endocrinologia BSB T01", "BSB", "M7 - Urgências em diabetes", "15/05/2026", 24, 0, 24, 11], ["Dermatologia CPS T04", "CPS", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "16/05/2026", 12, 2, 14, 14], ["Endocrinologia CPS T01", "CPS", "M11 - Hipopituitarismo", "16/05/2026", 24, 8, 32, 32], ["Dermatologia SP T12", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "16/05/2026", 12, 0, 12, 12], ["Dermatologia SP T15", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "16/05/2026", 12, 2, 14, 14], ["Oftalmologia SP T02", "SP", "M13 - Refração e Visão Subnormal II", "16/05/2026", 24, 0, 24, 24], ["Endocrinologia BSB T01", "BSB", "M7 - Urgências em diabetes", "16/05/2026", 24, 0, 24, 8], ["Dermatologia One SP T01", "SP", "M2 - Toxina Botulínica I – conceitos fundamentais, áreas clássicas, pontos seguros", "17/05/2026", 12, 0, 12, 12], ["Dermatologia CPS T03", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "18/05/2026", 12, 1, 13, 13], ["Endocrinologia CPS T02", "CPS", "M6 - Diabetes gestacional e outros tipos de diabetes", "18/05/2026", 24, 10, 34, 34], ["Dermatologia SP T08", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "18/05/2026", 39, 0, 39, 24], ["Dermatologia SP T11", "SP", "M4 - Farmacologia Dermatológica e Estética", "18/05/2026", 39, 0, 39, 14], ["Endocrinologia SP T02", "SP", "M5 - Diabetes tipo 2", "18/05/2026", 24, 2, 26, 26], ["Dermatologia BSB T03", "BSB", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "18/05/2026", 0, 0, 0, 0], ["Dermatologia CPS T03", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "19/05/2026", 12, 0, 12, 3], ["Endocrinologia CPS T02", "CPS", "M6 - Diabetes gestacional e outros tipos de diabetes", "19/05/2026", 24, 1, 25, 25], ["Dermatologia SP T08", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "19/05/2026", 39, 0, 39, 18], ["Dermatologia SP T11", "SP", "M4 - Farmacologia Dermatológica e Estética", "19/05/2026", 39, 0, 39, 13], ["Endocrinologia SP T02", "SP", "M5 - Diabetes tipo 2", "19/05/2026", 24, 1, 25, 25], ["Dermatologia BSB T03", "BSB", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "19/05/2026", 0, 0, 0, 0], ["Dermatologia CPS T03", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "20/05/2026", 12, 0, 12, 11], ["Endocrinologia CPS T02", "CPS", "M6 - Diabetes gestacional e outros tipos de diabetes", "20/05/2026", 24, 0, 24, 22], ["Dermatologia SP T08", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "20/05/2026", 39, 0, 39, 11], ["Dermatologia SP T11", "SP", "M4 - Farmacologia Dermatológica e Estética", "20/05/2026", 39, 0, 39, 12], ["Endocrinologia SP T02", "SP", "M5 - Diabetes tipo 2", "20/05/2026", 24, 2, 26, 26], ["Dermatologia BSB T03", "BSB", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "20/05/2026", 0, 0, 0, 0], ["Pediatria CPS T05", "CPS", "M3 - Alergia / Imunologia e Otorrinolaringologia", "21/05/2026", 24, 0, 24, 25], ["Psiquiatria CPS T03", "CPS", "M3 - Transtornos do humor I", "21/05/2026", 24, 0, 24, 24], ["Dermatologia SP T06", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "21/05/2026", 12, 0, 12, 11], ["Dermatologia SP T13", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "21/05/2026", 12, 0, 12, 10], ["Dermatologia SP T16", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "21/05/2026", 12, 2, 14, 14], ["Dermatologia SP T21", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "21/05/2026", 39, 0, 39, 39], ["Pediatria CPS T05", "CPS", "M3 - Alergia / Imunologia e Otorrinolaringologia", "22/05/2026", 24, 0, 24, 24], ["Psiquiatria CPS T03", "CPS", "M3 - Transtornos do humor I", "22/05/2026", 24, 0, 24, 23], ["Dermatologia SP T06", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "22/05/2026", 12, 0, 12, 11], ["Dermatologia SP T13", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "22/05/2026", 12, 0, 12, 12], ["Dermatologia SP T16", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "22/05/2026", 12, 0, 12, 12], ["Dermatologia SP T21", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "22/05/2026", 39, 0, 39, 39], ["Neuropediatria CPS T02", "CPS", "M4 - Neurologia da Prematuridade e das Encefalopatias Neonatais", "23/05/2026", 12, 10, 22, 22], ["Psiquiatria CPS T03", "CPS", "M3 - Transtornos do humor I", "23/05/2026", 24, 7, 31, 31], ["Dermatologia SP T06", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "23/05/2026", 12, 0, 12, 3], ["Dermatologia SP T13", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "23/05/2026", 12, 0, 12, 12], ["Dermatologia SP T16", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "23/05/2026", 12, 2, 14, 14], ["Dermatologia SP T21", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "23/05/2026", 39, 0, 39, 38], ["Psiquiatria SP T04", "SP", "M3 - Transtornos do humor II – Transtorno afetivo bipolar", "23/05/2026", 24, 1, 25, 25], ["Dermatologia CPS T06", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "25/05/2026", 12, 3, 15, 15], ["Pediatria CPS T04", "CPS", "M3 - Alergia / Imunologia e Otorrinolaringologia", "25/05/2026", 24, 0, 24, 24], ["Dermatologia SP T18", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "25/05/2026", 39, 0, 39, 37], ["Oftalmologia SP T05", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "25/05/2026", 24, 0, 24, 20], ["Psiquiatria SP T02", "SP", "M7 - Espectro da esquizofrenia e outros transtornos psicóticos", "25/05/2026", 24, 0, 24, 24], ["Tricologia SP T02", "SP", "M1 - Fundamentos da tricologia clínica avaliação e diagnóstico capilar (tricoscopia)", "25/05/2026", 18, 0, 18, 18], ["Dermatologia CPS T06", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "26/05/2026", 12, 1, 13, 13], ["Endocrinologia CPS T03", "CPS", "M2 - Obesidade e Síndrome Metabólica", "26/05/2026", 24, 16, 40, 40], ["Pediatria CPS T04", "CPS", "M3 - Alergia / Imunologia e Otorrinolaringologia", "26/05/2026", 24, 0, 24, 24], ["Dermatologia SP T18", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "26/05/2026", 39, 0, 39, 34], ["Oftalmologia SP T05", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "26/05/2026", 24, 0, 24, 7], ["Psiquiatria SP T02", "SP", "M7 - Espectro da esquizofrenia e outros transtornos psicóticos", "26/05/2026", 24, 0, 24, 15], ["Tricologia SP T02", "SP", "M1 - Fundamentos da tricologia clínica avaliação e diagnóstico capilar (tricoscopia)", "26/05/2026", 18, 0, 18, 18], ["Dermatologia CPS T06", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "27/05/2026", 12, 1, 13, 13], ["Endocrinologia CPS T03", "CPS", "M2 - Obesidade e Síndrome Metabólica", "27/05/2026", 24, 1, 25, 25], ["Dermatologia SP T18", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "27/05/2026", 39, 0, 39, 39], ["Oftalmologia SP T05", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "27/05/2026", 24, 0, 24, 17], ["Psiquiatria SP T02", "SP", "M7 - Espectro da esquizofrenia e outros transtornos psicóticos", "27/05/2026", 24, 0, 24, 18], ["Tricologia SP T02", "SP", "M1 - Fundamentos da tricologia clínica avaliação e diagnóstico capilar (tricoscopia)", "27/05/2026", 18, 0, 18, 18], ["Psiquiatria BSB T01", "BSB", "M2 - Transtornos do humor I – Transtorno depressivo", "27/05/2026", 24, 0, 24, 15], ["Endocrinologia ONL T02", "ONL", "M7 - Glândulas Adrenais", "27/05/2026", 24, 0, 24, 0], ["Dermatologia CPS T09", "CPS", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "28/05/2026", 0, 0, 0, 0], ["Oftalmologia CPS T01", "CPS", "M21 - Úvea, Tumor e Neuroftalmo II", "28/05/2026", 24, 3, 27, 27], ["Dermatologia SP T10", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "28/05/2026", 12, 11, 23, 23], ["Dermatologia SP T17", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "28/05/2026", 12, 0, 12, 11], ["Endocrinologia SP T04", "SP", "M2 - Obesidade e Síndrome Metabólica", "28/05/2026", 24, 0, 24, 24], ["Nutrologia SP T01", "SP", "M11 - Obesidade, Síndrome Metabólica e Diabetes", "28/05/2026", 12, 7, 19, 19], ["Oftalmologia SP T04", "SP", "M8 - Glaucoma I", "28/05/2026", 24, 0, 24, 14], ["Tricologia SP T01", "SP", "M5 - Outras alopecias / Tricologia e Endocrinologia", "28/05/2026", 18, 4, 22, 22], ["Oftalmologia BSB T01", "BSB", "M9 - Retina e Vítreo I", "28/05/2026", 24, 0, 24, 16], ["Dermatologia CPS T09", "CPS", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "29/05/2026", 0, 0, 0, 0], ["Oftalmologia CPS T01", "CPS", "M21 - Úvea, Tumor e Neuroftalmo II", "29/05/2026", 24, 0, 24, 24], ["Dermatologia SP T10", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "29/05/2026", 12, 6, 18, 18], ["Dermatologia SP T17", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "29/05/2026", 12, 0, 12, 11], ["Endocrinologia SP T04", "SP", "M2 - Obesidade e Síndrome Metabólica", "29/05/2026", 24, 0, 24, 24], ["Oftalmologia SP T04", "SP", "M8 - Glaucoma I", "29/05/2026", 24, 0, 24, 6], ["Tricologia SP T01", "SP", "M5 - Outras alopecias / Tricologia e Endocrinologia", "29/05/2026", 18, 3, 21, 21], ["Oftalmologia BSB T01", "BSB", "M9 - Retina e Vítreo I", "29/05/2026", 24, 0, 24, 16], ["Dermatologia CPS T09", "CPS", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "30/05/2026", 0, 0, 0, 0], ["Neuropediatria CPS T03", "CPS", "M3 - Epilepsias na Infância", "30/05/2026", 12, 6, 18, 18], ["Oftalmologia CPS T01", "CPS", "M21 - Úvea, Tumor e Neuroftalmo II", "30/05/2026", 24, 1, 25, 25], ["Dermatologia SP T10", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "30/05/2026", 12, 16, 28, 28], ["Dermatologia SP T17", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "30/05/2026", 12, 0, 12, 12], ["Oftalmologia SP T04", "SP", "M8 - Glaucoma I", "30/05/2026", 24, 0, 24, 9], ["Tricologia SP T01", "SP", "M5 - Outras alopecias / Tricologia e Endocrinologia", "30/05/2026", 18, 3, 21, 21], ["Oftalmologia BSB T01", "BSB", "M9 - Retina e Vítreo I", "30/05/2026", 24, 0, 24, 15], ["Dermatologia CPS T05", "CPS", "M4 - Farmacologia Dermatológica e Estética", "01/06/2026", 39, 8, 47, 47], ["Pediatria CPS T03", "CPS", "M8 - Cirurgia Pediátrica e Hematologia/Oncologia", "01/06/2026", 24, 2, 26, 26], ["Dermatologia SP T07", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "01/06/2026", 12, 0, 12, 12], ["Endocrinologia SP T03", "SP", "M4 - Diabetes tipo 1, bomba de insulina", "01/06/2026", 24, 1, 25, 25], ["Oftalmologia SP T03", "SP", "M11 - Oftalmologia cirúrgica I", "01/06/2026", 0, 0, 0, 0], ["Dermatologia CPS T05", "CPS", "M4 - Farmacologia Dermatológica e Estética", "02/06/2026", 39, 0, 39, 39], ["Pediatria CPS T03", "CPS", "M8 - Cirurgia Pediátrica e Hematologia/Oncologia", "02/06/2026", 24, 10, 34, 34], ["Dermatologia SP T07", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "02/06/2026", 12, 11, 23, 23], ["Endocrinologia SP T03", "SP", "M4 - Diabetes tipo 1, bomba de insulina", "02/06/2026", 24, 0, 24, 22], ["Oftalmologia SP T03", "SP", "M11 - Oftalmologia cirúrgica I", "02/06/2026", 0, 0, 0, 0], ["Dermatologia CPS T05", "CPS", "M4 - Farmacologia Dermatológica e Estética", "03/06/2026", 39, 0, 39, 29], ["Dermatologia SP T07", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "03/06/2026", 12, 6, 18, 18], ["Endocrinologia SP T03", "SP", "M4 - Diabetes tipo 1, bomba de insulina", "03/06/2026", 24, 0, 24, 21], ["Oftalmologia SP T03", "SP", "M11 - Oftalmologia cirúrgica I", "03/06/2026", 0, 0, 0, 0], ["Endocrinologia ONL T01", "ONL", "M11 - Hipófise e Hipotálamo: Patologias e Terapêutica", "03/06/2026", 8, 7, 15, 15], ["Oftalmologia CPS T02", "CPS", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "08/06/2026", 24, 6, 30, 30], ["Psiquiatria CPS T02", "CPS", "M13 - Transtornos da personalidade", "08/06/2026", 24, 5, 29, 29], ["Dermatologia Cirurgica SP T01", "SP", "M5 - Tratamento de unha encravada", "08/06/2026", 12, 9, 21, 21], ["Dermatologia SP T04", "SP", "M18 - Estética Genital Feminina", "08/06/2026", 12, 2, 14, 14], ["Dermatologia SP T11", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "08/06/2026", 12, 7, 19, 19], ["Dermatologia SP T14", "SP", "M4 - Farmacologia Dermatológica e Estética", "08/06/2026", 39, 15, 54, 56], ["Oftalmologia CPS T02", "CPS", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "09/06/2026", 24, 5, 29, 29], ["Psiquiatria CPS T02", "CPS", "M13 - Transtornos da personalidade", "09/06/2026", 24, 0, 24, 23], ["Dermatologia Cirurgica SP T01", "SP", "M5 - Tratamento de unha encravada", "09/06/2026", 12, 10, 22, 22], ["Dermatologia SP T04", "SP", "M18 - Estética Genital Feminina", "09/06/2026", 12, 5, 17, 17], ["Dermatologia SP T11", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "09/06/2026", 12, 10, 22, 22], ["Dermatologia SP T14", "SP", "M4 - Farmacologia Dermatológica e Estética", "09/06/2026", 39, 7, 46, 46], ["Oftalmologia CPS T02", "CPS", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "10/06/2026", 24, 2, 26, 26], ["Psiquiatria CPS T02", "CPS", "M13 - Transtornos da personalidade", "10/06/2026", 24, 8, 32, 32], ["Psiquiatria CPS T04", "CPS", "M4 - Transtornos de ansiedade I", "10/06/2026", 24, 9, 33, 33], ["Dermatologia Cirurgica SP T01", "SP", "M5 - Tratamento de unha encravada", "10/06/2026", 12, 11, 23, 23], ["Dermatologia SP T04", "SP", "M18 - Estética Genital Feminina", "10/06/2026", 12, 3, 15, 15], ["Dermatologia SP T11", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "10/06/2026", 12, 6, 18, 18], ["Dermatologia SP T14", "SP", "M4 - Farmacologia Dermatológica e Estética", "10/06/2026", 39, 11, 50, 50], ["Psiquiatria ONL T01", "ONL", "M11 - Emergências Psiquiátricas II", "10/06/2026", 8, 14, 22, 22], ["Dermatologia CPS T04", "CPS", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "11/06/2026", 24, 0, 24, 18], ["Dermatologia CPS T07", "CPS", "M4 - Farmacologia Dermatológica e Estética", "11/06/2026", 39, 0, 39, 31], ["Endocrinologia CPS T01", "CPS", "M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)", "11/06/2026", 24, 0, 24, 24], ["Dermatologia SP T05", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "11/06/2026", 12, 2, 14, 15], ["Dermatologia SP T09", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "11/06/2026", 24, 0, 24, 22], ["Dermatologia SP T13", "SP", "M4 - Farmacologia Dermatológica e Estética", "11/06/2026", 39, 0, 39, 30], ["Psiquiatria SP T03", "SP", "M4 - Transtornos do humor II", "11/06/2026", 24, 7, 31, 31], ["Dermatologia BSB T02", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "11/06/2026", 12, 1, 13, 16], ["Psiquiatria ONL T03", "ONL", "M5 - Transtornos Relacionados ao uso de Substâncias", "11/06/2026", 8, 16, 24, 24], ["Dermatologia CPS T04", "CPS", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "12/06/2026", 24, 0, 24, 22], ["Dermatologia CPS T07", "CPS", "M4 - Farmacologia Dermatológica e Estética", "12/06/2026", 39, 0, 39, 27], ["Endocrinologia CPS T01", "CPS", "M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)", "12/06/2026", 24, 0, 24, 24], ["Dermatologia SP T05", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "12/06/2026", 12, 1, 13, 15], ["Dermatologia SP T09", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "12/06/2026", 24, 4, 28, 28], ["Dermatologia SP T13", "SP", "M4 - Farmacologia Dermatológica e Estética", "12/06/2026", 39, 0, 39, 27], ["Psiquiatria SP T03", "SP", "M4 - Transtornos do humor II", "12/06/2026", 24, 9, 33, 33], ["Dermatologia BSB T02", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "12/06/2026", 12, 0, 12, 12], ["Dermatologia CPS T04", "CPS", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "13/06/2026", 24, 0, 24, 24], ["Dermatologia CPS T07", "CPS", "M4 - Farmacologia Dermatológica e Estética", "13/06/2026", 39, 0, 39, 22], ["Endocrinologia CPS T01", "CPS", "M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)", "13/06/2026", 24, 2, 26, 26], ["Dermatologia SP T05", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "13/06/2026", 12, 6, 18, 18], ["Dermatologia SP T09", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "13/06/2026", 24, 13, 37, 37], ["Dermatologia SP T13", "SP", "M4 - Farmacologia Dermatológica e Estética", "13/06/2026", 39, 0, 39, 37], ["Psiquiatria Infantil SP T01", "SP", "M5 - Transtornos do neurodesenvolvimento II - Transtorno de déficit de atenção e hiperatividade (TDAH)", "13/06/2026", 12, 6, 18, 18], ["Psiquiatria SP T03", "SP", "M4 - Transtornos do humor II", "13/06/2026", 24, 9, 33, 34], ["Dermatologia BSB T02", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "13/06/2026", 12, 0, 12, 12], ["Dermatologia CPS T03", "CPS", "M14 - Preenchimento Glúteo", "15/06/2026", 12, 5, 17, 17], ["Endocrinologia CPS T02", "CPS", "M7 - Urgências em diabetes", "15/06/2026", 24, 11, 35, 36], ["Pediatria CPS T04", "CPS", "M5 - Neonatologia", "15/06/2026", 24, 1, 25, 25], ["Dermatologia SP T08", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "15/06/2026", 12, 9, 21, 21], ["Dermatologia SP T18", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "15/06/2026", 12, 14, 26, 26], ["Endocrinologia SP T02", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "15/06/2026", 24, 3, 27, 27], ["Oftalmologia SP T06", "SP", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "15/06/2026", 24, 7, 31, 31], ["Dermatologia BSB T03", "BSB", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "15/06/2026", 39, 7, 46, 46], ["Dermatologia CPS T03", "CPS", "M14 - Preenchimento Glúteo", "16/06/2026", 12, 5, 17, 17], ["Endocrinologia CPS T02", "CPS", "M7 - Urgências em diabetes", "16/06/2026", 24, 4, 28, 28], ["Pediatria CPS T04", "CPS", "M5 - Neonatologia", "16/06/2026", 24, 0, 24, 23], ["Dermatologia SP T08", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "16/06/2026", 12, 2, 14, 14], ["Dermatologia SP T18", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "16/06/2026", 12, 2, 14, 14], ["Endocrinologia SP T02", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "16/06/2026", 24, 5, 29, 29], ["Oftalmologia SP T06", "SP", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "16/06/2026", 24, 0, 24, 21], ["Dermatologia BSB T03", "BSB", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "16/06/2026", 39, 0, 39, 38], ["Dermatologia CPS T03", "CPS", "M14 - Preenchimento Glúteo", "17/06/2026", 12, 4, 16, 16], ["Endocrinologia CPS T02", "CPS", "M7 - Urgências em diabetes", "17/06/2026", 24, 8, 32, 32], ["Dermatologia SP T08", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "17/06/2026", 12, 5, 17, 17], ["Dermatologia SP T18", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "17/06/2026", 12, 3, 15, 15], ["Endocrinologia SP T02", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "17/06/2026", 24, 0, 24, 15], ["Oftalmologia SP T06", "SP", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "17/06/2026", 24, 2, 26, 26], ["Dermatologia BSB T03", "BSB", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "17/06/2026", 39, 0, 39, 33], ["Endocrinologia ONL T02", "ONL", "M8 - Osteometabolismo", "17/06/2026", 8, 5, 13, 15], ["Dermatologia CPS T02", "CPS", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "18/06/2026", 0, 0, 0, 0], ["Pediatria CPS T05", "CPS", "M5 - Neonatologia", "18/06/2026", 24, 1, 25, 25], ["Dermatologia SP T06", "SP", "M14 - Preenchimento Glúteo", "18/06/2026", 12, 1, 13, 13], ["Dermatologia SP T15", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "18/06/2026", 12, 2, 14, 14], ["Dermatologia SP T21", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "18/06/2026", 12, 3, 15, 15], ["Nutrologia SP T01", "SP", "M12 - Nutrologia Aplicada à Cirurgia Bariátrica", "18/06/2026", 12, 5, 17, 17], ["Oftalmologia SP T02", "SP", "M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II", "18/06/2026", 24, 0, 24, 22], ["Endocrinologia BSB T01", "BSB", "M11 - Hipopituitarismo", "18/06/2026", 15, 0, 15, 12], ["Endocrinologia ONL T03", "ONL", "M8 - Osteometabolismo", "18/06/2026", 8, 16, 24, 24], ["Endocrinologia ONL T04", "ONL", "M3 - Diabetes Mellitus", "18/06/2026", 8, 16, 24, 24], ["Dermatologia CPS T02", "CPS", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "19/06/2026", 0, 0, 0, 0], ["Pediatria CPS T05", "CPS", "M5 - Neonatologia", "19/06/2026", 24, 0, 24, 14], ["Dermatologia SP T06", "SP", "M14 - Preenchimento Glúteo", "19/06/2026", 12, 1, 13, 13], ["Dermatologia SP T15", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "19/06/2026", 12, 5, 17, 17], ["Dermatologia SP T21", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "19/06/2026", 12, 6, 18, 18], ["Oftalmologia SP T02", "SP", "M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II", "19/06/2026", 24, 0, 24, 21], ["Endocrinologia BSB T01", "BSB", "M11 - Hipopituitarismo", "19/06/2026", 15, 0, 15, 12], ["Dermatologia CPS T02", "CPS", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "20/06/2026", 0, 0, 0, 0], ["Neuropediatria CPS T01", "CPS", "M7 - TEA e diferenciais", "20/06/2026", 12, 0, 12, 7], ["Dermatologia SP T06", "SP", "M14 - Preenchimento Glúteo", "20/06/2026", 12, 3, 15, 15], ["Dermatologia SP T15", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "20/06/2026", 12, 2, 14, 14], ["Dermatologia SP T21", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "20/06/2026", 12, 4, 16, 16], ["Oftalmologia SP T02", "SP", "M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II", "20/06/2026", 24, 1, 25, 25], ["Endocrinologia BSB T01", "BSB", "M11 - Hipopituitarismo", "20/06/2026", 15, 0, 15, 12], ["Dermatologia One SP T01", "SP", "M3 - Ácido Hialurônico I – preenchimento básico, MD Codes, proporções faciais", "21/06/2026", 12, 4, 16, 16], ["Dermatologia CPS T06", "CPS", "M4 - Farmacologia Dermatológica e Estética", "22/06/2026", 39, 8, 47, 33], ["Dermatologia SP T20", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "22/06/2026", 0, 0, 0, 0], ["Oftalmologia SP T05", "SP", "M5 - Estrabismo I", "22/06/2026", 24, 5, 29, 23], ["Psiquiatria SP T02", "SP", "M8 - Compreensão do conteúdo e discussão de casos clínicos I", "22/06/2026", 24, 5, 29, 19], ["Tricologia SP T02", "SP", "M2 - Nutrição e Suplementação em Tricologia", "22/06/2026", 18, 6, 24, 15], ["Dermatologia CPS T06", "CPS", "M4 - Farmacologia Dermatológica e Estética", "23/06/2026", 39, 8, 47, 36], ["Endocrinologia CPS T03", "CPS", "M3 - Diabetes Mellitus Tipo 1 e Tipo 2", "23/06/2026", 12, 13, 25, 25], ["Dermatologia SP T20", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "23/06/2026", 0, 0, 0, 0], ["Oftalmologia SP T05", "SP", "M5 - Estrabismo I", "23/06/2026", 24, 5, 29, 14], ["Psiquiatria SP T02", "SP", "M8 - Compreensão do conteúdo e discussão de casos clínicos I", "23/06/2026", 24, 5, 29, 21], ["Tricologia SP T02", "SP", "M2 - Nutrição e Suplementação em Tricologia", "23/06/2026", 18, 8, 26, 18], ["Dermatologia CPS T06", "CPS", "M4 - Farmacologia Dermatológica e Estética", "24/06/2026", 39, 7, 46, 32], ["Endocrinologia CPS T03", "CPS", "M3 - Diabetes Mellitus Tipo 1 e Tipo 2", "24/06/2026", 12, 13, 25, 25], ["Dermatologia SP T20", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "24/06/2026", 0, 0, 0, 0], ["Oftalmologia SP T05", "SP", "M5 - Estrabismo I", "24/06/2026", 24, 4, 28, 20], ["Psiquiatria SP T02", "SP", "M8 - Compreensão do conteúdo e discussão de casos clínicos I", "24/06/2026", 24, 4, 28, 21], ["Tricologia SP T02", "SP", "M2 - Nutrição e Suplementação em Tricologia", "24/06/2026", 18, 10, 28, 23], ["Psiquiatria BSB T01", "BSB", "M3 - Transtornos do humor II – Transtorno afetivo bipolar", "24/06/2026", 18, 8, 26, 18], ["Endocrinologia ONL T05", "ONL", "M3 - Diabetes Mellitus", "24/06/2026", 8, 20, 28, 21], ["Dermatologia CPS T09", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "25/06/2026", 39, 24, 63, 52], ["Oftalmologia CPS T01", "CPS", "M22 - Oftalmologia cirúrgica II", "25/06/2026", 0, 0, 0, 0], ["Dermatologia SP T10", "SP", "M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)", "25/06/2026", 24, 9, 33, 32], ["Dermatologia SP T17", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "25/06/2026", 12, 2, 14, 13], ["Dermatologia SP T19", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "25/06/2026", 12, 4, 16, 16], ["Endocrinologia SP T04", "SP", "M3 - Diabetes Mellitus Tipo 1 e Tipo 2", "25/06/2026", 24, 7, 31, 27], ["Oftalmologia SP T04", "SP", "M9 - Retina e Vítreo I", "25/06/2026", 24, 5, 29, 28], ["Tricologia SP T01", "SP", "M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo", "25/06/2026", 18, 12, 30, 30], ["Dermatologia BSB T01", "BSB", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "25/06/2026", 12, 3, 15, 2], ["Psiquiatria ONL T04", "ONL", "M4 - Espectro da Esquizofrenia e Outros Transtornos Psicóticos", "25/06/2026", 8, 19, 27, 20], ["Dermatologia CPS T09", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "26/06/2026", 39, 19, 58, 51], ["Oftalmologia CPS T01", "CPS", "M22 - Oftalmologia cirúrgica II", "26/06/2026", 0, 0, 0, 0], ["Dermatologia SP T10", "SP", "M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)", "26/06/2026", 24, 5, 29, 29], ["Dermatologia SP T17", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "26/06/2026", 12, 2, 14, 12], ["Dermatologia SP T19", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "26/06/2026", 12, 1, 13, 14], ["Endocrinologia SP T04", "SP", "M3 - Diabetes Mellitus Tipo 1 e Tipo 2", "26/06/2026", 24, 10, 34, 30], ["Oftalmologia SP T04", "SP", "M9 - Retina e Vítreo I", "26/06/2026", 24, 5, 29, 29], ["Tricologia SP T01", "SP", "M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo", "26/06/2026", 18, 7, 25, 25], ["Dermatologia BSB T01", "BSB", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "26/06/2026", 12, 2, 14, 3], ["Dermatologia CPS T09", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "27/06/2026", 39, 13, 52, 50], ["Neuropediatria CPS T02", "CPS", "M5 - Transtornos do Sono, Traumatismo Cranioencefálico, COMA e Morte Encefálica", "27/06/2026", 12, 4, 16, 11], ["Neuropediatria CPS T03", "CPS", "M4 - Neurologia da Prematuridade e das Encefalopatias Neonatais", "27/06/2026", 12, 5, 17, 11], ["Oftalmologia CPS T01", "CPS", "M22 - Oftalmologia cirúrgica II", "27/06/2026", 0, 0, 0, 0], ["Dermatologia SP T10", "SP", "M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)", "27/06/2026", 24, 8, 32, 31], ["Dermatologia SP T17", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "27/06/2026", 12, 1, 13, 13], ["Dermatologia SP T19", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "27/06/2026", 12, 8, 20, 20], ["Oftalmologia SP T04", "SP", "M9 - Retina e Vítreo I", "27/06/2026", 24, 4, 28, 27], ["Psiquiatria SP T04", "SP", "M4 - Transtornos de ansiedade I", "27/06/2026", 24, 13, 37, 34], ["Tricologia SP T01", "SP", "M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo", "27/06/2026", 18, 12, 30, 29], ["Dermatologia BSB T01", "BSB", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "27/06/2026", 12, 2, 14, 3], ["Dermatologia CPS T05", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "29/06/2026", 39, 21, 60, 60], ["Dermatologia CPS T08", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "29/06/2026", 12, 10, 22, 22], ["Pediatria CPS T03", "CPS", "M7 - Saúde Mental e Adolescência", "29/06/2026", 24, 8, 32, 32], ["Dermatologia SP T07", "SP", "M14 - Preenchimento Glúteo", "29/06/2026", 12, 8, 20, 20], ["Endocrinologia SP T03", "SP", "M5 - Diabetes tipo 2", "29/06/2026", 24, 7, 31, 26], ["Oftalmologia SP T03", "SP", "M12 - Introdução à Oftalmologia II", "29/06/2026", 24, 13, 37, 37], ["Dermatologia CPS T05", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "30/06/2026", 39, 11, 50, 50], ["Dermatologia CPS T08", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "30/06/2026", 12, 5, 17, 17], ["Pediatria CPS T03", "CPS", "M7 - Saúde Mental e Adolescência", "30/06/2026", 24, 7, 31, 31], ["Dermatologia SP T07", "SP", "M14 - Preenchimento Glúteo", "30/06/2026", 12, 1, 13, 13], ["Endocrinologia SP T03", "SP", "M5 - Diabetes tipo 2", "30/06/2026", 24, 6, 30, 26], ["Oftalmologia SP T03", "SP", "M12 - Introdução à Oftalmologia II", "30/06/2026", 24, 7, 31, 31], ["Dermatologia CPS T05", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "01/07/2026", 39, 12, 51, 51], ["Dermatologia CPS T08", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "01/07/2026", 12, 3, 15, 15], ["Dermatologia SP T07", "SP", "M14 - Preenchimento Glúteo", "01/07/2026", 12, 3, 15, 15], ["Endocrinologia SP T03", "SP", "M5 - Diabetes tipo 2", "01/07/2026", 24, 6, 30, 17], ["Oftalmologia SP T03", "SP", "M12 - Introdução à Oftalmologia II", "01/07/2026", 24, 8, 32, 32], ["Endocrinologia ONL T07", "ONL", "M2 - Abordagem Clínica em Endocrinologia", "01/07/2026", 8, 18, 26, 10], ["Dermatologia CPS T07", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "02/07/2026", 12, 6, 18, 18], ["Psiquiatria CPS T03", "CPS", "M4 - Transtornos do humor II", "02/07/2026", 24, 17, 41, 41], ["Dermatologia SP T05", "SP", "M17 - Tratamentos Capilares", "02/07/2026", 18, 6, 24, 24], ["Dermatologia SP T09", "SP", "M12 - Peelings Químicos", "02/07/2026", 24, 14, 38, 38], ["Dermatologia SP T12", "SP", "M4 - Farmacologia Dermatológica e Estética", "02/07/2026", 39, 8, 47, 38], ["Dermatologia CPS T07", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "03/07/2026", 12, 2, 14, 14], ["Psiquiatria CPS T03", "CPS", "M4 - Transtornos do humor II", "03/07/2026", 24, 30, 54, 54], ["Dermatologia SP T05", "SP", "M17 - Tratamentos Capilares", "03/07/2026", 18, 3, 21, 21], ["Dermatologia SP T09", "SP", "M12 - Peelings Químicos", "03/07/2026", 24, 10, 34, 35], ["Dermatologia SP T12", "SP", "M4 - Farmacologia Dermatológica e Estética", "03/07/2026", 39, 8, 47, 29], ["Dermatologia CPS T07", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "04/07/2026", 12, 3, 15, 15], ["Neuropediatria CPS T04", "CPS", "M1 - Neurodesenvolvimento e exame neurólogico", "04/07/2026", 12, 11, 23, 23], ["Psiquiatria CPS T03", "CPS", "M4 - Transtornos do humor II", "04/07/2026", 24, 33, 57, 57], ["Dermatologia SP T05", "SP", "M17 - Tratamentos Capilares", "04/07/2026", 18, 4, 22, 22], ["Dermatologia SP T09", "SP", "M12 - Peelings Químicos", "04/07/2026", 24, 9, 33, 33], ["Dermatologia SP T12", "SP", "M4 - Farmacologia Dermatológica e Estética", "04/07/2026", 39, 7, 46, 22], ["Oftalmologia CPS T02", "CPS", "M5 - Estrabismo I", "06/07/2026", 24, 11, 35, 35], ["Psiquiatria CPS T02", "CPS", "M14 - Transtornos somatoformes, dissociativos e conversivos", "06/07/2026", 24, 13, 37, 37], ["Dermatologia Cirurgica SP T01", "SP", "M6 - Tratamento de cicatrizes", "06/07/2026", 12, 7, 19, 17], ["Dermatologia SP T04", "SP", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "06/07/2026", 12, 9, 21, 21], ["Dermatologia SP T14", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "06/07/2026", 12, 4, 16, 16], ["Oftalmologia CPS T02", "CPS", "M5 - Estrabismo I", "07/07/2026", 24, 0, 24, 19], ["Psiquiatria CPS T02", "CPS", "M14 - Transtornos somatoformes, dissociativos e conversivos", "07/07/2026", 24, 7, 31, 31], ["Dermatologia Cirurgica SP T01", "SP", "M6 - Tratamento de cicatrizes", "07/07/2026", 12, 2, 14, 12], ["Dermatologia SP T04", "SP", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "07/07/2026", 12, 6, 18, 18], ["Dermatologia SP T14", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "07/07/2026", 12, 9, 21, 21], ["Oftalmologia CPS T02", "CPS", "M5 - Estrabismo I", "08/07/2026", 24, 0, 24, 10], ["Psiquiatria CPS T02", "CPS", "M14 - Transtornos somatoformes, dissociativos e conversivos", "08/07/2026", 24, 9, 33, 33], ["Psiquiatria CPS T04", "CPS", "M5 - Transtornos relacionados a traumas e estressores", "08/07/2026", 24, 18, 42, 41], ["Dermatologia Cirurgica SP T01", "SP", "M6 - Tratamento de cicatrizes", "08/07/2026", 12, 2, 14, 12], ["Dermatologia SP T04", "SP", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "08/07/2026", 12, 5, 17, 17], ["Dermatologia SP T14", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "08/07/2026", 12, 4, 16, 16], ["Dermatologia SP T13", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "09/07/2026", 12, 4, 16, 16], ["Dermatologia SP T16", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "09/07/2026", 12, 2, 14, 8], ["Dermatologia SP T21", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "09/07/2026", 12, 2, 14, 9], ["Oftalmologia SP T02", "SP", "M15 - Plástica Ocular, Vias Lacrimais e Órbita II", "09/07/2026", 24, 5, 29, 21], ["Psiquiatria SP T03", "SP", "M5 - Transtornos de ansiedade I", "09/07/2026", 24, 13, 37, 38], ["Dermatologia BSB T01", "BSB", "M14 - Preenchimento Glúteo", "09/07/2026", 12, 2, 14, 3], ["Dermatologia BSB T02", "BSB", "M4 - Farmacologia Dermatológica e Estética", "09/07/2026", 39, 8, 47, 6], ["Oftalmologia BSB T01", "BSB", "M8 - Glaucoma I", "09/07/2026", 18, 1, 19, 11], ["Dermatologia SP T13", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "10/07/2026", 12, 4, 16, 16], ["Dermatologia SP T16", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "10/07/2026", 12, 2, 14, 1], ["Dermatologia SP T21", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "10/07/2026", 12, 2, 14, 3], ["Oftalmologia SP T02", "SP", "M15 - Plástica Ocular, Vias Lacrimais e Órbita II", "10/07/2026", 24, 5, 29, 7], ["Psiquiatria SP T03", "SP", "M5 - Transtornos de ansiedade I", "10/07/2026", 24, 21, 45, 45], ["Dermatologia BSB T01", "BSB", "M14 - Preenchimento Glúteo", "10/07/2026", 12, 1, 13, 1], ["Dermatologia BSB T02", "BSB", "M4 - Farmacologia Dermatológica e Estética", "10/07/2026", 39, 8, 47, 4], ["Oftalmologia BSB T01", "BSB", "M8 - Glaucoma I", "10/07/2026", 18, 1, 19, 8], ["Neuropediatria CPS T01", "CPS", "M8 - Transtornos do Processamento Sensorial e da Regulação Emocional; Cefaleia na Infância", "11/07/2026", 12, 10, 22, 20], ["Dermatologia SP T13", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "11/07/2026", 12, 2, 14, 14], ["Dermatologia SP T16", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "11/07/2026", 12, 1, 13, 4], ["Dermatologia SP T21", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "11/07/2026", 12, 1, 13, 4], ["Oftalmologia SP T02", "SP", "M15 - Plástica Ocular, Vias Lacrimais e Órbita II", "11/07/2026", 24, 4, 28, 5], ["Psiquiatria Infantil SP T01", "SP", "M6 - Transtornos do neurodesenvolvimento III - Transtorno do desenvolvimento intelectual (TDI), transtornos da comunicação, transtornos motores e transtornos específicos da aprendizagem", "11/07/2026", 12, 5, 17, 11], ["Psiquiatria SP T03", "SP", "M5 - Transtornos de ansiedade I", "11/07/2026", 24, 22, 46, 46], ["Dermatologia BSB T01", "BSB", "M14 - Preenchimento Glúteo", "11/07/2026", 12, 1, 13, 0], ["Dermatologia BSB T02", "BSB", "M4 - Farmacologia Dermatológica e Estética", "11/07/2026", 39, 7, 46, 4], ["Oftalmologia BSB T01", "BSB", "M8 - Glaucoma I", "11/07/2026", 18, 0, 18, 7], ["Dermatologia CPS T03", "CPS", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "13/07/2026", 12, 2, 14, 1], ["Endocrinologia CPS T02", "CPS", "M3 - Obesidade e síndrome metabólica", "13/07/2026", 24, 20, 44, 44], ["Dermatologia SP T08", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "13/07/2026", 24, 20, 44, 44], ["Dermatologia SP T11", "SP", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "13/07/2026", 39, 0, 39, 18], ["Oftalmologia SP T06", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "13/07/2026", 24, 5, 29, 3], ["Dermatologia BSB T03", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "13/07/2026", 12, 2, 14, 14], ["Dermatologia CPS T03", "CPS", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "14/07/2026", 12, 2, 14, 0], ["Endocrinologia CPS T02", "CPS", "M3 - Obesidade e síndrome metabólica", "14/07/2026", 24, 17, 41, 41], ["Dermatologia SP T08", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "14/07/2026", 24, 15, 39, 39], ["Dermatologia SP T11", "SP", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "14/07/2026", 39, 0, 39, 7], ["Oftalmologia SP T06", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "14/07/2026", 24, 5, 29, 0], ["Dermatologia BSB T03", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "14/07/2026", 12, 2, 14, 12], ["Dermatologia CPS T03", "CPS", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "15/07/2026", 12, 1, 13, 0], ["Endocrinologia CPS T02", "CPS", "M3 - Obesidade e síndrome metabólica", "15/07/2026", 24, 16, 40, 40], ["Dermatologia SP T08", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "15/07/2026", 24, 13, 37, 37], ["Dermatologia SP T11", "SP", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "15/07/2026", 39, 0, 39, 12], ["Oftalmologia SP T06", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "15/07/2026", 24, 4, 28, 3], ["Dermatologia BSB T03", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "15/07/2026", 12, 1, 13, 13], ["Psiquiatria ONL T05", "ONL", "M4 - Espectro da Esquizofrenia e Outros Transtornos Psicóticos", "15/07/2026", 8, 19, 27, 0], ["Endocrinologia CPS T01", "CPS", "M13 - Síndrome de Cushing", "16/07/2026", 24, 5, 29, 20], ["Pediatria CPS T05", "CPS", "M4 - Infectologia e Neurologia", "16/07/2026", 24, 7, 31, 23], ["Dermatologia SP T06", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "16/07/2026", 12, 2, 14, 0], ["Dermatologia SP T15", "SP", "M4 - Farmacologia Dermatológica e Estética", "16/07/2026", 39, 8, 47, 13], ["Dermatologia SP T19", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "16/07/2026", 12, 2, 14, 0], ["Endocrinologia SP T05", "SP", "M1 - Doenças da Tireoide", "16/07/2026", 24, 8, 32, 32], ["Endocrinologia BSB T01", "BSB", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "16/07/2026", 15, 15, 30, 27], ["Endocrinologia ONL T06", "ONL", "M5 - Obesidade", "16/07/2026", 8, 18, 26, 0], ["Psiquiatria ONL T02", "ONL", "M8 - Transtorno Obsessivo Compulsivo e Transtornos relacionados", "16/07/2026", 8, 19, 27, 0], ["Endocrinologia CPS T01", "CPS", "M13 - Síndrome de Cushing", "17/07/2026", 24, 5, 29, 18], ["Pediatria CPS T05", "CPS", "M4 - Infectologia e Neurologia", "17/07/2026", 24, 7, 31, 20], ["Dermatologia SP T06", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "17/07/2026", 12, 2, 14, 0], ["Dermatologia SP T15", "SP", "M4 - Farmacologia Dermatológica e Estética", "17/07/2026", 39, 8, 47, 6], ["Dermatologia SP T19", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "17/07/2026", 12, 2, 14, 0], ["Endocrinologia SP T05", "SP", "M1 - Doenças da Tireoide", "17/07/2026", 24, 7, 31, 31], ["Endocrinologia BSB T01", "BSB", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "17/07/2026", 15, 18, 33, 29], ["Endocrinologia CPS T01", "CPS", "M13 - Síndrome de Cushing", "18/07/2026", 24, 5, 29, 10], ["Neuropediatria CPS T02", "CPS", "M6 - Distúrbios de movimento e paralisia cerebral", "18/07/2026", 12, 10, 22, 20], ["Dermatologia SP T06", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "18/07/2026", 12, 1, 13, 1], ["Dermatologia SP T15", "SP", "M4 - Farmacologia Dermatológica e Estética", "18/07/2026", 39, 7, 46, 1], ["Dermatologia SP T19", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "18/07/2026", 12, 1, 13, 0], ["Endocrinologia BSB T01", "BSB", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "18/07/2026", 15, 13, 28, 25], ["Dermatologia One SP T01", "SP", "M4 - Dermatologia Clínica Inestética – melasma, acne, cicatriz, rosácea", "19/07/2026", 39, 16, 55, 55], ["Pediatria CPS T04", "CPS", "M4 - Infectologia e Neurologia", "20/07/2026", 24, 7, 31, 14], ["Dermatologia SP T20", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "20/07/2026", 39, 8, 47, 47], ["Endocrinologia SP T02", "SP", "M7 - Urgências em diabetes", "20/07/2026", 24, 7, 31, 13], ["Oftalmologia SP T05", "SP", "M6 - Córnea I", "20/07/2026", 24, 5, 29, 12], ["Tricologia SP T02", "SP", "M3 - Alopecias não cicatriciais, classificação e tratamento", "20/07/2026", 18, 7, 25, 25], ["Endocrinologia CPS T03", "CPS", "M4 - Interpretação de Exames Laboratoriais em Endocrinologia", "21/07/2026", 12, 39, 51, 51], ["Pediatria CPS T04", "CPS", "M4 - Infectologia e Neurologia", "21/07/2026", 24, 7, 31, 8], ["Dermatologia SP T20", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "21/07/2026", 39, 8, 47, 40], ["Endocrinologia SP T02", "SP", "M7 - Urgências em diabetes", "21/07/2026", 24, 6, 30, 2], ["Oftalmologia SP T05", "SP", "M6 - Córnea I", "21/07/2026", 24, 5, 29, 3], ["Tricologia SP T02", "SP", "M3 - Alopecias não cicatriciais, classificação e tratamento", "21/07/2026", 18, 7, 25, 25], ["Endocrinologia CPS T03", "CPS", "M4 - Interpretação de Exames Laboratoriais em Endocrinologia", "22/07/2026", 12, 31, 43, 43], ["Dermatologia SP T20", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "22/07/2026", 39, 7, 46, 38], ["Endocrinologia SP T02", "SP", "M7 - Urgências em diabetes", "22/07/2026", 24, 6, 30, 3], ["Oftalmologia SP T05", "SP", "M6 - Córnea I", "22/07/2026", 24, 4, 28, 3], ["Tricologia SP T02", "SP", "M3 - Alopecias não cicatriciais, classificação e tratamento", "22/07/2026", 18, 6, 24, 24], ["Endocrinologia ONL T01", "ONL", "M12 - Endocrinologia do Crescimento e Desenvolvimento", "22/07/2026", 8, 18, 26, 0], ["Dermatologia CPS T04", "CPS", "M12 - Peelings Químicos", "23/07/2026", 24, 10, 34, 31], ["Dermatologia CPS T09", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "23/07/2026", 12, 6, 18, 18], ["Dermatologia SP T17", "SP", "M4 - Farmacologia Dermatológica e Estética", "23/07/2026", 39, 8, 47, 1], ["Endocrinologia SP T04", "SP", "M4 - Interpretação de Exames Laboratoriais em Endocrinologia", "23/07/2026", 24, 11, 35, 35], ["Nutrologia SP T01", "SP", "M1 - Nutrologia Esportiva: Performance e Composição Corporal", "23/07/2026", 12, 7, 19, 19], ["Oftalmologia SP T04", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "23/07/2026", 24, 5, 29, 14], ["Dermatologia CPS T04", "CPS", "M12 - Peelings Químicos", "24/07/2026", 24, 10, 34, 30], ["Dermatologia CPS T09", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "24/07/2026", 12, 5, 17, 17], ["Dermatologia SP T17", "SP", "M4 - Farmacologia Dermatológica e Estética", "24/07/2026", 39, 8, 47, 0], ["Endocrinologia SP T04", "SP", "M4 - Interpretação de Exames Laboratoriais em Endocrinologia", "24/07/2026", 24, 12, 36, 36], ["Oftalmologia SP T04", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "24/07/2026", 24, 5, 29, 0], ["Dermatologia CPS T04", "CPS", "M12 - Peelings Químicos", "25/07/2026", 24, 7, 31, 30], ["Dermatologia CPS T09", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "25/07/2026", 12, 1, 13, 13], ["Neuropediatria CPS T03", "CPS", "M5 - Transtornos do Sono, Traumatismo Cranioencefálico, COMA e Morte Encefálica", "25/07/2026", 12, 13, 25, 24], ["Dermatologia SP T17", "SP", "M4 - Farmacologia Dermatológica e Estética", "25/07/2026", 39, 7, 46, 0], ["Oftalmologia SP T04", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "25/07/2026", 24, 4, 28, 3], ["Psiquiatria SP T04", "SP", "M5 - Transtornos relacionados a traumas e estressores", "25/07/2026", 24, 5, 29, 20], ["Dermatologia CPS T06", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "27/07/2026", 12, 3, 15, 13], ["Pediatria CPS T06", "CPS", "M1 - Pneumologia", "27/07/2026", 24, 7, 31, 3], ["Dermatologia SP T18", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "27/07/2026", 12, 2, 14, 0], ["Psiquiatria SP T02", "SP", "M9 - Transtorno por uso de substâncias I", "27/07/2026", 24, 5, 29, 4], ["Dermatologia CPS T06", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "28/07/2026", 12, 2, 14, 13], ["Pediatria CPS T06", "CPS", "M1 - Pneumologia", "28/07/2026", 24, 7, 31, 0], ["Dermatologia SP T18", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "28/07/2026", 12, 2, 14, 0], ["Psiquiatria SP T02", "SP", "M9 - Transtorno por uso de substâncias I", "28/07/2026", 24, 5, 29, 2], ["Dermatologia CPS T06", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "29/07/2026", 12, 1, 13, 13], ["Dermatologia SP T18", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "29/07/2026", 12, 1, 13, 0], ["Psiquiatria SP T02", "SP", "M9 - Transtorno por uso de substâncias I", "29/07/2026", 24, 4, 28, 4], ["Psiquiatria BSB T01", "BSB", "M4 - Transtornos de ansiedade I", "29/07/2026", 18, 6, 24, 24], ["Psiquiatria ONL T01", "ONL", "M12 - Saúde Mental em Populações Específicas", "29/07/2026", 8, 19, 27, 0], ["Psiquiatria CPS T03", "CPS", "M5 - Transtornos de ansiedade I", "30/07/2026", 24, 6, 30, 24], ["Dermatologia SP T10", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "30/07/2026", 12, 3, 15, 14], ["Dermatologia SP T12", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "30/07/2026", 12, 3, 15, 15], ["Dermatologia SP T22", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "30/07/2026", 0, 0, 0, 0], ["Tricologia SP T01", "SP", "M7 - Tratamentos capilares com MMP, microagulhamento e lasers capilares e ledterapia aplicados á tricologia\"", "30/07/2026", 18, 4, 22, 21], ["Oftalmologia BSB T01", "BSB", "M10 - Úvea, Tumor e Neuroftalmo I", "30/07/2026", 18, 1, 19, 11], ["Psiquiatria CPS T03", "CPS", "M5 - Transtornos de ansiedade I", "31/07/2026", 24, 6, 30, 22], ["Dermatologia SP T10", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "31/07/2026", 12, 2, 14, 11], ["Dermatologia SP T12", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "31/07/2026", 12, 3, 15, 15], ["Dermatologia SP T22", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "31/07/2026", 0, 0, 0, 0], ["Tricologia SP T01", "SP", "M7 - Tratamentos capilares com MMP, microagulhamento e lasers capilares e ledterapia aplicados á tricologia\"", "31/07/2026", 18, 6, 24, 24], ["Oftalmologia BSB T01", "BSB", "M10 - Úvea, Tumor e Neuroftalmo I", "31/07/2026", 18, 0, 18, 3], ["Neuropediatria CPS T04", "CPS", "M2 - TDAH e diferenciais", "01/08/2026", 12, 6, 18, 18], ["Psiquiatria CPS T03", "CPS", "M5 - Transtornos de ansiedade I", "01/08/2026", 24, 5, 29, 25], ["Dermatologia SP T10", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "01/08/2026", 12, 1, 13, 13], ["Dermatologia SP T12", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "01/08/2026", 12, 3, 15, 15], ["Dermatologia SP T22", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "01/08/2026", 0, 0, 0, 0], ["Tricologia SP T01", "SP", "M7 - Tratamentos capilares com MMP, microagulhamento e lasers capilares e ledterapia aplicados á tricologia\"", "01/08/2026", 18, 4, 22, 17], ["Oftalmologia BSB T01", "BSB", "M10 - Úvea, Tumor e Neuroftalmo I", "01/08/2026", 18, 0, 18, 3], ["Dermatologia CPS T05", "CPS", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "03/08/2026", 39, 8, 47, 12], ["Dermatologia CPS T08", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "03/08/2026", 12, 2, 14, 12], ["Oftalmologia CPS T02", "CPS", "M6 - Córnea I", "03/08/2026", 24, 6, 30, 12], ["Dermatologia SP T07", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "03/08/2026", 12, 2, 14, 0], ["Endocrinologia SP T03", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "03/08/2026", 24, 7, 31, 0], ["Oftalmologia SP T03", "SP", "M13 - Refração e Visão Subnormal II", "03/08/2026", 24, 5, 29, 29], ["Dermatologia CPS T05", "CPS", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "04/08/2026", 39, 8, 47, 4], ["Dermatologia CPS T08", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "04/08/2026", 12, 2, 14, 2], ["Oftalmologia CPS T02", "CPS", "M6 - Córnea I", "04/08/2026", 24, 5, 29, 3], ["Dermatologia SP T07", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "04/08/2026", 12, 2, 14, 0], ["Endocrinologia SP T03", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "04/08/2026", 24, 6, 30, 0], ["Oftalmologia SP T03", "SP", "M13 - Refração e Visão Subnormal II", "04/08/2026", 24, 5, 29, 24], ["Dermatologia CPS T05", "CPS", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "05/08/2026", 39, 7, 46, 0], ["Dermatologia CPS T08", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "05/08/2026", 12, 1, 13, 2], ["Oftalmologia CPS T02", "CPS", "M6 - Córnea I", "05/08/2026", 24, 5, 29, 0], ["Psiquiatria CPS T04", "CPS", "M6 - Espectro da esquizofrenia e outros transtornos psicóticos", "05/08/2026", 24, 6, 30, 5], ["Dermatologia SP T07", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "05/08/2026", 12, 1, 13, 0], ["Endocrinologia SP T03", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "05/08/2026", 24, 6, 30, 0], ["Oftalmologia SP T03", "SP", "M13 - Refração e Visão Subnormal II", "05/08/2026", 24, 4, 28, 25], ["Endocrinologia ONL T07", "ONL", "M3 - Diabetes Mellitus", "05/08/2026", 8, 18, 26, 0], ["Dermatologia CPS T04", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "06/08/2026", 12, 3, 15, 6], ["Dermatologia CPS T07", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "06/08/2026", 39, 8, 47, 24], ["Dermatologia SP T05", "SP", "M18 - Estética Genital Feminina", "06/08/2026", 12, 3, 15, 14], ["Dermatologia SP T09", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "06/08/2026", 12, 3, 15, 10], ["Psiquiatria SP T03", "SP", "M6 - Transtornos relacionados a traumas e estressores", "06/08/2026", 24, 5, 29, 8], ["Dermatologia BSB T01", "BSB", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "06/08/2026", 12, 2, 14, 0], ["Dermatologia BSB T02", "BSB", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "06/08/2026", 12, 2, 14, 5], ["Endocrinologia ONL T04", "ONL", "M11 - Hipófise e Hipotálamo: Patologias e Terapêutica", "06/08/2026", 8, 18, 26, 0], ["Dermatologia CPS T04", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "07/08/2026", 12, 2, 14, 2], ["Dermatologia CPS T07", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "07/08/2026", 39, 8, 47, 5], ["Dermatologia SP T05", "SP", "M18 - Estética Genital Feminina", "07/08/2026", 12, 2, 14, 10], ["Dermatologia SP T09", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "07/08/2026", 12, 2, 14, 3], ["Psiquiatria SP T03", "SP", "M6 - Transtornos relacionados a traumas e estressores", "07/08/2026", 24, 5, 29, 3], ["Dermatologia BSB T01", "BSB", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "07/08/2026", 12, 2, 14, 0], ["Dermatologia BSB T02", "BSB", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "07/08/2026", 12, 2, 14, 0], ["Dermatologia CPS T04", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "08/08/2026", 12, 2, 14, 4], ["Dermatologia CPS T07", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "08/08/2026", 39, 7, 46, 4], ["Dermatologia SP T05", "SP", "M18 - Estética Genital Feminina", "08/08/2026", 12, 1, 13, 10], ["Dermatologia SP T09", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "08/08/2026", 12, 2, 14, 7], ["Psiquiatria Infantil SP T01", "SP", "M7 - Transtornos disruptivos - transtorno de oposição desafiante (TOD), transtorno de conduta (TC) e transtorno explosivo intermitente (TEI)", "08/08/2026", 12, 4, 16, 11], ["Psiquiatria SP T03", "SP", "M6 - Transtornos relacionados a traumas e estressores", "08/08/2026", 24, 4, 28, 1], ["Dermatologia BSB T01", "BSB", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "08/08/2026", 12, 1, 13, 0], ["Dermatologia BSB T02", "BSB", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "08/08/2026", 12, 1, 13, 0], ["Endocrinologia CPS T02", "CPS", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "10/08/2026", 24, 10, 34, 14], ["Psiquiatria CPS T02", "CPS", "M15 - Suicidalidade", "10/08/2026", 12, 11, 23, 23], ["Dermatologia Cirurgica SP T01", "SP", "M7 - Sutura especial e técnicas especiais", "10/08/2026", 12, 2, 14, 14], ["Dermatologia SP T04", "SP", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "10/08/2026", 0, 0, 0, 0], ["Oftalmologia SP T06", "SP", "M5 - Estrabismo I", "10/08/2026", 24, 5, 29, 1], ["Tricologia SP T02", "SP", "M4 - Alopecias cicatriciais, classificação e tratamento", "10/08/2026", 18, 4, 22, 15], ["Endocrinologia CPS T02", "CPS", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "11/08/2026", 24, 11, 35, 11], ["Psiquiatria CPS T02", "CPS", "M15 - Suicidalidade", "11/08/2026", 12, 6, 18, 18], ["Dermatologia Cirurgica SP T01", "SP", "M7 - Sutura especial e técnicas especiais", "11/08/2026", 12, 2, 14, 8], ["Dermatologia SP T04", "SP", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "11/08/2026", 0, 0, 0, 0], ["Oftalmologia SP T06", "SP", "M5 - Estrabismo I", "11/08/2026", 24, 5, 29, 2], ["Tricologia SP T02", "SP", "M4 - Alopecias cicatriciais, classificação e tratamento", "11/08/2026", 18, 4, 22, 8], ["Endocrinologia CPS T02", "CPS", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "12/08/2026", 24, 6, 30, 10], ["Psiquiatria CPS T02", "CPS", "M15 - Suicidalidade", "12/08/2026", 12, 7, 19, 19], ["Dermatologia Cirurgica SP T01", "SP", "M7 - Sutura especial e técnicas especiais", "12/08/2026", 12, 5, 17, 15], ["Dermatologia SP T04", "SP", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "12/08/2026", 0, 0, 0, 0], ["Oftalmologia SP T06", "SP", "M5 - Estrabismo I", "12/08/2026", 24, 4, 28, 0], ["Tricologia SP T02", "SP", "M4 - Alopecias cicatriciais, classificação e tratamento", "12/08/2026", 18, 4, 22, 8], ["Endocrinologia ONL T05", "ONL", "M11 - Hipófise e Hipotálamo: Patologias e Terapêutica", "12/08/2026", 8, 18, 26, 0], ["Endocrinologia CPS T01", "CPS", "M14 - Crescimento, Endocrinologia pediátrica básica", "13/08/2026", 24, 0, 24, 15], ["Pediatria CPS T05", "CPS", "M6 - Nutrologia e Endocrinologia", "13/08/2026", 24, 7, 31, 23], ["Dermatologia SP T13", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "13/08/2026", 12, 2, 14, 4], ["Dermatologia SP T15", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "13/08/2026", 12, 2, 14, 14], ["Dermatologia SP T21", "SP", "M4 - Farmacologia Dermatológica e Estética", "13/08/2026", 39, 8, 47, 0], ["Oftalmologia SP T02", "SP", "M16 - Estrabismo II", "13/08/2026", 24, 5, 29, 0], ["Endocrinologia BSB T01", "BSB", "M9 - Adenomas hipofisários", "13/08/2026", 15, 0, 15, 9], ["Psiquiatria ONL T03", "ONL", "M8 - Transtorno Obsessivo Compulsivo e Transtornos relacionados", "13/08/2026", 8, 19, 27, 0], ["Endocrinologia CPS T01", "CPS", "M14 - Crescimento, Endocrinologia pediátrica básica", "14/08/2026", 24, 0, 24, 5], ["Pediatria CPS T05", "CPS", "M6 - Nutrologia e Endocrinologia", "14/08/2026", 24, 7, 31, 12], ["Dermatologia SP T13", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "14/08/2026", 12, 2, 14, 0], ["Dermatologia SP T15", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "14/08/2026", 12, 2, 14, 14], ["Dermatologia SP T21", "SP", "M4 - Farmacologia Dermatológica e Estética", "14/08/2026", 39, 8, 47, 0], ["Oftalmologia SP T02", "SP", "M16 - Estrabismo II", "14/08/2026", 24, 5, 29, 0], ["Endocrinologia BSB T01", "BSB", "M9 - Adenomas hipofisários", "14/08/2026", 15, 0, 15, 2], ["Endocrinologia CPS T01", "CPS", "M14 - Crescimento, Endocrinologia pediátrica básica", "15/08/2026", 24, 0, 24, 10], ["Neuropediatria CPS T02", "CPS", "M7 - TEA e diferenciais", "15/08/2026", 12, 3, 15, 14], ["Dermatologia SP T13", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "15/08/2026", 12, 1, 13, 1], ["Dermatologia SP T15", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "15/08/2026", 12, 1, 13, 13], ["Dermatologia SP T21", "SP", "M4 - Farmacologia Dermatológica e Estética", "15/08/2026", 39, 7, 46, 0], ["Oftalmologia SP T02", "SP", "M16 - Estrabismo II", "15/08/2026", 24, 4, 28, 1], ["Endocrinologia BSB T01", "BSB", "M9 - Adenomas hipofisários", "15/08/2026", 15, 0, 15, 5], ["Dermatologia CPS T03", "CPS", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "17/08/2026", 12, 2, 14, 0], ["Pediatria CPS T04", "CPS", "M6 - Nutrologia e Endocrinologia", "17/08/2026", 24, 7, 31, 8], ["Dermatologia SP T08", "SP", "M12 - Peelings Químicos", "17/08/2026", 24, 10, 34, 16], ["Dermatologia SP T11", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "17/08/2026", 39, 8, 47, 6], ["Dermatologia SP T18", "SP", "M4 - Farmacologia Dermatológica e Estética", "17/08/2026", 39, 8, 47, 0], ["Endocrinologia SP T02", "SP", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "17/08/2026", 24, 7, 31, 28], ["Dermatologia BSB T03", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "17/08/2026", 12, 2, 14, 3], ["Dermatologia CPS T03", "CPS", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "18/08/2026", 12, 2, 14, 0], ["Pediatria CPS T04", "CPS", "M6 - Nutrologia e Endocrinologia", "18/08/2026", 24, 7, 31, 1], ["Dermatologia SP T08", "SP", "M12 - Peelings Químicos", "18/08/2026", 24, 10, 34, 3], ["Dermatologia SP T11", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "18/08/2026", 39, 8, 47, 3], ["Dermatologia SP T18", "SP", "M4 - Farmacologia Dermatológica e Estética", "18/08/2026", 39, 8, 47, 0], ["Endocrinologia SP T02", "SP", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "18/08/2026", 24, 6, 30, 26], ["Dermatologia BSB T03", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "18/08/2026", 12, 2, 14, 0], ["Dermatologia CPS T03", "CPS", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "19/08/2026", 12, 1, 13, 1], ["Dermatologia SP T08", "SP", "M12 - Peelings Químicos", "19/08/2026", 24, 9, 33, 5], ["Dermatologia SP T11", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "19/08/2026", 39, 7, 46, 2], ["Dermatologia SP T18", "SP", "M4 - Farmacologia Dermatológica e Estética", "19/08/2026", 39, 7, 46, 0], ["Endocrinologia SP T02", "SP", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "19/08/2026", 24, 6, 30, 21], ["Dermatologia BSB T03", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "19/08/2026", 12, 1, 13, 2], ["Endocrinologia ONL T02", "ONL", "M12 - Endocrinologia do Crescimento e Desenvolvimento", "19/08/2026", 8, 18, 26, 0], ["Dermatologia CPS T09", "CPS", "M4 - Farmacologia Dermatológica e Estética", "20/08/2026", 39, 8, 47, 8], ["Dermatologia SP T06", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "20/08/2026", 12, 2, 14, 0], ["Dermatologia SP T16", "SP", "M4 - Farmacologia Dermatológica e Estética", "20/08/2026", 39, 8, 47, 0], ["Dermatologia SP T19", "SP", "M4 - Farmacologia Dermatológica e Estética", "20/08/2026", 39, 8, 47, 0], ["Endocrinologia SP T05", "SP", "M2 - Obesidade e Síndrome Metabólica", "20/08/2026", 24, 7, 31, 31], ["Nutrologia SP T01", "SP", "M2 - Nutrologia e Saúde Gastrointestinal", "20/08/2026", 12, 2, 14, 14], ["Endocrinologia ONL T03", "ONL", "M5 - Obesidade", "20/08/2026", 8, 18, 26, 0], ["Dermatologia CPS T09", "CPS", "M4 - Farmacologia Dermatológica e Estética", "21/08/2026", 39, 8, 47, 7], ["Dermatologia SP T06", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "21/08/2026", 12, 2, 14, 2], ["Dermatologia SP T16", "SP", "M4 - Farmacologia Dermatológica e Estética", "21/08/2026", 39, 8, 47, 0], ["Dermatologia SP T19", "SP", "M4 - Farmacologia Dermatológica e Estética", "21/08/2026", 39, 8, 47, 0], ["Endocrinologia SP T05", "SP", "M2 - Obesidade e Síndrome Metabólica", "21/08/2026", 24, 6, 30, 30], ["Dermatologia CPS T09", "CPS", "M4 - Farmacologia Dermatológica e Estética", "22/08/2026", 39, 7, 46, 5], ["Neuropediatria CPS T01", "CPS", "M9 - Doenças Neurogenéticas, neuromusculares e Erros Inatos do Metabolismo", "22/08/2026", 12, 2, 14, 6], ["Neuropediatria CPS T03", "CPS", "M6 - Distúrbios de movimento e paralisia cerebral", "22/08/2026", 12, 2, 14, 0], ["Dermatologia SP T06", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "22/08/2026", 12, 1, 13, 0], ["Dermatologia SP T16", "SP", "M4 - Farmacologia Dermatológica e Estética", "22/08/2026", 39, 7, 46, 0], ["Dermatologia SP T19", "SP", "M4 - Farmacologia Dermatológica e Estética", "22/08/2026", 39, 7, 46, 0], ["Psiquiatria SP T04", "SP", "M6 - Espectro da esquizofrenia e outros transtornos psicóticos", "22/08/2026", 24, 5, 29, 0], ["Dermatologia One SP T01", "SP", "M5 - Laser I – conceitos, fototipos, rejuvenescimento e melasma", "23/08/2026", 24, 6, 30, 30], ["Dermatologia CPS T06", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "24/08/2026", 39, 8, 47, 2], ["Pediatria CPS T06", "CPS", "M2 - Emergências e Terapia Intensiva", "24/08/2026", 24, 7, 31, 0], ["Dermatologia SP T14", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "24/08/2026", 12, 2, 14, 0], ["Dermatologia SP T20", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "24/08/2026", 12, 2, 14, 14], ["Oftalmologia SP T05", "SP", "M7 - Catarata I", "24/08/2026", 24, 5, 29, 6], ["Psiquiatria SP T02", "SP", "M10 - Transtorno por uso de substâncias II", "24/08/2026", 24, 5, 29, 1], ["Dermatologia CPS T06", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "25/08/2026", 39, 8, 47, 0], ["Endocrinologia CPS T03", "CPS", "M5 - Endocrinologia da Criança e do Adolescente", "25/08/2026", 12, 0, 12, 1], ["Pediatria CPS T06", "CPS", "M2 - Emergências e Terapia Intensiva", "25/08/2026", 24, 7, 31, 1], ["Dermatologia SP T14", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "25/08/2026", 12, 2, 14, 0], ["Dermatologia SP T20", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "25/08/2026", 12, 2, 14, 14], ["Oftalmologia SP T05", "SP", "M7 - Catarata I", "25/08/2026", 24, 5, 29, 3], ["Psiquiatria SP T02", "SP", "M10 - Transtorno por uso de substâncias II", "25/08/2026", 24, 5, 29, 0], ["Dermatologia CPS T06", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "26/08/2026", 39, 7, 46, 0], ["Endocrinologia CPS T03", "CPS", "M5 - Endocrinologia da Criança e do Adolescente", "26/08/2026", 12, 0, 12, 2], ["Dermatologia SP T14", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "26/08/2026", 12, 1, 13, 0], ["Dermatologia SP T20", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "26/08/2026", 12, 1, 13, 13], ["Oftalmologia SP T05", "SP", "M7 - Catarata I", "26/08/2026", 24, 4, 28, 4], ["Psiquiatria SP T02", "SP", "M10 - Transtorno por uso de substâncias II", "26/08/2026", 24, 4, 28, 0], ["Psiquiatria BSB T01", "BSB", "M5 - Transtornos relacionados a traumas e estressores", "26/08/2026", 18, 0, 18, 8], ["Dermatologia SP T10", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "27/08/2026", 24, 4, 28, 11], ["Dermatologia SP T17", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "27/08/2026", 12, 2, 14, 8], ["Endocrinologia SP T04", "SP", "M5 - Endocrinologia da Criança e do Adolescente", "27/08/2026", 24, 6, 30, 1], ["Oftalmologia SP T04", "SP", "M11 - Oftalmologia cirúrgica I", "27/08/2026", 0, 0, 0, 0], ["Tricologia SP T01", "SP", "M8 - Tratamentos capilares com intradermoterapia, eletroporação, tratamentos regenerativos/plano de desenvolvimento de carreira do médico tricologista", "27/08/2026", 18, 4, 22, 2], ["Oftalmologia BSB T01", "BSB", "M11 - Oftalmologia cirúrgica I", "27/08/2026", 39, 0, 39, 0], ["Psiquiatria ONL T04", "ONL", "M6 - Transtornos Relacionados a traumas e a Estressores", "27/08/2026", 8, 19, 27, 0], ["Dermatologia SP T10", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "28/08/2026", 24, 4, 28, 4], ["Dermatologia SP T17", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "28/08/2026", 12, 2, 14, 1], ["Endocrinologia SP T04", "SP", "M5 - Endocrinologia da Criança e do Adolescente", "28/08/2026", 24, 6, 30, 0], ["Oftalmologia SP T04", "SP", "M11 - Oftalmologia cirúrgica I", "28/08/2026", 0, 0, 0, 0], ["Tricologia SP T01", "SP", "M8 - Tratamentos capilares com intradermoterapia, eletroporação, tratamentos regenerativos/plano de desenvolvimento de carreira do médico tricologista", "28/08/2026", 18, 4, 22, 2], ["Oftalmologia BSB T01", "BSB", "M11 - Oftalmologia cirúrgica I", "28/08/2026", 39, 0, 39, 0], ["Dermatologia SP T10", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "29/08/2026", 24, 3, 27, 8], ["Dermatologia SP T17", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "29/08/2026", 12, 1, 13, 2], ["Oftalmologia SP T04", "SP", "M11 - Oftalmologia cirúrgica I", "29/08/2026", 0, 0, 0, 0], ["Tricologia SP T01", "SP", "M8 - Tratamentos capilares com intradermoterapia, eletroporação, tratamentos regenerativos/plano de desenvolvimento de carreira do médico tricologista", "29/08/2026", 18, 4, 22, 0], ["Oftalmologia BSB T01", "BSB", "M11 - Oftalmologia cirúrgica I", "29/08/2026", 39, 0, 39, 0], ["Dermatologia CPS T05", "CPS", "M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)", "31/08/2026", 24, 4, 28, 9], ["Dermatologia CPS T08", "CPS", "M4 - Farmacologia Dermatológica e Estética", "31/08/2026", 39, 8, 47, 0], ["Oftalmologia CPS T02", "CPS", "M7 - Catarata I", "31/08/2026", 24, 6, 30, 23], ["Dermatologia SP T07", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "31/08/2026", 12, 2, 14, 0], ["Endocrinologia SP T03", "SP", "M7 - Urgências em diabetes", "31/08/2026", 24, 7, 31, 0], ["Oftalmologia SP T03", "SP", "M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II", "31/08/2026", 24, 5, 29, 0]];
+const RAW = [
+  ["Dermatologia CPS T05", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "04/05/2026", 12, 9, 21, 21],
+  ["Dermatologia CPS T08", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "04/05/2026", 39, 0, 39, 29],
+  ["Pediatria CPS T03", "CPS", "M6 - Nutrologia e Endocrinologia", "04/05/2026", 24, 0, 24, 20],
+  ["Dermatologia SP T07", "SP", "M12 - Peelings Químicos", "04/05/2026", 24, 7, 31, 31],
+  ["Endocrinologia SP T03", "SP", "M3 - Obesidade e síndrome metabólica", "04/05/2026", 24, 0, 24, 23],
+  ["Oftalmologia SP T03", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "04/05/2026", 24, 3, 27, 27],
+  ["Dermatologia CPS T05", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "05/05/2026", 12, 11, 23, 23],
+  ["Dermatologia CPS T08", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "05/05/2026", 39, 0, 39, 36],
+  ["Pediatria CPS T03", "CPS", "M6 - Nutrologia e Endocrinologia", "05/05/2026", 24, 0, 24, 23],
+  ["Dermatologia SP T07", "SP", "M12 - Peelings Químicos", "05/05/2026", 24, 0, 24, 11],
+  ["Endocrinologia SP T03", "SP", "M3 - Obesidade e síndrome metabólica", "05/05/2026", 24, 3, 27, 28],
+  ["Oftalmologia SP T03", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "05/05/2026", 24, 9, 33, 33],
+  ["Dermatologia CPS T05", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "06/05/2026", 12, 2, 14, 14],
+  ["Dermatologia CPS T08", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "06/05/2026", 39, 0, 39, 34],
+  ["Pediatria CPS T03", "CPS", "M6 - Nutrologia e Endocrinologia", "06/05/2026", 24, 2, 26, 26],
+  ["Dermatologia SP T07", "SP", "M12 - Peelings Químicos", "06/05/2026", 24, 0, 24, 16],
+  ["Endocrinologia SP T03", "SP", "M3 - Obesidade e síndrome metabólica", "06/05/2026", 24, 8, 32, 32],
+  ["Oftalmologia SP T03", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "06/05/2026", 24, 5, 29, 29],
+  ["Dermatologia CPS T02", "CPS", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "07/05/2026", 12, 13, 25, 25],
+  ["Dermatologia CPS T07", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "07/05/2026", 12, 17, 29, 29],
+  ["Dermatologia SP T05", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "07/05/2026", 12, 1, 13, 13],
+  ["Dermatologia SP T09", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "07/05/2026", 12, 10, 22, 22],
+  ["Dermatologia SP T19", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "07/05/2026", 39, 9, 48, 48],
+  ["Psiquiatria SP T03", "SP", "M3 - Transtornos do humor I", "07/05/2026", 24, 1, 25, 25],
+  ["Dermatologia BSB T01", "BSB", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "07/05/2026", 12, 0, 12, 9],
+  ["Dermatologia BSB T02", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "07/05/2026", 12, 0, 12, 12],
+  ["Psiquiatria ONL T05", "ONL", "M6 - Transtornos Relacionados a traumas e a Estressores", "07/05/2026", 24, 0, 24, 0],
+  ["Dermatologia CPS T02", "CPS", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "08/05/2026", 12, 13, 25, 25],
+  ["Dermatologia CPS T07", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "08/05/2026", 12, 15, 27, 27],
+  ["Dermatologia SP T05", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "08/05/2026", 12, 0, 12, 6],
+  ["Dermatologia SP T09", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "08/05/2026", 12, 5, 17, 17],
+  ["Dermatologia SP T19", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "08/05/2026", 39, 0, 39, 35],
+  ["Psiquiatria SP T03", "SP", "M3 - Transtornos do humor I", "08/05/2026", 24, 4, 28, 29],
+  ["Dermatologia BSB T01", "BSB", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "08/05/2026", 12, 0, 12, 6],
+  ["Dermatologia BSB T02", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "08/05/2026", 12, 0, 12, 12],
+  ["Dermatologia CPS T02", "CPS", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "09/05/2026", 12, 11, 23, 23],
+  ["Dermatologia CPS T07", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "09/05/2026", 12, 15, 27, 27],
+  ["Neuropediatria CPS T01", "CPS", "M6 - Distúrbios de movimento e paralisia cerebral", "09/05/2026", 12, 10, 22, 22],
+  ["Dermatologia SP T05", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "09/05/2026", 12, 0, 12, 8],
+  ["Dermatologia SP T09", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "09/05/2026", 12, 0, 12, 12],
+  ["Dermatologia SP T19", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "09/05/2026", 39, 6, 45, 46],
+  ["Psiquiatria Infantil SP T01", "SP", "M4 - Transtornos do neurodesenvolvimento I - Transtorno do espectro autista (TEA)", "09/05/2026", 12, 11, 23, 23],
+  ["Psiquiatria SP T03", "SP", "M3 - Transtornos do humor I", "09/05/2026", 24, 6, 30, 30],
+  ["Dermatologia BSB T01", "BSB", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "09/05/2026", 12, 0, 12, 7],
+  ["Dermatologia BSB T02", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "09/05/2026", 12, 1, 13, 13],
+  ["Oftalmologia CPS T02", "CPS", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "11/05/2026", 24, 1, 25, 25],
+  ["Psiquiatria CPS T02", "CPS", "M12 - Transtorno Obsessivo Compulsivo e transtornos relacionados", "11/05/2026", 24, 6, 30, 30],
+  ["Dermatologia Cirurgica SP T01", "SP", "M4 - Lesões pré-malignas e métodos destrutivos", "11/05/2026", 12, 5, 17, 17],
+  ["Dermatologia SP T04", "SP", "M17 - Tratamentos Capilares", "11/05/2026", 18, 0, 18, 17],
+  ["Dermatologia SP T14", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "11/05/2026", 12, 8, 20, 20],
+  ["Oftalmologia SP T06", "SP", "M2 - Refração e Visão Subnormal I", "11/05/2026", 24, 0, 24, 25],
+  ["Oftalmologia CPS T02", "CPS", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "12/05/2026", 24, 5, 29, 29],
+  ["Psiquiatria CPS T02", "CPS", "M12 - Transtorno Obsessivo Compulsivo e transtornos relacionados", "12/05/2026", 24, 0, 24, 24],
+  ["Dermatologia Cirurgica SP T01", "SP", "M4 - Lesões pré-malignas e métodos destrutivos", "12/05/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T04", "SP", "M17 - Tratamentos Capilares", "12/05/2026", 18, 0, 18, 7],
+  ["Dermatologia SP T14", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "12/05/2026", 12, 0, 12, 12],
+  ["Oftalmologia SP T06", "SP", "M2 - Refração e Visão Subnormal I", "12/05/2026", 24, 0, 24, 24],
+  ["Oftalmologia CPS T02", "CPS", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "13/05/2026", 24, 4, 28, 28],
+  ["Psiquiatria CPS T02", "CPS", "M12 - Transtorno Obsessivo Compulsivo e transtornos relacionados", "13/05/2026", 24, 2, 26, 26],
+  ["Psiquiatria CPS T04", "CPS", "M3 - Transtornos do humor II – Transtorno afetivo bipolar", "13/05/2026", 24, 3, 27, 27],
+  ["Dermatologia Cirurgica SP T01", "SP", "M4 - Lesões pré-malignas e métodos destrutivos", "13/05/2026", 12, 5, 17, 17],
+  ["Dermatologia SP T04", "SP", "M17 - Tratamentos Capilares", "13/05/2026", 18, 0, 18, 5],
+  ["Dermatologia SP T14", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "13/05/2026", 12, 0, 12, 9],
+  ["Oftalmologia SP T06", "SP", "M2 - Refração e Visão Subnormal I", "13/05/2026", 24, 0, 24, 16],
+  ["Dermatologia CPS T04", "CPS", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "14/05/2026", 12, 1, 13, 13],
+  ["Endocrinologia CPS T01", "CPS", "M11 - Hipopituitarismo", "14/05/2026", 24, 6, 30, 31],
+  ["Pediatria CPS T02", "CPS", "M8 - Cirurgia Pediátrica e Hematologia/Oncologia", "14/05/2026", 24, 0, 24, 8],
+  ["Dermatologia SP T12", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "14/05/2026", 12, 0, 12, 11],
+  ["Dermatologia SP T15", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "14/05/2026", 12, 5, 17, 17],
+  ["Oftalmologia SP T02", "SP", "M13 - Refração e Visão Subnormal II", "14/05/2026", 24, 0, 24, 21],
+  ["Endocrinologia BSB T01", "BSB", "M7 - Urgências em diabetes", "14/05/2026", 24, 0, 24, 17],
+  ["Endocrinologia ONL T06", "ONL", "M4 - Tireoide: Distúrbios e Manejo Clínico", "14/05/2026", 24, 0, 24, 0],
+  ["Psiquiatria ONL T02", "ONL", "M6 - Transtornos Relacionados a traumas e a Estressores", "14/05/2026", 24, 0, 24, 0],
+  ["Dermatologia CPS T04", "CPS", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "15/05/2026", 12, 2, 14, 14],
+  ["Endocrinologia CPS T01", "CPS", "M11 - Hipopituitarismo", "15/05/2026", 24, 3, 27, 27],
+  ["Pediatria CPS T02", "CPS", "M8 - Cirurgia Pediátrica e Hematologia/Oncologia", "15/05/2026", 24, 0, 24, 6],
+  ["Dermatologia SP T12", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "15/05/2026", 12, 1, 13, 13],
+  ["Dermatologia SP T15", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "15/05/2026", 12, 2, 14, 14],
+  ["Oftalmologia SP T02", "SP", "M13 - Refração e Visão Subnormal II", "15/05/2026", 24, 0, 24, 22],
+  ["Endocrinologia BSB T01", "BSB", "M7 - Urgências em diabetes", "15/05/2026", 24, 0, 24, 11],
+  ["Dermatologia CPS T04", "CPS", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "16/05/2026", 12, 2, 14, 14],
+  ["Endocrinologia CPS T01", "CPS", "M11 - Hipopituitarismo", "16/05/2026", 24, 8, 32, 32],
+  ["Dermatologia SP T12", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "16/05/2026", 12, 0, 12, 12],
+  ["Dermatologia SP T15", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "16/05/2026", 12, 2, 14, 14],
+  ["Oftalmologia SP T02", "SP", "M13 - Refração e Visão Subnormal II", "16/05/2026", 24, 0, 24, 24],
+  ["Endocrinologia BSB T01", "BSB", "M7 - Urgências em diabetes", "16/05/2026", 24, 0, 24, 8],
+  ["Dermatologia One SP T01", "SP", "M2 - Toxina Botulínica I – conceitos fundamentais, áreas clássicas, pontos seguros", "17/05/2026", 12, 0, 12, 12],
+  ["Dermatologia CPS T03", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "18/05/2026", 12, 1, 13, 13],
+  ["Endocrinologia CPS T02", "CPS", "M6 - Diabetes gestacional e outros tipos de diabetes", "18/05/2026", 24, 10, 34, 34],
+  ["Dermatologia SP T08", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "18/05/2026", 39, 0, 39, 24],
+  ["Dermatologia SP T11", "SP", "M4 - Farmacologia Dermatológica e Estética", "18/05/2026", 39, 0, 39, 14],
+  ["Endocrinologia SP T02", "SP", "M5 - Diabetes tipo 2", "18/05/2026", 24, 2, 26, 26],
+  ["Dermatologia BSB T03", "BSB", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "18/05/2026", 0, 0, 0, 0],
+  ["Dermatologia CPS T03", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "19/05/2026", 12, 0, 12, 3],
+  ["Endocrinologia CPS T02", "CPS", "M6 - Diabetes gestacional e outros tipos de diabetes", "19/05/2026", 24, 1, 25, 25],
+  ["Dermatologia SP T08", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "19/05/2026", 39, 0, 39, 18],
+  ["Dermatologia SP T11", "SP", "M4 - Farmacologia Dermatológica e Estética", "19/05/2026", 39, 0, 39, 13],
+  ["Endocrinologia SP T02", "SP", "M5 - Diabetes tipo 2", "19/05/2026", 24, 1, 25, 25],
+  ["Dermatologia BSB T03", "BSB", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "19/05/2026", 0, 0, 0, 0],
+  ["Dermatologia CPS T03", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "20/05/2026", 12, 0, 12, 11],
+  ["Endocrinologia CPS T02", "CPS", "M6 - Diabetes gestacional e outros tipos de diabetes", "20/05/2026", 24, 0, 24, 22],
+  ["Dermatologia SP T08", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "20/05/2026", 39, 0, 39, 11],
+  ["Dermatologia SP T11", "SP", "M4 - Farmacologia Dermatológica e Estética", "20/05/2026", 39, 0, 39, 12],
+  ["Endocrinologia SP T02", "SP", "M5 - Diabetes tipo 2", "20/05/2026", 24, 2, 26, 26],
+  ["Dermatologia BSB T03", "BSB", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "20/05/2026", 0, 0, 0, 0],
+  ["Pediatria CPS T05", "CPS", "M3 - Alergia / Imunologia e Otorrinolaringologia", "21/05/2026", 24, 0, 24, 25],
+  ["Psiquiatria CPS T03", "CPS", "M3 - Transtornos do humor I", "21/05/2026", 24, 0, 24, 24],
+  ["Dermatologia SP T06", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "21/05/2026", 12, 0, 12, 11],
+  ["Dermatologia SP T13", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "21/05/2026", 12, 0, 12, 10],
+  ["Dermatologia SP T16", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "21/05/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T21", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "21/05/2026", 39, 0, 39, 39],
+  ["Pediatria CPS T05", "CPS", "M3 - Alergia / Imunologia e Otorrinolaringologia", "22/05/2026", 24, 0, 24, 24],
+  ["Psiquiatria CPS T03", "CPS", "M3 - Transtornos do humor I", "22/05/2026", 24, 0, 24, 23],
+  ["Dermatologia SP T06", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "22/05/2026", 12, 0, 12, 11],
+  ["Dermatologia SP T13", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "22/05/2026", 12, 0, 12, 12],
+  ["Dermatologia SP T16", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "22/05/2026", 12, 0, 12, 12],
+  ["Dermatologia SP T21", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "22/05/2026", 39, 0, 39, 39],
+  ["Neuropediatria CPS T02", "CPS", "M4 - Neurologia da Prematuridade e das Encefalopatias Neonatais", "23/05/2026", 12, 10, 22, 22],
+  ["Psiquiatria CPS T03", "CPS", "M3 - Transtornos do humor I", "23/05/2026", 24, 7, 31, 31],
+  ["Dermatologia SP T06", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "23/05/2026", 12, 0, 12, 3],
+  ["Dermatologia SP T13", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "23/05/2026", 12, 0, 12, 12],
+  ["Dermatologia SP T16", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "23/05/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T21", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "23/05/2026", 39, 0, 39, 38],
+  ["Psiquiatria SP T04", "SP", "M3 - Transtornos do humor II – Transtorno afetivo bipolar", "23/05/2026", 24, 1, 25, 25],
+  ["Dermatologia CPS T06", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "25/05/2026", 12, 3, 15, 15],
+  ["Pediatria CPS T04", "CPS", "M3 - Alergia / Imunologia e Otorrinolaringologia", "25/05/2026", 24, 0, 24, 24],
+  ["Dermatologia SP T18", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "25/05/2026", 39, 0, 39, 37],
+  ["Oftalmologia SP T05", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "25/05/2026", 24, 0, 24, 20],
+  ["Psiquiatria SP T02", "SP", "M7 - Espectro da esquizofrenia e outros transtornos psicóticos", "25/05/2026", 24, 0, 24, 24],
+  ["Tricologia SP T02", "SP", "M1 - Fundamentos da tricologia clínica avaliação e diagnóstico capilar (tricoscopia)", "25/05/2026", 18, 0, 18, 18],
+  ["Dermatologia CPS T06", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "26/05/2026", 12, 1, 13, 13],
+  ["Endocrinologia CPS T03", "CPS", "M2 - Obesidade e Síndrome Metabólica", "26/05/2026", 24, 16, 40, 40],
+  ["Pediatria CPS T04", "CPS", "M3 - Alergia / Imunologia e Otorrinolaringologia", "26/05/2026", 24, 0, 24, 24],
+  ["Dermatologia SP T18", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "26/05/2026", 39, 0, 39, 34],
+  ["Oftalmologia SP T05", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "26/05/2026", 24, 0, 24, 7],
+  ["Psiquiatria SP T02", "SP", "M7 - Espectro da esquizofrenia e outros transtornos psicóticos", "26/05/2026", 24, 0, 24, 15],
+  ["Tricologia SP T02", "SP", "M1 - Fundamentos da tricologia clínica avaliação e diagnóstico capilar (tricoscopia)", "26/05/2026", 18, 0, 18, 18],
+  ["Dermatologia CPS T06", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "27/05/2026", 12, 1, 13, 13],
+  ["Endocrinologia CPS T03", "CPS", "M2 - Obesidade e Síndrome Metabólica", "27/05/2026", 24, 1, 25, 25],
+  ["Dermatologia SP T18", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "27/05/2026", 39, 0, 39, 39],
+  ["Oftalmologia SP T05", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "27/05/2026", 24, 0, 24, 17],
+  ["Psiquiatria SP T02", "SP", "M7 - Espectro da esquizofrenia e outros transtornos psicóticos", "27/05/2026", 24, 0, 24, 18],
+  ["Tricologia SP T02", "SP", "M1 - Fundamentos da tricologia clínica avaliação e diagnóstico capilar (tricoscopia)", "27/05/2026", 18, 0, 18, 18],
+  ["Psiquiatria BSB T01", "BSB", "M2 - Transtornos do humor I – Transtorno depressivo", "27/05/2026", 24, 0, 24, 15],
+  ["Endocrinologia ONL T02", "ONL", "M7 - Glândulas Adrenais", "27/05/2026", 24, 0, 24, 0],
+  ["Dermatologia CPS T09", "CPS", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "28/05/2026", 0, 0, 0, 0],
+  ["Oftalmologia CPS T01", "CPS", "M21 - Úvea, Tumor e Neuroftalmo II", "28/05/2026", 24, 3, 27, 27],
+  ["Dermatologia SP T10", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "28/05/2026", 12, 11, 23, 23],
+  ["Dermatologia SP T17", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "28/05/2026", 12, 0, 12, 11],
+  ["Endocrinologia SP T04", "SP", "M2 - Obesidade e Síndrome Metabólica", "28/05/2026", 24, 0, 24, 24],
+  ["Nutrologia SP T01", "SP", "M11 - Obesidade, Síndrome Metabólica e Diabetes", "28/05/2026", 12, 7, 19, 19],
+  ["Oftalmologia SP T04", "SP", "M8 - Glaucoma I", "28/05/2026", 24, 0, 24, 14],
+  ["Tricologia SP T01", "SP", "M5 - Outras alopecias / Tricologia e Endocrinologia", "28/05/2026", 18, 4, 22, 22],
+  ["Oftalmologia BSB T01", "BSB", "M9 - Retina e Vítreo I", "28/05/2026", 24, 0, 24, 16],
+  ["Dermatologia CPS T09", "CPS", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "29/05/2026", 0, 0, 0, 0],
+  ["Oftalmologia CPS T01", "CPS", "M21 - Úvea, Tumor e Neuroftalmo II", "29/05/2026", 24, 0, 24, 24],
+  ["Dermatologia SP T10", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "29/05/2026", 12, 6, 18, 18],
+  ["Dermatologia SP T17", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "29/05/2026", 12, 0, 12, 11],
+  ["Endocrinologia SP T04", "SP", "M2 - Obesidade e Síndrome Metabólica", "29/05/2026", 24, 0, 24, 24],
+  ["Oftalmologia SP T04", "SP", "M8 - Glaucoma I", "29/05/2026", 24, 0, 24, 6],
+  ["Tricologia SP T01", "SP", "M5 - Outras alopecias / Tricologia e Endocrinologia", "29/05/2026", 18, 3, 21, 21],
+  ["Oftalmologia BSB T01", "BSB", "M9 - Retina e Vítreo I", "29/05/2026", 24, 0, 24, 16],
+  ["Dermatologia CPS T09", "CPS", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "30/05/2026", 0, 0, 0, 0],
+  ["Neuropediatria CPS T03", "CPS", "M3 - Epilepsias na Infância", "30/05/2026", 12, 6, 18, 18],
+  ["Oftalmologia CPS T01", "CPS", "M21 - Úvea, Tumor e Neuroftalmo II", "30/05/2026", 24, 1, 25, 25],
+  ["Dermatologia SP T10", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "30/05/2026", 12, 16, 28, 28],
+  ["Dermatologia SP T17", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "30/05/2026", 12, 0, 12, 12],
+  ["Oftalmologia SP T04", "SP", "M8 - Glaucoma I", "30/05/2026", 24, 0, 24, 9],
+  ["Tricologia SP T01", "SP", "M5 - Outras alopecias / Tricologia e Endocrinologia", "30/05/2026", 18, 3, 21, 21],
+  ["Oftalmologia BSB T01", "BSB", "M9 - Retina e Vítreo I", "30/05/2026", 24, 0, 24, 15],
+  ["Dermatologia CPS T05", "CPS", "M4 - Farmacologia Dermatológica e Estética", "01/06/2026", 39, 8, 47, 47],
+  ["Pediatria CPS T03", "CPS", "M8 - Cirurgia Pediátrica e Hematologia/Oncologia", "01/06/2026", 24, 2, 26, 26],
+  ["Dermatologia SP T07", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "01/06/2026", 12, 0, 12, 12],
+  ["Endocrinologia SP T03", "SP", "M4 - Diabetes tipo 1, bomba de insulina", "01/06/2026", 24, 1, 25, 25],
+  ["Oftalmologia SP T03", "SP", "M11 - Oftalmologia cirúrgica I", "01/06/2026", 0, 0, 0, 0],
+  ["Dermatologia CPS T05", "CPS", "M4 - Farmacologia Dermatológica e Estética", "02/06/2026", 39, 0, 39, 39],
+  ["Pediatria CPS T03", "CPS", "M8 - Cirurgia Pediátrica e Hematologia/Oncologia", "02/06/2026", 24, 10, 34, 34],
+  ["Dermatologia SP T07", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "02/06/2026", 12, 11, 23, 23],
+  ["Endocrinologia SP T03", "SP", "M4 - Diabetes tipo 1, bomba de insulina", "02/06/2026", 24, 0, 24, 22],
+  ["Oftalmologia SP T03", "SP", "M11 - Oftalmologia cirúrgica I", "02/06/2026", 0, 0, 0, 0],
+  ["Dermatologia CPS T05", "CPS", "M4 - Farmacologia Dermatológica e Estética", "03/06/2026", 39, 0, 39, 29],
+  ["Dermatologia SP T07", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "03/06/2026", 12, 6, 18, 18],
+  ["Endocrinologia SP T03", "SP", "M4 - Diabetes tipo 1, bomba de insulina", "03/06/2026", 24, 0, 24, 21],
+  ["Oftalmologia SP T03", "SP", "M11 - Oftalmologia cirúrgica I", "03/06/2026", 0, 0, 0, 0],
+  ["Endocrinologia ONL T01", "ONL", "M11 - Hipófise e Hipotálamo: Patologias e Terapêutica", "03/06/2026", 8, 7, 15, 15],
+  ["Oftalmologia CPS T02", "CPS", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "08/06/2026", 24, 6, 30, 30],
+  ["Psiquiatria CPS T02", "CPS", "M13 - Transtornos da personalidade", "08/06/2026", 24, 5, 29, 29],
+  ["Dermatologia Cirurgica SP T01", "SP", "M5 - Tratamento de unha encravada", "08/06/2026", 12, 9, 21, 21],
+  ["Dermatologia SP T04", "SP", "M18 - Estética Genital Feminina", "08/06/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T11", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "08/06/2026", 12, 7, 19, 19],
+  ["Dermatologia SP T14", "SP", "M4 - Farmacologia Dermatológica e Estética", "08/06/2026", 39, 15, 54, 56],
+  ["Oftalmologia CPS T02", "CPS", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "09/06/2026", 24, 5, 29, 29],
+  ["Psiquiatria CPS T02", "CPS", "M13 - Transtornos da personalidade", "09/06/2026", 24, 0, 24, 23],
+  ["Dermatologia Cirurgica SP T01", "SP", "M5 - Tratamento de unha encravada", "09/06/2026", 12, 10, 22, 22],
+  ["Dermatologia SP T04", "SP", "M18 - Estética Genital Feminina", "09/06/2026", 12, 5, 17, 17],
+  ["Dermatologia SP T11", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "09/06/2026", 12, 10, 22, 22],
+  ["Dermatologia SP T14", "SP", "M4 - Farmacologia Dermatológica e Estética", "09/06/2026", 39, 7, 46, 46],
+  ["Oftalmologia CPS T02", "CPS", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "10/06/2026", 24, 2, 26, 26],
+  ["Psiquiatria CPS T02", "CPS", "M13 - Transtornos da personalidade", "10/06/2026", 24, 8, 32, 32],
+  ["Psiquiatria CPS T04", "CPS", "M4 - Transtornos de ansiedade I", "10/06/2026", 24, 9, 33, 33],
+  ["Dermatologia Cirurgica SP T01", "SP", "M5 - Tratamento de unha encravada", "10/06/2026", 12, 11, 23, 23],
+  ["Dermatologia SP T04", "SP", "M18 - Estética Genital Feminina", "10/06/2026", 12, 3, 15, 15],
+  ["Dermatologia SP T11", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "10/06/2026", 12, 6, 18, 18],
+  ["Dermatologia SP T14", "SP", "M4 - Farmacologia Dermatológica e Estética", "10/06/2026", 39, 11, 50, 50],
+  ["Psiquiatria ONL T01", "ONL", "M11 - Emergências Psiquiátricas II", "10/06/2026", 8, 14, 22, 22],
+  ["Dermatologia CPS T04", "CPS", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "11/06/2026", 24, 0, 24, 18],
+  ["Dermatologia CPS T07", "CPS", "M4 - Farmacologia Dermatológica e Estética", "11/06/2026", 39, 0, 39, 31],
+  ["Endocrinologia CPS T01", "CPS", "M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)", "11/06/2026", 24, 0, 24, 24],
+  ["Dermatologia SP T05", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "11/06/2026", 12, 2, 14, 15],
+  ["Dermatologia SP T09", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "11/06/2026", 24, 0, 24, 22],
+  ["Dermatologia SP T13", "SP", "M4 - Farmacologia Dermatológica e Estética", "11/06/2026", 39, 0, 39, 30],
+  ["Psiquiatria SP T03", "SP", "M4 - Transtornos do humor II", "11/06/2026", 24, 7, 31, 31],
+  ["Dermatologia BSB T02", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "11/06/2026", 12, 1, 13, 16],
+  ["Psiquiatria ONL T03", "ONL", "M5 - Transtornos Relacionados ao uso de Substâncias", "11/06/2026", 8, 16, 24, 24],
+  ["Dermatologia CPS T04", "CPS", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "12/06/2026", 24, 0, 24, 22],
+  ["Dermatologia CPS T07", "CPS", "M4 - Farmacologia Dermatológica e Estética", "12/06/2026", 39, 0, 39, 27],
+  ["Endocrinologia CPS T01", "CPS", "M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)", "12/06/2026", 24, 0, 24, 24],
+  ["Dermatologia SP T05", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "12/06/2026", 12, 1, 13, 15],
+  ["Dermatologia SP T09", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "12/06/2026", 24, 4, 28, 28],
+  ["Dermatologia SP T13", "SP", "M4 - Farmacologia Dermatológica e Estética", "12/06/2026", 39, 0, 39, 27],
+  ["Psiquiatria SP T03", "SP", "M4 - Transtornos do humor II", "12/06/2026", 24, 9, 33, 33],
+  ["Dermatologia BSB T02", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "12/06/2026", 12, 0, 12, 12],
+  ["Dermatologia CPS T04", "CPS", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "13/06/2026", 24, 0, 24, 24],
+  ["Dermatologia CPS T07", "CPS", "M4 - Farmacologia Dermatológica e Estética", "13/06/2026", 39, 0, 39, 22],
+  ["Endocrinologia CPS T01", "CPS", "M12 - Doenças das supra-renais e Síndrome dos ovários policísticos (SOP)", "13/06/2026", 24, 2, 26, 26],
+  ["Dermatologia SP T05", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "13/06/2026", 12, 6, 18, 18],
+  ["Dermatologia SP T09", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "13/06/2026", 24, 13, 37, 37],
+  ["Dermatologia SP T13", "SP", "M4 - Farmacologia Dermatológica e Estética", "13/06/2026", 39, 0, 39, 37],
+  ["Psiquiatria Infantil SP T01", "SP", "M5 - Transtornos do neurodesenvolvimento II - Transtorno de déficit de atenção e hiperatividade (TDAH)", "13/06/2026", 12, 6, 18, 18],
+  ["Psiquiatria SP T03", "SP", "M4 - Transtornos do humor II", "13/06/2026", 24, 9, 33, 34],
+  ["Dermatologia BSB T02", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "13/06/2026", 12, 0, 12, 12],
+  ["Dermatologia CPS T03", "CPS", "M14 - Preenchimento Glúteo", "15/06/2026", 12, 5, 17, 17],
+  ["Endocrinologia CPS T02", "CPS", "M7 - Urgências em diabetes", "15/06/2026", 24, 11, 35, 36],
+  ["Pediatria CPS T04", "CPS", "M5 - Neonatologia", "15/06/2026", 24, 1, 25, 25],
+  ["Dermatologia SP T08", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "15/06/2026", 12, 9, 21, 21],
+  ["Dermatologia SP T18", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "15/06/2026", 12, 14, 26, 26],
+  ["Endocrinologia SP T02", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "15/06/2026", 24, 3, 27, 27],
+  ["Oftalmologia SP T06", "SP", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "15/06/2026", 24, 7, 31, 31],
+  ["Dermatologia BSB T03", "BSB", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "15/06/2026", 39, 7, 46, 46],
+  ["Dermatologia CPS T03", "CPS", "M14 - Preenchimento Glúteo", "16/06/2026", 12, 5, 17, 17],
+  ["Endocrinologia CPS T02", "CPS", "M7 - Urgências em diabetes", "16/06/2026", 24, 4, 28, 28],
+  ["Pediatria CPS T04", "CPS", "M5 - Neonatologia", "16/06/2026", 24, 0, 24, 23],
+  ["Dermatologia SP T08", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "16/06/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T18", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "16/06/2026", 12, 2, 14, 14],
+  ["Endocrinologia SP T02", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "16/06/2026", 24, 5, 29, 29],
+  ["Oftalmologia SP T06", "SP", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "16/06/2026", 24, 0, 24, 21],
+  ["Dermatologia BSB T03", "BSB", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "16/06/2026", 39, 0, 39, 38],
+  ["Dermatologia CPS T03", "CPS", "M14 - Preenchimento Glúteo", "17/06/2026", 12, 4, 16, 16],
+  ["Endocrinologia CPS T02", "CPS", "M7 - Urgências em diabetes", "17/06/2026", 24, 8, 32, 32],
+  ["Dermatologia SP T08", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "17/06/2026", 12, 5, 17, 17],
+  ["Dermatologia SP T18", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "17/06/2026", 12, 3, 15, 15],
+  ["Endocrinologia SP T02", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "17/06/2026", 24, 0, 24, 15],
+  ["Oftalmologia SP T06", "SP", "M3 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho I", "17/06/2026", 24, 2, 26, 26],
+  ["Dermatologia BSB T03", "BSB", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "17/06/2026", 39, 0, 39, 33],
+  ["Endocrinologia ONL T02", "ONL", "M8 - Osteometabolismo", "17/06/2026", 8, 5, 13, 15],
+  ["Dermatologia CPS T02", "CPS", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "18/06/2026", 0, 0, 0, 0],
+  ["Pediatria CPS T05", "CPS", "M5 - Neonatologia", "18/06/2026", 24, 1, 25, 25],
+  ["Dermatologia SP T06", "SP", "M14 - Preenchimento Glúteo", "18/06/2026", 12, 1, 13, 13],
+  ["Dermatologia SP T15", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "18/06/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T21", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "18/06/2026", 12, 3, 15, 15],
+  ["Nutrologia SP T01", "SP", "M12 - Nutrologia Aplicada à Cirurgia Bariátrica", "18/06/2026", 12, 5, 17, 17],
+  ["Oftalmologia SP T02", "SP", "M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II", "18/06/2026", 24, 0, 24, 22],
+  ["Endocrinologia BSB T01", "BSB", "M11 - Hipopituitarismo", "18/06/2026", 15, 0, 15, 12],
+  ["Endocrinologia ONL T03", "ONL", "M8 - Osteometabolismo", "18/06/2026", 8, 16, 24, 24],
+  ["Endocrinologia ONL T04", "ONL", "M3 - Diabetes Mellitus", "18/06/2026", 8, 16, 24, 24],
+  ["Dermatologia CPS T02", "CPS", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "19/06/2026", 0, 0, 0, 0],
+  ["Pediatria CPS T05", "CPS", "M5 - Neonatologia", "19/06/2026", 24, 0, 24, 14],
+  ["Dermatologia SP T06", "SP", "M14 - Preenchimento Glúteo", "19/06/2026", 12, 1, 13, 13],
+  ["Dermatologia SP T15", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "19/06/2026", 12, 5, 17, 17],
+  ["Dermatologia SP T21", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "19/06/2026", 12, 6, 18, 18],
+  ["Oftalmologia SP T02", "SP", "M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II", "19/06/2026", 24, 0, 24, 21],
+  ["Endocrinologia BSB T01", "BSB", "M11 - Hipopituitarismo", "19/06/2026", 15, 0, 15, 12],
+  ["Dermatologia CPS T02", "CPS", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "20/06/2026", 0, 0, 0, 0],
+  ["Neuropediatria CPS T01", "CPS", "M7 - TEA e diferenciais", "20/06/2026", 12, 0, 12, 7],
+  ["Dermatologia SP T06", "SP", "M14 - Preenchimento Glúteo", "20/06/2026", 12, 3, 15, 15],
+  ["Dermatologia SP T15", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "20/06/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T21", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "20/06/2026", 12, 4, 16, 16],
+  ["Oftalmologia SP T02", "SP", "M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II", "20/06/2026", 24, 1, 25, 25],
+  ["Endocrinologia BSB T01", "BSB", "M11 - Hipopituitarismo", "20/06/2026", 15, 0, 15, 12],
+  ["Dermatologia One SP T01", "SP", "M3 - Ácido Hialurônico I – preenchimento básico, MD Codes, proporções faciais", "21/06/2026", 12, 4, 16, 16],
+  ["Dermatologia CPS T06", "CPS", "M4 - Farmacologia Dermatológica e Estética", "22/06/2026", 39, 0, 39, 34],
+  ["Dermatologia SP T20", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "22/06/2026", 0, 0, 0, 0],
+  ["Oftalmologia SP T05", "SP", "M5 - Estrabismo I", "22/06/2026", 24, 0, 24, 23],
+  ["Psiquiatria SP T02", "SP", "M8 - Compreensão do conteúdo e discussão de casos clínicos I", "22/06/2026", 24, 0, 24, 20],
+  ["Tricologia SP T02", "SP", "M2 - Nutrição e Suplementação em Tricologia", "22/06/2026", 18, 0, 18, 17],
+  ["Dermatologia CPS T06", "CPS", "M4 - Farmacologia Dermatológica e Estética", "23/06/2026", 39, 8, 47, 31],
+  ["Endocrinologia CPS T03", "CPS", "M3 - Diabetes Mellitus Tipo 1 e Tipo 2", "23/06/2026", 12, 13, 25, 24],
+  ["Dermatologia SP T20", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "23/06/2026", 0, 0, 0, 0],
+  ["Oftalmologia SP T05", "SP", "M5 - Estrabismo I", "23/06/2026", 24, 5, 29, 16],
+  ["Psiquiatria SP T02", "SP", "M8 - Compreensão do conteúdo e discussão de casos clínicos I", "23/06/2026", 24, 5, 29, 24],
+  ["Tricologia SP T02", "SP", "M2 - Nutrição e Suplementação em Tricologia", "23/06/2026", 18, 7, 25, 13],
+  ["Dermatologia CPS T06", "CPS", "M4 - Farmacologia Dermatológica e Estética", "24/06/2026", 39, 7, 46, 34],
+  ["Endocrinologia CPS T03", "CPS", "M3 - Diabetes Mellitus Tipo 1 e Tipo 2", "24/06/2026", 12, 14, 26, 24],
+  ["Dermatologia SP T20", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "24/06/2026", 0, 0, 0, 0],
+  ["Oftalmologia SP T05", "SP", "M5 - Estrabismo I", "24/06/2026", 24, 5, 29, 21],
+  ["Psiquiatria SP T02", "SP", "M8 - Compreensão do conteúdo e discussão de casos clínicos I", "24/06/2026", 24, 4, 28, 21],
+  ["Tricologia SP T02", "SP", "M2 - Nutrição e Suplementação em Tricologia", "24/06/2026", 18, 10, 28, 23],
+  ["Psiquiatria BSB T01", "BSB", "M3 - Transtornos do humor II – Transtorno afetivo bipolar", "24/06/2026", 18, 8, 26, 17],
+  ["Endocrinologia ONL T05", "ONL", "M3 - Diabetes Mellitus", "24/06/2026", 8, 20, 28, 21],
+  ["Dermatologia CPS T09", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "25/06/2026", 39, 23, 62, 48],
+  ["Oftalmologia CPS T01", "CPS", "M22 - Oftalmologia cirúrgica II", "25/06/2026", 0, 0, 0, 0],
+  ["Dermatologia SP T10", "SP", "M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)", "25/06/2026", 24, 8, 32, 28],
+  ["Dermatologia SP T17", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "25/06/2026", 12, 2, 14, 12],
+  ["Dermatologia SP T19", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "25/06/2026", 12, 4, 16, 15],
+  ["Endocrinologia SP T04", "SP", "M3 - Diabetes Mellitus Tipo 1 e Tipo 2", "25/06/2026", 24, 7, 31, 27],
+  ["Oftalmologia SP T04", "SP", "M9 - Retina e Vítreo I", "25/06/2026", 24, 5, 29, 27],
+  ["Tricologia SP T01", "SP", "M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo", "25/06/2026", 18, 13, 31, 29],
+  ["Dermatologia BSB T01", "BSB", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "25/06/2026", 12, 3, 15, 3],
+  ["Psiquiatria ONL T04", "ONL", "M4 - Espectro da Esquizofrenia e Outros Transtornos Psicóticos", "25/06/2026", 8, 19, 27, 20],
+  ["Dermatologia CPS T09", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "26/06/2026", 39, 19, 58, 51],
+  ["Oftalmologia CPS T01", "CPS", "M22 - Oftalmologia cirúrgica II", "26/06/2026", 0, 0, 0, 0],
+  ["Dermatologia SP T10", "SP", "M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)", "26/06/2026", 24, 6, 30, 28],
+  ["Dermatologia SP T17", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "26/06/2026", 12, 2, 14, 11],
+  ["Dermatologia SP T19", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "26/06/2026", 12, 2, 14, 13],
+  ["Endocrinologia SP T04", "SP", "M3 - Diabetes Mellitus Tipo 1 e Tipo 2", "26/06/2026", 24, 10, 34, 31],
+  ["Oftalmologia SP T04", "SP", "M9 - Retina e Vítreo I", "26/06/2026", 24, 5, 29, 29],
+  ["Tricologia SP T01", "SP", "M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo", "26/06/2026", 18, 8, 26, 25],
+  ["Dermatologia BSB T01", "BSB", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "26/06/2026", 12, 2, 14, 6],
+  ["Dermatologia CPS T09", "CPS", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "27/06/2026", 39, 13, 52, 49],
+  ["Neuropediatria CPS T02", "CPS", "M5 - Transtornos do Sono, Traumatismo Cranioencefálico, COMA e Morte Encefálica", "27/06/2026", 12, 4, 16, 11],
+  ["Neuropediatria CPS T03", "CPS", "M4 - Neurologia da Prematuridade e das Encefalopatias Neonatais", "27/06/2026", 12, 5, 17, 11],
+  ["Oftalmologia CPS T01", "CPS", "M22 - Oftalmologia cirúrgica II", "27/06/2026", 0, 0, 0, 0],
+  ["Dermatologia SP T10", "SP", "M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)", "27/06/2026", 24, 9, 33, 31],
+  ["Dermatologia SP T17", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "27/06/2026", 12, 1, 13, 13],
+  ["Dermatologia SP T19", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "27/06/2026", 12, 8, 20, 19],
+  ["Oftalmologia SP T04", "SP", "M9 - Retina e Vítreo I", "27/06/2026", 24, 4, 28, 27],
+  ["Psiquiatria SP T04", "SP", "M4 - Transtornos de ansiedade I", "27/06/2026", 24, 13, 37, 35],
+  ["Tricologia SP T01", "SP", "M6 - Outras alopecias/ Doenças dermatológicas do couro cabeludo", "27/06/2026", 18, 13, 31, 29],
+  ["Dermatologia BSB T01", "BSB", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "27/06/2026", 12, 2, 14, 4],
+  ["Dermatologia CPS T05", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "29/06/2026", 39, 21, 60, 60],
+  ["Dermatologia CPS T08", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "29/06/2026", 12, 10, 22, 22],
+  ["Pediatria CPS T03", "CPS", "M7 - Saúde Mental e Adolescência", "29/06/2026", 24, 8, 32, 32],
+  ["Dermatologia SP T07", "SP", "M14 - Preenchimento Glúteo", "29/06/2026", 12, 8, 20, 20],
+  ["Endocrinologia SP T03", "SP", "M5 - Diabetes tipo 2", "29/06/2026", 24, 7, 31, 26],
+  ["Oftalmologia SP T03", "SP", "M12 - Introdução à Oftalmologia II", "29/06/2026", 24, 13, 37, 37],
+  ["Dermatologia CPS T05", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "30/06/2026", 39, 11, 50, 50],
+  ["Dermatologia CPS T08", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "30/06/2026", 12, 5, 17, 17],
+  ["Pediatria CPS T03", "CPS", "M7 - Saúde Mental e Adolescência", "30/06/2026", 24, 9, 33, 33],
+  ["Dermatologia SP T07", "SP", "M14 - Preenchimento Glúteo", "30/06/2026", 12, 1, 13, 13],
+  ["Endocrinologia SP T03", "SP", "M5 - Diabetes tipo 2", "30/06/2026", 24, 6, 30, 26],
+  ["Oftalmologia SP T03", "SP", "M12 - Introdução à Oftalmologia II", "30/06/2026", 24, 8, 32, 32],
+  ["Dermatologia CPS T05", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "01/07/2026", 39, 13, 52, 52],
+  ["Dermatologia CPS T08", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "01/07/2026", 12, 3, 15, 15],
+  ["Dermatologia SP T07", "SP", "M14 - Preenchimento Glúteo", "01/07/2026", 12, 3, 15, 15],
+  ["Endocrinologia SP T03", "SP", "M5 - Diabetes tipo 2", "01/07/2026", 24, 6, 30, 17],
+  ["Oftalmologia SP T03", "SP", "M12 - Introdução à Oftalmologia II", "01/07/2026", 24, 8, 32, 32],
+  ["Endocrinologia ONL T07", "ONL", "M2 - Abordagem Clínica em Endocrinologia", "01/07/2026", 8, 18, 26, 10],
+  ["Dermatologia CPS T07", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "02/07/2026", 12, 6, 18, 18],
+  ["Psiquiatria CPS T03", "CPS", "M4 - Transtornos do humor II", "02/07/2026", 24, 17, 41, 41],
+  ["Dermatologia SP T05", "SP", "M17 - Tratamentos Capilares", "02/07/2026", 18, 6, 24, 24],
+  ["Dermatologia SP T09", "SP", "M12 - Peelings Químicos", "02/07/2026", 24, 14, 38, 39],
+  ["Dermatologia SP T12", "SP", "M4 - Farmacologia Dermatológica e Estética", "02/07/2026", 39, 8, 47, 38],
+  ["Dermatologia CPS T07", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "03/07/2026", 12, 2, 14, 14],
+  ["Psiquiatria CPS T03", "CPS", "M4 - Transtornos do humor II", "03/07/2026", 24, 30, 54, 54],
+  ["Dermatologia SP T05", "SP", "M17 - Tratamentos Capilares", "03/07/2026", 18, 3, 21, 21],
+  ["Dermatologia SP T09", "SP", "M12 - Peelings Químicos", "03/07/2026", 24, 10, 34, 35],
+  ["Dermatologia SP T12", "SP", "M4 - Farmacologia Dermatológica e Estética", "03/07/2026", 39, 8, 47, 30],
+  ["Dermatologia CPS T07", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "04/07/2026", 12, 3, 15, 15],
+  ["Neuropediatria CPS T04", "CPS", "M1 - Neurodesenvolvimento e exame neurólogico", "04/07/2026", 12, 11, 23, 23],
+  ["Psiquiatria CPS T03", "CPS", "M4 - Transtornos do humor II", "04/07/2026", 24, 33, 57, 57],
+  ["Dermatologia SP T05", "SP", "M17 - Tratamentos Capilares", "04/07/2026", 18, 4, 22, 22],
+  ["Dermatologia SP T09", "SP", "M12 - Peelings Químicos", "04/07/2026", 24, 9, 33, 33],
+  ["Dermatologia SP T12", "SP", "M4 - Farmacologia Dermatológica e Estética", "04/07/2026", 39, 7, 46, 22],
+  ["Oftalmologia CPS T02", "CPS", "M5 - Estrabismo I", "06/07/2026", 24, 11, 35, 35],
+  ["Psiquiatria CPS T02", "CPS", "M14 - Transtornos somatoformes, dissociativos e conversivos", "06/07/2026", 24, 13, 37, 37],
+  ["Dermatologia Cirurgica SP T01", "SP", "M6 - Tratamento de cicatrizes", "06/07/2026", 12, 7, 19, 17],
+  ["Dermatologia SP T04", "SP", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "06/07/2026", 12, 9, 21, 21],
+  ["Dermatologia SP T14", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "06/07/2026", 12, 4, 16, 16],
+  ["Oftalmologia CPS T02", "CPS", "M5 - Estrabismo I", "07/07/2026", 24, 0, 24, 20],
+  ["Psiquiatria CPS T02", "CPS", "M14 - Transtornos somatoformes, dissociativos e conversivos", "07/07/2026", 24, 7, 31, 31],
+  ["Dermatologia Cirurgica SP T01", "SP", "M6 - Tratamento de cicatrizes", "07/07/2026", 12, 2, 14, 12],
+  ["Dermatologia SP T04", "SP", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "07/07/2026", 12, 6, 18, 18],
+  ["Dermatologia SP T14", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "07/07/2026", 12, 9, 21, 21],
+  ["Oftalmologia CPS T02", "CPS", "M5 - Estrabismo I", "08/07/2026", 24, 0, 24, 12],
+  ["Psiquiatria CPS T02", "CPS", "M14 - Transtornos somatoformes, dissociativos e conversivos", "08/07/2026", 24, 9, 33, 33],
+  ["Psiquiatria CPS T04", "CPS", "M5 - Transtornos relacionados a traumas e estressores", "08/07/2026", 24, 18, 42, 41],
+  ["Dermatologia Cirurgica SP T01", "SP", "M6 - Tratamento de cicatrizes", "08/07/2026", 12, 2, 14, 12],
+  ["Dermatologia SP T04", "SP", "M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores", "08/07/2026", 12, 5, 17, 17],
+  ["Dermatologia SP T14", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "08/07/2026", 12, 4, 16, 16],
+  ["Dermatologia SP T13", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "09/07/2026", 12, 4, 16, 16],
+  ["Dermatologia SP T16", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "09/07/2026", 12, 2, 14, 8],
+  ["Dermatologia SP T21", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "09/07/2026", 12, 2, 14, 9],
+  ["Oftalmologia SP T02", "SP", "M15 - Plástica Ocular, Vias Lacrimais e Órbita II", "09/07/2026", 24, 5, 29, 23],
+  ["Psiquiatria SP T03", "SP", "M5 - Transtornos de ansiedade I", "09/07/2026", 24, 13, 37, 38],
+  ["Dermatologia BSB T01", "BSB", "M14 - Preenchimento Glúteo", "09/07/2026", 12, 2, 14, 3],
+  ["Dermatologia BSB T02", "BSB", "M4 - Farmacologia Dermatológica e Estética", "09/07/2026", 39, 8, 47, 7],
+  ["Oftalmologia BSB T01", "BSB", "M8 - Glaucoma I", "09/07/2026", 18, 1, 19, 11],
+  ["Dermatologia SP T13", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "10/07/2026", 12, 4, 16, 16],
+  ["Dermatologia SP T16", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "10/07/2026", 12, 2, 14, 2],
+  ["Dermatologia SP T21", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "10/07/2026", 12, 2, 14, 3],
+  ["Oftalmologia SP T02", "SP", "M15 - Plástica Ocular, Vias Lacrimais e Órbita II", "10/07/2026", 24, 5, 29, 7],
+  ["Psiquiatria SP T03", "SP", "M5 - Transtornos de ansiedade I", "10/07/2026", 24, 21, 45, 45],
+  ["Dermatologia BSB T01", "BSB", "M14 - Preenchimento Glúteo", "10/07/2026", 12, 1, 13, 1],
+  ["Dermatologia BSB T02", "BSB", "M4 - Farmacologia Dermatológica e Estética", "10/07/2026", 39, 8, 47, 4],
+  ["Oftalmologia BSB T01", "BSB", "M8 - Glaucoma I", "10/07/2026", 18, 1, 19, 8],
+  ["Neuropediatria CPS T01", "CPS", "M8 - Transtornos do Processamento Sensorial e da Regulação Emocional; Cefaleia na Infância", "11/07/2026", 12, 10, 22, 20],
+  ["Dermatologia SP T13", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "11/07/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T16", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "11/07/2026", 12, 1, 13, 4],
+  ["Dermatologia SP T21", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "11/07/2026", 12, 1, 13, 4],
+  ["Oftalmologia SP T02", "SP", "M15 - Plástica Ocular, Vias Lacrimais e Órbita II", "11/07/2026", 24, 4, 28, 5],
+  ["Psiquiatria Infantil SP T01", "SP", "M6 - Transtornos do neurodesenvolvimento III - Transtorno do desenvolvimento intelectual (TDI), transtornos da comunicação, transtornos motores e transtornos específicos da aprendizagem", "11/07/2026", 12, 5, 17, 11],
+  ["Psiquiatria SP T03", "SP", "M5 - Transtornos de ansiedade I", "11/07/2026", 24, 22, 46, 46],
+  ["Dermatologia BSB T01", "BSB", "M14 - Preenchimento Glúteo", "11/07/2026", 12, 1, 13, 0],
+  ["Dermatologia BSB T02", "BSB", "M4 - Farmacologia Dermatológica e Estética", "11/07/2026", 39, 7, 46, 4],
+  ["Oftalmologia BSB T01", "BSB", "M8 - Glaucoma I", "11/07/2026", 18, 0, 18, 7],
+  ["Dermatologia CPS T03", "CPS", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "13/07/2026", 12, 2, 14, 1],
+  ["Endocrinologia CPS T02", "CPS", "M3 - Obesidade e síndrome metabólica", "13/07/2026", 24, 20, 44, 44],
+  ["Dermatologia SP T08", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "13/07/2026", 24, 20, 44, 44],
+  ["Dermatologia SP T11", "SP", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "13/07/2026", 39, 0, 39, 18],
+  ["Oftalmologia SP T06", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "13/07/2026", 24, 5, 29, 3],
+  ["Dermatologia BSB T03", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "13/07/2026", 12, 2, 14, 14],
+  ["Dermatologia CPS T03", "CPS", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "14/07/2026", 12, 2, 14, 0],
+  ["Endocrinologia CPS T02", "CPS", "M3 - Obesidade e síndrome metabólica", "14/07/2026", 24, 17, 41, 41],
+  ["Dermatologia SP T08", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "14/07/2026", 24, 15, 39, 39],
+  ["Dermatologia SP T11", "SP", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "14/07/2026", 39, 0, 39, 7],
+  ["Oftalmologia SP T06", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "14/07/2026", 24, 5, 29, 0],
+  ["Dermatologia BSB T03", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "14/07/2026", 12, 2, 14, 12],
+  ["Dermatologia CPS T03", "CPS", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "15/07/2026", 12, 1, 13, 0],
+  ["Endocrinologia CPS T02", "CPS", "M3 - Obesidade e síndrome metabólica", "15/07/2026", 24, 16, 40, 40],
+  ["Dermatologia SP T08", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "15/07/2026", 24, 13, 37, 37],
+  ["Dermatologia SP T11", "SP", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "15/07/2026", 39, 0, 39, 12],
+  ["Oftalmologia SP T06", "SP", "M4 - Plástica Ocular, Vias Lacrimais e Órbita I", "15/07/2026", 24, 4, 28, 3],
+  ["Dermatologia BSB T03", "BSB", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "15/07/2026", 12, 1, 13, 13],
+  ["Psiquiatria ONL T05", "ONL", "M4 - Espectro da Esquizofrenia e Outros Transtornos Psicóticos", "15/07/2026", 8, 19, 27, 0],
+  ["Endocrinologia CPS T01", "CPS", "M13 - Síndrome de Cushing", "16/07/2026", 24, 5, 29, 20],
+  ["Pediatria CPS T05", "CPS", "M4 - Infectologia e Neurologia", "16/07/2026", 24, 7, 31, 24],
+  ["Dermatologia SP T06", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "16/07/2026", 12, 2, 14, 0],
+  ["Dermatologia SP T15", "SP", "M4 - Farmacologia Dermatológica e Estética", "16/07/2026", 39, 8, 47, 14],
+  ["Dermatologia SP T19", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "16/07/2026", 12, 2, 14, 0],
+  ["Endocrinologia SP T05", "SP", "M1 - Doenças da Tireoide", "16/07/2026", 24, 8, 32, 32],
+  ["Endocrinologia BSB T01", "BSB", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "16/07/2026", 15, 15, 30, 27],
+  ["Endocrinologia ONL T06", "ONL", "M5 - Obesidade", "16/07/2026", 8, 18, 26, 0],
+  ["Psiquiatria ONL T02", "ONL", "M8 - Transtorno Obsessivo Compulsivo e Transtornos relacionados", "16/07/2026", 8, 19, 27, 0],
+  ["Endocrinologia CPS T01", "CPS", "M13 - Síndrome de Cushing", "17/07/2026", 24, 5, 29, 18],
+  ["Pediatria CPS T05", "CPS", "M4 - Infectologia e Neurologia", "17/07/2026", 24, 7, 31, 20],
+  ["Dermatologia SP T06", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "17/07/2026", 12, 2, 14, 0],
+  ["Dermatologia SP T15", "SP", "M4 - Farmacologia Dermatológica e Estética", "17/07/2026", 39, 8, 47, 6],
+  ["Dermatologia SP T19", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "17/07/2026", 12, 2, 14, 0],
+  ["Endocrinologia SP T05", "SP", "M1 - Doenças da Tireoide", "17/07/2026", 24, 7, 31, 31],
+  ["Endocrinologia BSB T01", "BSB", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "17/07/2026", 15, 18, 33, 29],
+  ["Endocrinologia CPS T01", "CPS", "M13 - Síndrome de Cushing", "18/07/2026", 24, 5, 29, 10],
+  ["Neuropediatria CPS T02", "CPS", "M6 - Distúrbios de movimento e paralisia cerebral", "18/07/2026", 12, 10, 22, 20],
+  ["Dermatologia SP T06", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "18/07/2026", 12, 1, 13, 1],
+  ["Dermatologia SP T15", "SP", "M4 - Farmacologia Dermatológica e Estética", "18/07/2026", 39, 7, 46, 1],
+  ["Dermatologia SP T19", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "18/07/2026", 12, 1, 13, 0],
+  ["Endocrinologia BSB T01", "BSB", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "18/07/2026", 15, 13, 28, 25],
+  ["Dermatologia One SP T01", "SP", "M4 - Dermatologia Clínica Inestética – melasma, acne, cicatriz, rosácea", "19/07/2026", 39, 16, 55, 55],
+  ["Pediatria CPS T04", "CPS", "M4 - Infectologia e Neurologia", "20/07/2026", 24, 7, 31, 14],
+  ["Dermatologia SP T20", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "20/07/2026", 39, 8, 47, 47],
+  ["Endocrinologia SP T02", "SP", "M7 - Urgências em diabetes", "20/07/2026", 24, 7, 31, 13],
+  ["Oftalmologia SP T05", "SP", "M6 - Córnea I", "20/07/2026", 24, 5, 29, 12],
+  ["Tricologia SP T02", "SP", "M3 - Alopecias não cicatriciais, classificação e tratamento", "20/07/2026", 18, 7, 25, 25],
+  ["Endocrinologia CPS T03", "CPS", "M4 - Interpretação de Exames Laboratoriais em Endocrinologia", "21/07/2026", 12, 39, 51, 51],
+  ["Pediatria CPS T04", "CPS", "M4 - Infectologia e Neurologia", "21/07/2026", 24, 7, 31, 8],
+  ["Dermatologia SP T20", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "21/07/2026", 39, 8, 47, 41],
+  ["Endocrinologia SP T02", "SP", "M7 - Urgências em diabetes", "21/07/2026", 24, 6, 30, 2],
+  ["Oftalmologia SP T05", "SP", "M6 - Córnea I", "21/07/2026", 24, 5, 29, 3],
+  ["Tricologia SP T02", "SP", "M3 - Alopecias não cicatriciais, classificação e tratamento", "21/07/2026", 18, 7, 25, 25],
+  ["Endocrinologia CPS T03", "CPS", "M4 - Interpretação de Exames Laboratoriais em Endocrinologia", "22/07/2026", 12, 31, 43, 43],
+  ["Dermatologia SP T20", "SP", "M2 - Avaliação Estética e Planejamento Terapêutico para Excelentes Resultados", "22/07/2026", 39, 7, 46, 38],
+  ["Endocrinologia SP T02", "SP", "M7 - Urgências em diabetes", "22/07/2026", 24, 6, 30, 3],
+  ["Oftalmologia SP T05", "SP", "M6 - Córnea I", "22/07/2026", 24, 4, 28, 3],
+  ["Tricologia SP T02", "SP", "M3 - Alopecias não cicatriciais, classificação e tratamento", "22/07/2026", 18, 6, 24, 24],
+  ["Endocrinologia ONL T01", "ONL", "M12 - Endocrinologia do Crescimento e Desenvolvimento", "22/07/2026", 8, 18, 26, 0],
+  ["Dermatologia CPS T04", "CPS", "M12 - Peelings Químicos", "23/07/2026", 24, 10, 34, 31],
+  ["Dermatologia CPS T09", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "23/07/2026", 12, 6, 18, 18],
+  ["Dermatologia SP T17", "SP", "M4 - Farmacologia Dermatológica e Estética", "23/07/2026", 39, 8, 47, 1],
+  ["Endocrinologia SP T04", "SP", "M4 - Interpretação de Exames Laboratoriais em Endocrinologia", "23/07/2026", 24, 11, 35, 35],
+  ["Nutrologia SP T01", "SP", "M1 - Nutrologia Esportiva: Performance e Composição Corporal", "23/07/2026", 12, 7, 19, 19],
+  ["Oftalmologia SP T04", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "23/07/2026", 24, 5, 29, 14],
+  ["Dermatologia CPS T04", "CPS", "M12 - Peelings Químicos", "24/07/2026", 24, 10, 34, 30],
+  ["Dermatologia CPS T09", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "24/07/2026", 12, 5, 17, 17],
+  ["Dermatologia SP T17", "SP", "M4 - Farmacologia Dermatológica e Estética", "24/07/2026", 39, 8, 47, 0],
+  ["Endocrinologia SP T04", "SP", "M4 - Interpretação de Exames Laboratoriais em Endocrinologia", "24/07/2026", 24, 12, 36, 36],
+  ["Oftalmologia SP T04", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "24/07/2026", 24, 5, 29, 0],
+  ["Dermatologia CPS T04", "CPS", "M12 - Peelings Químicos", "25/07/2026", 24, 7, 31, 31],
+  ["Dermatologia CPS T09", "CPS", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "25/07/2026", 12, 1, 13, 13],
+  ["Neuropediatria CPS T03", "CPS", "M5 - Transtornos do Sono, Traumatismo Cranioencefálico, COMA e Morte Encefálica", "25/07/2026", 12, 13, 25, 24],
+  ["Dermatologia SP T17", "SP", "M4 - Farmacologia Dermatológica e Estética", "25/07/2026", 39, 7, 46, 0],
+  ["Oftalmologia SP T04", "SP", "M10 - Úvea, Tumor e Neuroftalmo I", "25/07/2026", 24, 4, 28, 3],
+  ["Psiquiatria SP T04", "SP", "M5 - Transtornos relacionados a traumas e estressores", "25/07/2026", 24, 5, 29, 20],
+  ["Dermatologia CPS T06", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "27/07/2026", 12, 3, 15, 13],
+  ["Pediatria CPS T06", "CPS", "M1 - Pneumologia", "27/07/2026", 24, 7, 31, 3],
+  ["Dermatologia SP T18", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "27/07/2026", 12, 2, 14, 0],
+  ["Psiquiatria SP T02", "SP", "M9 - Transtorno por uso de substâncias I", "27/07/2026", 24, 5, 29, 11],
+  ["Dermatologia CPS T06", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "28/07/2026", 12, 2, 14, 13],
+  ["Pediatria CPS T06", "CPS", "M1 - Pneumologia", "28/07/2026", 24, 7, 31, 0],
+  ["Dermatologia SP T18", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "28/07/2026", 12, 2, 14, 0],
+  ["Psiquiatria SP T02", "SP", "M9 - Transtorno por uso de substâncias I", "28/07/2026", 24, 5, 29, 4],
+  ["Dermatologia CPS T06", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "29/07/2026", 12, 1, 13, 13],
+  ["Dermatologia SP T18", "SP", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "29/07/2026", 12, 1, 13, 0],
+  ["Psiquiatria SP T02", "SP", "M9 - Transtorno por uso de substâncias I", "29/07/2026", 24, 4, 28, 5],
+  ["Psiquiatria BSB T01", "BSB", "M4 - Transtornos de ansiedade I", "29/07/2026", 18, 6, 24, 24],
+  ["Psiquiatria ONL T01", "ONL", "M12 - Saúde Mental em Populações Específicas", "29/07/2026", 8, 19, 27, 0],
+  ["Psiquiatria CPS T03", "CPS", "M5 - Transtornos de ansiedade I", "30/07/2026", 24, 6, 30, 26],
+  ["Dermatologia SP T10", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "30/07/2026", 12, 3, 15, 14],
+  ["Dermatologia SP T12", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "30/07/2026", 12, 3, 15, 15],
+  ["Dermatologia SP T22", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "30/07/2026", 0, 0, 0, 0],
+  ["Tricologia SP T01", "SP", "M7 - Tratamentos capilares com MMP, microagulhamento e lasers capilares e ledterapia aplicados á tricologia\"", "30/07/2026", 18, 4, 22, 21],
+  ["Oftalmologia BSB T01", "BSB", "M10 - Úvea, Tumor e Neuroftalmo I", "30/07/2026", 18, 1, 19, 11],
+  ["Psiquiatria CPS T03", "CPS", "M5 - Transtornos de ansiedade I", "31/07/2026", 24, 6, 30, 24],
+  ["Dermatologia SP T10", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "31/07/2026", 12, 2, 14, 11],
+  ["Dermatologia SP T12", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "31/07/2026", 12, 3, 15, 15],
+  ["Dermatologia SP T22", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "31/07/2026", 0, 0, 0, 0],
+  ["Tricologia SP T01", "SP", "M7 - Tratamentos capilares com MMP, microagulhamento e lasers capilares e ledterapia aplicados á tricologia\"", "31/07/2026", 18, 6, 24, 24],
+  ["Oftalmologia BSB T01", "BSB", "M10 - Úvea, Tumor e Neuroftalmo I", "31/07/2026", 18, 0, 18, 3],
+  ["Neuropediatria CPS T04", "CPS", "M2 - TDAH e diferenciais", "01/08/2026", 12, 6, 18, 18],
+  ["Psiquiatria CPS T03", "CPS", "M5 - Transtornos de ansiedade I", "01/08/2026", 24, 5, 29, 25],
+  ["Dermatologia SP T10", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "01/08/2026", 12, 1, 13, 13],
+  ["Dermatologia SP T12", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "01/08/2026", 12, 3, 15, 15],
+  ["Dermatologia SP T22", "SP", "M1 - Anatomia e Fisiologia da Pele Aplicada à Prática Cosmiatria - Face", "01/08/2026", 0, 0, 0, 0],
+  ["Tricologia SP T01", "SP", "M7 - Tratamentos capilares com MMP, microagulhamento e lasers capilares e ledterapia aplicados á tricologia\"", "01/08/2026", 18, 4, 22, 18],
+  ["Oftalmologia BSB T01", "BSB", "M10 - Úvea, Tumor e Neuroftalmo I", "01/08/2026", 18, 0, 18, 3],
+  ["Dermatologia CPS T05", "CPS", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "03/08/2026", 39, 8, 47, 12],
+  ["Dermatologia CPS T08", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "03/08/2026", 12, 2, 14, 12],
+  ["Oftalmologia CPS T02", "CPS", "M6 - Córnea I", "03/08/2026", 24, 6, 30, 12],
+  ["Dermatologia SP T07", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "03/08/2026", 12, 2, 14, 0],
+  ["Endocrinologia SP T03", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "03/08/2026", 24, 7, 31, 0],
+  ["Oftalmologia SP T03", "SP", "M13 - Refração e Visão Subnormal II", "03/08/2026", 24, 5, 29, 30],
+  ["Dermatologia CPS T05", "CPS", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "04/08/2026", 39, 8, 47, 4],
+  ["Dermatologia CPS T08", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "04/08/2026", 12, 2, 14, 2],
+  ["Oftalmologia CPS T02", "CPS", "M6 - Córnea I", "04/08/2026", 24, 5, 29, 3],
+  ["Dermatologia SP T07", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "04/08/2026", 12, 2, 14, 0],
+  ["Endocrinologia SP T03", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "04/08/2026", 24, 6, 30, 0],
+  ["Oftalmologia SP T03", "SP", "M13 - Refração e Visão Subnormal II", "04/08/2026", 24, 5, 29, 28],
+  ["Dermatologia CPS T05", "CPS", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "05/08/2026", 39, 7, 46, 0],
+  ["Dermatologia CPS T08", "CPS", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "05/08/2026", 12, 1, 13, 2],
+  ["Oftalmologia CPS T02", "CPS", "M6 - Córnea I", "05/08/2026", 24, 5, 29, 0],
+  ["Psiquiatria CPS T04", "CPS", "M6 - Espectro da esquizofrenia e outros transtornos psicóticos", "05/08/2026", 24, 6, 30, 6],
+  ["Dermatologia SP T07", "SP", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "05/08/2026", 12, 1, 13, 0],
+  ["Endocrinologia SP T03", "SP", "M6 - Diabetes gestacional e outros tipos de diabetes", "05/08/2026", 24, 6, 30, 0],
+  ["Oftalmologia SP T03", "SP", "M13 - Refração e Visão Subnormal II", "05/08/2026", 24, 4, 28, 25],
+  ["Endocrinologia ONL T07", "ONL", "M3 - Diabetes Mellitus", "05/08/2026", 8, 18, 26, 0],
+  ["Dermatologia CPS T04", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "06/08/2026", 12, 3, 15, 6],
+  ["Dermatologia CPS T07", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "06/08/2026", 39, 8, 47, 24],
+  ["Dermatologia SP T05", "SP", "M18 - Estética Genital Feminina", "06/08/2026", 12, 3, 15, 14],
+  ["Dermatologia SP T09", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "06/08/2026", 12, 3, 15, 10],
+  ["Psiquiatria SP T03", "SP", "M6 - Transtornos relacionados a traumas e estressores", "06/08/2026", 24, 5, 29, 8],
+  ["Dermatologia BSB T01", "BSB", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "06/08/2026", 12, 2, 14, 0],
+  ["Dermatologia BSB T02", "BSB", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "06/08/2026", 12, 2, 14, 5],
+  ["Endocrinologia ONL T04", "ONL", "M11 - Hipófise e Hipotálamo: Patologias e Terapêutica", "06/08/2026", 8, 18, 26, 0],
+  ["Dermatologia CPS T04", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "07/08/2026", 12, 2, 14, 2],
+  ["Dermatologia CPS T07", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "07/08/2026", 39, 8, 47, 5],
+  ["Dermatologia SP T05", "SP", "M18 - Estética Genital Feminina", "07/08/2026", 12, 2, 14, 10],
+  ["Dermatologia SP T09", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "07/08/2026", 12, 2, 14, 3],
+  ["Psiquiatria SP T03", "SP", "M6 - Transtornos relacionados a traumas e estressores", "07/08/2026", 24, 5, 29, 3],
+  ["Dermatologia BSB T01", "BSB", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "07/08/2026", 12, 2, 14, 0],
+  ["Dermatologia BSB T02", "BSB", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "07/08/2026", 12, 2, 14, 0],
+  ["Dermatologia CPS T04", "CPS", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "08/08/2026", 12, 2, 14, 4],
+  ["Dermatologia CPS T07", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "08/08/2026", 39, 7, 46, 4],
+  ["Dermatologia SP T05", "SP", "M18 - Estética Genital Feminina", "08/08/2026", 12, 1, 13, 10],
+  ["Dermatologia SP T09", "SP", "M13 - Tratamentos corporais para flacidez, gordura localizada e estrais", "08/08/2026", 12, 2, 14, 7],
+  ["Psiquiatria Infantil SP T01", "SP", "M7 - Transtornos disruptivos - transtorno de oposição desafiante (TOD), transtorno de conduta (TC) e transtorno explosivo intermitente (TEI)", "08/08/2026", 12, 4, 16, 11],
+  ["Psiquiatria SP T03", "SP", "M6 - Transtornos relacionados a traumas e estressores", "08/08/2026", 24, 4, 28, 1],
+  ["Dermatologia BSB T01", "BSB", "M15 - Complicações em Procedimentos Dermatológicos Injetáveis", "08/08/2026", 12, 1, 13, 0],
+  ["Dermatologia BSB T02", "BSB", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "08/08/2026", 12, 1, 13, 0],
+  ["Endocrinologia CPS T02", "CPS", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "10/08/2026", 24, 10, 34, 19],
+  ["Psiquiatria CPS T02", "CPS", "M15 - Suicidalidade", "10/08/2026", 12, 11, 23, 23],
+  ["Dermatologia Cirurgica SP T01", "SP", "M7 - Sutura especial e técnicas especiais", "10/08/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T04", "SP", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "10/08/2026", 0, 0, 0, 0],
+  ["Oftalmologia SP T06", "SP", "M5 - Estrabismo I", "10/08/2026", 24, 5, 29, 1],
+  ["Tricologia SP T02", "SP", "M4 - Alopecias cicatriciais, classificação e tratamento", "10/08/2026", 18, 4, 22, 15],
+  ["Endocrinologia CPS T02", "CPS", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "11/08/2026", 24, 11, 35, 11],
+  ["Psiquiatria CPS T02", "CPS", "M15 - Suicidalidade", "11/08/2026", 12, 6, 18, 18],
+  ["Dermatologia Cirurgica SP T01", "SP", "M7 - Sutura especial e técnicas especiais", "11/08/2026", 12, 2, 14, 8],
+  ["Dermatologia SP T04", "SP", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "11/08/2026", 0, 0, 0, 0],
+  ["Oftalmologia SP T06", "SP", "M5 - Estrabismo I", "11/08/2026", 24, 5, 29, 2],
+  ["Tricologia SP T02", "SP", "M4 - Alopecias cicatriciais, classificação e tratamento", "11/08/2026", 18, 4, 22, 8],
+  ["Endocrinologia CPS T02", "CPS", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "12/08/2026", 24, 6, 30, 10],
+  ["Psiquiatria CPS T02", "CPS", "M15 - Suicidalidade", "12/08/2026", 12, 7, 19, 19],
+  ["Dermatologia Cirurgica SP T01", "SP", "M7 - Sutura especial e técnicas especiais", "12/08/2026", 12, 5, 17, 15],
+  ["Dermatologia SP T04", "SP", "M20 - Gestão de consultório e legislação para funcionamento, marketing e vendas em estética", "12/08/2026", 0, 0, 0, 0],
+  ["Oftalmologia SP T06", "SP", "M5 - Estrabismo I", "12/08/2026", 24, 4, 28, 0],
+  ["Tricologia SP T02", "SP", "M4 - Alopecias cicatriciais, classificação e tratamento", "12/08/2026", 18, 4, 22, 8],
+  ["Endocrinologia ONL T05", "ONL", "M11 - Hipófise e Hipotálamo: Patologias e Terapêutica", "12/08/2026", 8, 18, 26, 0],
+  ["Endocrinologia CPS T01", "CPS", "M14 - Crescimento, Endocrinologia pediátrica básica", "13/08/2026", 24, 0, 24, 15],
+  ["Pediatria CPS T05", "CPS", "M6 - Nutrologia e Endocrinologia", "13/08/2026", 24, 7, 31, 23],
+  ["Dermatologia SP T13", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "13/08/2026", 12, 2, 14, 4],
+  ["Dermatologia SP T15", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "13/08/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T21", "SP", "M4 - Farmacologia Dermatológica e Estética", "13/08/2026", 39, 8, 47, 0],
+  ["Oftalmologia SP T02", "SP", "M16 - Estrabismo II", "13/08/2026", 24, 5, 29, 0],
+  ["Endocrinologia BSB T01", "BSB", "M9 - Adenomas hipofisários", "13/08/2026", 15, 0, 15, 9],
+  ["Psiquiatria ONL T03", "ONL", "M8 - Transtorno Obsessivo Compulsivo e Transtornos relacionados", "13/08/2026", 8, 19, 27, 0],
+  ["Endocrinologia CPS T01", "CPS", "M14 - Crescimento, Endocrinologia pediátrica básica", "14/08/2026", 24, 0, 24, 5],
+  ["Pediatria CPS T05", "CPS", "M6 - Nutrologia e Endocrinologia", "14/08/2026", 24, 7, 31, 12],
+  ["Dermatologia SP T13", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "14/08/2026", 12, 2, 14, 0],
+  ["Dermatologia SP T15", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "14/08/2026", 12, 2, 14, 14],
+  ["Dermatologia SP T21", "SP", "M4 - Farmacologia Dermatológica e Estética", "14/08/2026", 39, 8, 47, 0],
+  ["Oftalmologia SP T02", "SP", "M16 - Estrabismo II", "14/08/2026", 24, 5, 29, 0],
+  ["Endocrinologia BSB T01", "BSB", "M9 - Adenomas hipofisários", "14/08/2026", 15, 0, 15, 2],
+  ["Endocrinologia CPS T01", "CPS", "M14 - Crescimento, Endocrinologia pediátrica básica", "15/08/2026", 24, 0, 24, 10],
+  ["Neuropediatria CPS T02", "CPS", "M7 - TEA e diferenciais", "15/08/2026", 12, 3, 15, 14],
+  ["Dermatologia SP T13", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "15/08/2026", 12, 1, 13, 1],
+  ["Dermatologia SP T15", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "15/08/2026", 12, 1, 13, 13],
+  ["Dermatologia SP T21", "SP", "M4 - Farmacologia Dermatológica e Estética", "15/08/2026", 39, 7, 46, 0],
+  ["Oftalmologia SP T02", "SP", "M16 - Estrabismo II", "15/08/2026", 24, 4, 28, 1],
+  ["Endocrinologia BSB T01", "BSB", "M9 - Adenomas hipofisários", "15/08/2026", 15, 0, 15, 5],
+  ["Dermatologia CPS T03", "CPS", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "17/08/2026", 12, 2, 14, 0],
+  ["Pediatria CPS T04", "CPS", "M6 - Nutrologia e Endocrinologia", "17/08/2026", 24, 7, 31, 8],
+  ["Dermatologia SP T08", "SP", "M12 - Peelings Químicos", "17/08/2026", 24, 10, 34, 17],
+  ["Dermatologia SP T11", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "17/08/2026", 39, 8, 47, 6],
+  ["Dermatologia SP T18", "SP", "M4 - Farmacologia Dermatológica e Estética", "17/08/2026", 39, 8, 47, 0],
+  ["Endocrinologia SP T02", "SP", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "17/08/2026", 24, 7, 31, 29],
+  ["Dermatologia BSB T03", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "17/08/2026", 12, 2, 14, 4],
+  ["Dermatologia CPS T03", "CPS", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "18/08/2026", 12, 2, 14, 0],
+  ["Pediatria CPS T04", "CPS", "M6 - Nutrologia e Endocrinologia", "18/08/2026", 24, 7, 31, 1],
+  ["Dermatologia SP T08", "SP", "M12 - Peelings Químicos", "18/08/2026", 24, 10, 34, 3],
+  ["Dermatologia SP T11", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "18/08/2026", 39, 8, 47, 3],
+  ["Dermatologia SP T18", "SP", "M4 - Farmacologia Dermatológica e Estética", "18/08/2026", 39, 8, 47, 0],
+  ["Endocrinologia SP T02", "SP", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "18/08/2026", 24, 6, 30, 27],
+  ["Dermatologia BSB T03", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "18/08/2026", 12, 2, 14, 0],
+  ["Dermatologia CPS T03", "CPS", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "19/08/2026", 12, 1, 13, 1],
+  ["Dermatologia SP T08", "SP", "M12 - Peelings Químicos", "19/08/2026", 24, 9, 33, 5],
+  ["Dermatologia SP T11", "SP", "M9 - Dermatoses Inestéticas II: Fotoenvelhecimento, Rosácea, Cicatriz de Acne", "19/08/2026", 39, 7, 46, 3],
+  ["Dermatologia SP T18", "SP", "M4 - Farmacologia Dermatológica e Estética", "19/08/2026", 39, 7, 46, 0],
+  ["Endocrinologia SP T02", "SP", "M8 - Exames de imagem em endocrinologia/ testes funcionais", "19/08/2026", 24, 6, 30, 24],
+  ["Dermatologia BSB T03", "BSB", "M5 - Outras Técnicas de Aplicação de Toxina (Hiperidrose, Cefaleia, Blefarospasmo, Paralisia Facial)", "19/08/2026", 12, 1, 13, 2],
+  ["Endocrinologia ONL T02", "ONL", "M12 - Endocrinologia do Crescimento e Desenvolvimento", "19/08/2026", 8, 18, 26, 0],
+  ["Dermatologia CPS T09", "CPS", "M4 - Farmacologia Dermatológica e Estética", "20/08/2026", 39, 8, 47, 10],
+  ["Dermatologia SP T06", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "20/08/2026", 12, 2, 14, 0],
+  ["Dermatologia SP T16", "SP", "M4 - Farmacologia Dermatológica e Estética", "20/08/2026", 39, 8, 47, 0],
+  ["Dermatologia SP T19", "SP", "M4 - Farmacologia Dermatológica e Estética", "20/08/2026", 39, 8, 47, 0],
+  ["Endocrinologia SP T05", "SP", "M2 - Obesidade e Síndrome Metabólica", "20/08/2026", 24, 7, 31, 31],
+  ["Nutrologia SP T01", "SP", "M2 - Nutrologia e Saúde Gastrointestinal", "20/08/2026", 12, 2, 14, 14],
+  ["Endocrinologia ONL T03", "ONL", "M5 - Obesidade", "20/08/2026", 8, 18, 26, 0],
+  ["Dermatologia CPS T09", "CPS", "M4 - Farmacologia Dermatológica e Estética", "21/08/2026", 39, 8, 47, 8],
+  ["Dermatologia SP T06", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "21/08/2026", 12, 2, 14, 2],
+  ["Dermatologia SP T16", "SP", "M4 - Farmacologia Dermatológica e Estética", "21/08/2026", 39, 8, 47, 0],
+  ["Dermatologia SP T19", "SP", "M4 - Farmacologia Dermatológica e Estética", "21/08/2026", 39, 8, 47, 0],
+  ["Endocrinologia SP T05", "SP", "M2 - Obesidade e Síndrome Metabólica", "21/08/2026", 24, 6, 30, 30],
+  ["Dermatologia CPS T09", "CPS", "M4 - Farmacologia Dermatológica e Estética", "22/08/2026", 39, 7, 46, 5],
+  ["Neuropediatria CPS T01", "CPS", "M9 - Doenças Neurogenéticas, neuromusculares e Erros Inatos do Metabolismo", "22/08/2026", 12, 2, 14, 6],
+  ["Neuropediatria CPS T03", "CPS", "M6 - Distúrbios de movimento e paralisia cerebral", "22/08/2026", 12, 2, 14, 0],
+  ["Dermatologia SP T06", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "22/08/2026", 12, 1, 13, 0],
+  ["Dermatologia SP T16", "SP", "M4 - Farmacologia Dermatológica e Estética", "22/08/2026", 39, 7, 46, 0],
+  ["Dermatologia SP T19", "SP", "M4 - Farmacologia Dermatológica e Estética", "22/08/2026", 39, 7, 46, 0],
+  ["Psiquiatria SP T04", "SP", "M6 - Espectro da esquizofrenia e outros transtornos psicóticos", "22/08/2026", 24, 5, 29, 0],
+  ["Dermatologia One SP T01", "SP", "M5 - Laser I – conceitos, fototipos, rejuvenescimento e melasma", "23/08/2026", 24, 6, 30, 30],
+  ["Dermatologia CPS T06", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "24/08/2026", 39, 8, 47, 3],
+  ["Pediatria CPS T06", "CPS", "M2 - Emergências e Terapia Intensiva", "24/08/2026", 24, 7, 31, 0],
+  ["Dermatologia SP T14", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "24/08/2026", 12, 2, 14, 0],
+  ["Dermatologia SP T20", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "24/08/2026", 12, 2, 14, 14],
+  ["Oftalmologia SP T05", "SP", "M7 - Catarata I", "24/08/2026", 24, 5, 29, 6],
+  ["Psiquiatria SP T02", "SP", "M10 - Transtorno por uso de substâncias II", "24/08/2026", 24, 5, 29, 1],
+  ["Dermatologia CPS T06", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "25/08/2026", 39, 8, 47, 0],
+  ["Endocrinologia CPS T03", "CPS", "M5 - Endocrinologia da Criança e do Adolescente", "25/08/2026", 12, 0, 12, 1],
+  ["Pediatria CPS T06", "CPS", "M2 - Emergências e Terapia Intensiva", "25/08/2026", 24, 7, 31, 1],
+  ["Dermatologia SP T14", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "25/08/2026", 12, 2, 14, 0],
+  ["Dermatologia SP T20", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "25/08/2026", 12, 2, 14, 14],
+  ["Oftalmologia SP T05", "SP", "M7 - Catarata I", "25/08/2026", 24, 5, 29, 3],
+  ["Psiquiatria SP T02", "SP", "M10 - Transtorno por uso de substâncias II", "25/08/2026", 24, 5, 29, 0],
+  ["Dermatologia CPS T06", "CPS", "M6 - Dermatoses Inestéticas I: Melasma, Discromias e Acne", "26/08/2026", 39, 7, 46, 0],
+  ["Endocrinologia CPS T03", "CPS", "M5 - Endocrinologia da Criança e do Adolescente", "26/08/2026", 12, 0, 12, 2],
+  ["Dermatologia SP T14", "SP", "M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "26/08/2026", 12, 1, 13, 0],
+  ["Dermatologia SP T20", "SP", "M3 - Técnicas de Aplicação de Toxina Botulínica na Face", "26/08/2026", 12, 1, 13, 13],
+  ["Oftalmologia SP T05", "SP", "M7 - Catarata I", "26/08/2026", 24, 4, 28, 4],
+  ["Psiquiatria SP T02", "SP", "M10 - Transtorno por uso de substâncias II", "26/08/2026", 24, 4, 28, 0],
+  ["Psiquiatria BSB T01", "BSB", "M5 - Transtornos relacionados a traumas e estressores", "26/08/2026", 18, 0, 18, 8],
+  ["Dermatologia SP T10", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "27/08/2026", 24, 4, 28, 11],
+  ["Dermatologia SP T17", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "27/08/2026", 12, 2, 14, 8],
+  ["Endocrinologia SP T04", "SP", "M5 - Endocrinologia da Criança e do Adolescente", "27/08/2026", 24, 6, 30, 1],
+  ["Oftalmologia SP T04", "SP", "M11 - Oftalmologia cirúrgica I", "27/08/2026", 0, 0, 0, 0],
+  ["Tricologia SP T01", "SP", "M8 - Tratamentos capilares com intradermoterapia, eletroporação, tratamentos regenerativos/plano de desenvolvimento de carreira do médico tricologista", "27/08/2026", 18, 4, 22, 2],
+  ["Oftalmologia BSB T01", "BSB", "M11 - Oftalmologia cirúrgica I", "27/08/2026", 39, 0, 39, 0],
+  ["Psiquiatria ONL T04", "ONL", "M6 - Transtornos Relacionados a traumas e a Estressores", "27/08/2026", 8, 19, 27, 0],
+  ["Dermatologia SP T10", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "28/08/2026", 24, 4, 28, 4],
+  ["Dermatologia SP T17", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "28/08/2026", 12, 2, 14, 1],
+  ["Endocrinologia SP T04", "SP", "M5 - Endocrinologia da Criança e do Adolescente", "28/08/2026", 24, 6, 30, 0],
+  ["Oftalmologia SP T04", "SP", "M11 - Oftalmologia cirúrgica I", "28/08/2026", 0, 0, 0, 0],
+  ["Tricologia SP T01", "SP", "M8 - Tratamentos capilares com intradermoterapia, eletroporação, tratamentos regenerativos/plano de desenvolvimento de carreira do médico tricologista", "28/08/2026", 18, 4, 22, 2],
+  ["Oftalmologia BSB T01", "BSB", "M11 - Oftalmologia cirúrgica I", "28/08/2026", 39, 0, 39, 0],
+  ["Dermatologia SP T10", "SP", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)", "29/08/2026", 24, 3, 27, 9],
+  ["Dermatologia SP T17", "SP", "M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face", "29/08/2026", 12, 1, 13, 2],
+  ["Oftalmologia SP T04", "SP", "M11 - Oftalmologia cirúrgica I", "29/08/2026", 0, 0, 0, 0],
+  ["Tricologia SP T01", "SP", "M8 - Tratamentos capilares com intradermoterapia, eletroporação, tratamentos regenerativos/plano de desenvolvimento de carreira do médico tricologista", "29/08/2026", 18, 4, 22, 0],
+  ["Oftalmologia BSB T01", "BSB", "M11 - Oftalmologia cirúrgica I", "29/08/2026", 39, 0, 39, 0],
+  ["Dermatologia CPS T05", "CPS", "M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)", "31/08/2026", 24, 4, 28, 9],
+  ["Dermatologia CPS T08", "CPS", "M4 - Farmacologia Dermatológica e Estética", "31/08/2026", 39, 8, 47, 0],
+  ["Oftalmologia CPS T02", "CPS", "M7 - Catarata I", "31/08/2026", 24, 6, 30, 23],
+  ["Dermatologia SP T07", "SP", "M16 - Complicações em Procedimentos Estéticos Outros (Peelings, Laser, Microagulhamento)", "31/08/2026", 12, 2, 14, 0],
+  ["Endocrinologia SP T03", "SP", "M7 - Urgências em diabetes", "31/08/2026", 24, 7, 31, 0],
+  ["Oftalmologia SP T03", "SP", "M14 - Doenças Externas e Diagnóstico Diferencial de Olho Vermelho II", "31/08/2026", 24, 5, 29, 0]
+];
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 let WEEKS = ["S1","S2","S3","S4","S5"];
@@ -1851,7 +2503,6 @@ function getWeek(dateStr){
 function parseData(){
   return RAW.map(r => ({
     turma:r[0], unidade:r[1], modulo:r[2], data:r[3],
-    mes: r[3].split('/')[1],
     week: getWeek(r[3]),
     sp:r[4], se:r[5], st:r[6], ag:r[7]
   }));
@@ -1916,48 +2567,6 @@ function mkChart(id, cfg){
   if(!ctx) return;
   charts[id] = new Chart(ctx, cfg);
 }
-
-// ─── UNIT PILL FILTER ────────────────────────────────────────────────────────
-const U_BG = {CPS:"#1A2459",SP:"#375623",ONL:"#7F6000",BSB:"#843C0C"};
-function setUnitPill(btn, unit){
-  // Update pill styles
-  document.querySelectorAll('.unit-pill').forEach(p => {
-    const u = p.dataset.u;
-    const col = u ? (U_BG[u]||"#888") : "#888";
-    p.style.background = "#fff";
-    p.style.color = col;
-    p.style.border = "2px solid " + col;
-  });
-  const selCol = unit ? (U_BG[unit]||"#888") : "#888";
-  btn.style.background = selCol;
-  btn.style.color = "#fff";
-  btn.style.border = "2px solid " + selCol;
-
-  // Sync dropdown and re-render
-  const sel = document.getElementById("filter-unid-turma");
-  if(sel){ sel.value = unit; }
-  renderTurmaTable();
-  rebuildModuleDropdown();
-}
-
-// Sync pill when dropdown changes
-(function patchUnidDropdown(){
-  const sel = document.getElementById("filter-unid-turma");
-  if(!sel) return;
-  const orig = sel.onchange;
-  sel.addEventListener("change", function(){
-    const u = this.value;
-    document.querySelectorAll(".unit-pill").forEach(p => {
-      const pu = p.dataset.u;
-      const col = pu ? (U_BG[pu]||"#888") : "#888";
-      if(pu === u){
-        p.style.background = col; p.style.color="#fff"; p.style.border="2px solid "+col;
-      } else {
-        p.style.background="#fff"; p.style.color=col; p.style.border="2px solid "+col;
-      }
-    });
-  });
-})();
 
 // ─── PAGE NAVIGATION ─────────────────────────────────────────────────────────
 function showPage(name,el){
@@ -2038,39 +2647,6 @@ function buildMacro(){
   });
 
   buildHeatmap();
-
-  // ── Ocupação por Mês ──────────────────────────────────────────────────────
-  const MES_LABELS = {'05':'Mai','06':'Jun','07':'Jul','08':'Ago'};
-  const MES_ORDER  = ['05','06','07','08'];
-  const mesAgg = aggBy(DATA, ['mes']);
-  const mesMap = {}; mesAgg.forEach(m => mesMap[m.mes] = m);
-  const mesLabels = MES_ORDER.map(m => MES_LABELS[m] || m);
-  const mesOccBase = MES_ORDER.map(m => mesMap[m] && mesMap[m].sp>0 ? +(mesMap[m].ag/mesMap[m].sp*100).toFixed(1) : 0);
-  const mesOccST   = MES_ORDER.map(m => mesMap[m] && mesMap[m].st>0 ? +(mesMap[m].ag/mesMap[m].st*100).toFixed(1) : 0);
-  const mesAg      = MES_ORDER.map(m => mesMap[m]?.ag || 0);
-  mkChart("chart-mes-occ", {
-    type: "bar",
-    data: {
-      labels: mesLabels,
-      datasets: [
-        {label:"Ocupação base (ag/slots prática)",data:mesOccBase,backgroundColor:"#2D3A8C",borderRadius:5,yAxisID:"y"},
-        {label:"Ocupação c/ overbooking",data:mesOccST,backgroundColor:"#C5CBE8",borderRadius:5,yAxisID:"y"},
-        {label:"Agendamentos",data:mesAg,type:"line",borderColor:"#C9A84C",backgroundColor:"rgba(201,168,76,.15)",tension:.3,pointRadius:5,pointBackgroundColor:"#C9A84C",yAxisID:"y2"}
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{labels:{font:{size:11}}},tooltip:{callbacks:{
-        label: ctx => ctx.dataset.yAxisID==="y2"
-          ? ctx.dataset.label+": "+ctx.parsed.y.toLocaleString("pt-BR")
-          : ctx.dataset.label+": "+ctx.parsed.y.toFixed(1)+"%"
-      }}},
-      scales:{
-        y:{position:"left",min:0,max:130,ticks:{callback:v=>v+"%"},grid:{color:"#eee"},title:{display:true,text:"Taxa de Ocupação",font:{size:11}}},
-        y2:{position:"right",ticks:{stepSize:500},grid:{drawOnChartArea:false},title:{display:true,text:"Agendamentos",font:{size:11}}}
-      }
-    }
-  });
 }
 
 function buildHeatmap(){
@@ -3150,10 +3726,7 @@ function copyExecToPPT(){
 // ─── MÓDULO ───────────────────────────────────────────────────────────────────
 function buildModulo(){
   const fw=document.getElementById("filter-week-modulo").value;
-  const fu=document.getElementById("filter-unid-modulo").value;
-  const _DM2=getD();
-  let baseData = fw ? _DM2.filter(d=>d.week===fw) : _DM2;
-  if(fu) baseData = baseData.filter(d=>d.unidade===fu);
+  const _DM2=getD();const baseData = fw ? _DM2.filter(d=>d.week===fw) : _DM2;
 
   renderModuloTable(baseData);
 
@@ -3193,9 +3766,8 @@ function renderModuloTable(baseData){
   const fw=document.getElementById("filter-week-modulo").value;
   const sort=document.getElementById("filter-sort-modulo").value;
 
-  let filtered = baseData || (() => {
-    let d=getD(); if(fw) d=d.filter(x=>x.week===fw); if(fu) d=d.filter(x=>x.unidade===fu); return d;
-  })();
+  let filtered = baseData || (fw ? _DM2.filter(d=>d.week===fw) : _DM2);
+  if(fu) filtered=filtered.filter(d=>d.unidade===fu);
 
   let mAgg = aggBy(filtered,["modulo","unidade"]);
   if(q) mAgg=mAgg.filter(m=>m.modulo.toLowerCase().includes(q));
