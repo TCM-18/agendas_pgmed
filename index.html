@@ -165,9 +165,12 @@
 
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
     <label style="font-size:12px;font-weight:bold;color:#1A2459">Mês:</label>
-    <select id="filter-mes-macro" onchange="changeMes(this.value)" style="padding:5px 10px;border:1px solid #ccc;border-radius:5px;font-size:12px;background:#fff">
-      <option value="">Todos</option>
-    <option value="05">Mai</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ago</option><option value="09">Set</option></select>
+    <div id="filter-mes-macro-wrap" style="position:relative">
+      <button type="button" id="filter-mes-macro-btn" onclick="toggleMesMacroDropdown(event)" style="padding:5px 10px;border:1px solid #ccc;border-radius:5px;font-size:12px;background:#fff;cursor:pointer;min-width:150px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#1A2459">
+        <span id="filter-mes-macro-label">Todos</span><span style="font-size:9px;color:#888">▼</span>
+      </button>
+      <div id="filter-mes-macro-panel" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:30;background:#fff;border:1px solid #ccc;border-radius:5px;padding:8px 12px;box-shadow:0 4px 12px rgba(0,0,0,.15);min-width:150px"></div>
+    </div>
   </div>
   <div class="kpi-row" id="kpi-macro">
     <div class="kpi"><div class="label">Slots da Prática</div><div class="value">3.280</div><div class="sub">159 práticas com slots</div></div>
@@ -1855,9 +1858,16 @@ function parseData(){
 }
 let DATA = parseData();
 let curMes = "";
+let curMesesMacro = [];
 function getD(){
   if(!curMes) return DATA;
   const primary=DATA.filter(d=>d.data.split("/")[1]===curMes);
+  const validKeys=new Set(primary.map(d=>d.weekKey));
+  return DATA.filter(d=>validKeys.has(d.weekKey));
+}
+function getDMacro(){
+  if(!curMesesMacro.length) return DATA;
+  const primary=DATA.filter(d=>curMesesMacro.includes(d.data.split("/")[1]));
   const validKeys=new Set(primary.map(d=>d.weekKey));
   return DATA.filter(d=>validKeys.has(d.weekKey));
 }
@@ -1876,16 +1886,49 @@ function updateWeekLabels(){
   DATA.forEach(d=>{const i=WEEK_KEYS.indexOf(d.weekKey);d.week=i>=0?"S"+(i+1):"S?";});
   ["filter-week-turma","filter-week-modulo"].forEach(id=>{const s=document.getElementById(id);if(!s)return;const pv=s.value;s.innerHTML='<option value="">Todas as semanas</option>';WEEKS.forEach((w,i)=>{const o=document.createElement("option");o.value="S"+(i+1);o.textContent=w;s.appendChild(o);});if([...s.options].some(o=>o.value===pv))s.value=pv;});
 }
-function syncMesSelects(v){["filter-mes-macro","filter-mes-semana","filter-mes-unidade","filter-mes-turma","filter-mes-modulo"].forEach(id=>{const s=document.getElementById(id);if(s&&s.value!==v)s.value=v;});}
-function changeMes(v){curMes=v;syncMesSelects(v);updateWeekLabels();selWeek=null;buildMacro();buildSemana();buildUnidade();rebuildModuleDropdown();rebuildSpecDropdown();renderTurmaTable();buildModulo();}
+function syncMesSelects(v){["filter-mes-semana","filter-mes-unidade","filter-mes-turma","filter-mes-modulo"].forEach(id=>{const s=document.getElementById(id);if(s&&s.value!==v)s.value=v;});}
+function changeMes(v){curMes=v;syncMesSelects(v);updateWeekLabels();selWeek=null;buildSemana();buildUnidade();rebuildModuleDropdown();rebuildSpecDropdown();renderTurmaTable();buildModulo();}
 function initMesDropdowns(rebuild){
   const meses=[...new Set(DATA.map(d=>d.data.split("/")[1]))].sort();
-  ["filter-mes-macro","filter-mes-semana","filter-mes-unidade","filter-mes-turma","filter-mes-modulo"].forEach(id=>{
+  ["filter-mes-semana","filter-mes-unidade","filter-mes-turma","filter-mes-modulo"].forEach(id=>{
     const s=document.getElementById(id);if(!s)return;
     s.innerHTML='<option value="">Todos</option>';
     meses.forEach(mm=>{const o=document.createElement("option");o.value=mm;o.textContent=getMesLabel(mm);s.appendChild(o);});
   });
+  initMesMacroCheckboxes(meses);
 }
+function initMesMacroCheckboxes(meses){
+  const list = meses || [...new Set(DATA.map(d=>d.data.split("/")[1]))].sort();
+  const panel=document.getElementById("filter-mes-macro-panel");
+  if(!panel) return;
+  curMesesMacro = curMesesMacro.filter(m=>list.includes(m));
+  const checked=new Set(curMesesMacro);
+  panel.innerHTML = list.map(mm=>`<label style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;cursor:pointer;white-space:nowrap;color:#1A2459"><input type="checkbox" value="${mm}" onchange="onMesMacroChange()" ${checked.has(mm)?'checked':''}> ${getMesLabel(mm)}</label>`).join("");
+  updateMesMacroLabel();
+}
+function onMesMacroChange(){
+  const panel=document.getElementById("filter-mes-macro-panel");
+  if(!panel) return;
+  curMesesMacro = [...panel.querySelectorAll("input[type=checkbox]:checked")].map(i=>i.value);
+  updateMesMacroLabel();
+  buildMacro();
+}
+function updateMesMacroLabel(){
+  const label=document.getElementById("filter-mes-macro-label");
+  if(!label) return;
+  label.textContent = curMesesMacro.length ? curMesesMacro.map(getMesLabel).join(", ") : "Todos";
+}
+function toggleMesMacroDropdown(e){
+  if(e) e.stopPropagation();
+  const panel=document.getElementById("filter-mes-macro-panel");
+  if(!panel) return;
+  panel.style.display = panel.style.display==="block" ? "none" : "block";
+}
+document.addEventListener("click", function(e){
+  const wrap=document.getElementById("filter-mes-macro-wrap");
+  const panel=document.getElementById("filter-mes-macro-panel");
+  if(panel && panel.style.display==="block" && wrap && !wrap.contains(e.target)) panel.style.display="none";
+});
 
 function aggBy(data, keys){
   const map = {};
@@ -2010,7 +2053,7 @@ function showPage(name,el){
 
 // ─── MACRO ───────────────────────────────────────────────────────────────────
 function buildMacro(){
-  const _D=getD();const total = _D.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
+  const _D=getDMacro();const total = _D.reduce((a,d)=>({sp:a.sp+d.sp,se:a.se+d.se,st:a.st+d.st,ag:a.ag+d.ag}),{sp:0,se:0,st:0,ag:0});
   const withSlots = _D.filter(d=>d.sp>0).length;
   const noSlots = _D.filter(d=>d.sp===0).length;
 
@@ -2024,13 +2067,16 @@ function buildMacro(){
     <div class="kpi"><div class="label">Práticas s/ Slots</div><div class="value">${noSlots}</div><div class="sub">Sem slots cadastrados</div></div>
   `;
 
-  // Semana occ chart
-  const wAgg = aggBy(_D, ["week"]);
-  const wMap = {}; wAgg.forEach(w=>wMap[w.week]=w);
-  const wOcc = WEEKS.map(w => wMap[wKey(w)] ? (wMap[wKey(w)].sp>0 ? +(wMap[wKey(w)].ag/wMap[wKey(w)].sp*100).toFixed(1) : 0) : 0);
-  const wOccST = WEEKS.map(w => wMap[wKey(w)] ? (wMap[wKey(w)].st>0 ? +(wMap[wKey(w)].ag/wMap[wKey(w)].st*100).toFixed(1) : 0) : 0);
+  // Semanas do(s) mês(es) selecionado(s) na Macro — independente do filtro global "Mês"
+  const mWeekKeys=[...new Set(_D.map(d=>d.weekKey))].sort();
+  const mWeeks=mWeekKeys.map((k,i)=>mondayKeyToLabel(k,i));
 
-  mkChart("chart-semana-occ",{type:"bar",data:{labels:WEEKS.map(w=>w.replace("S","S")),
+  const wAgg = aggBy(_D, ["weekKey"]);
+  const wMap = {}; wAgg.forEach(w=>wMap[w.weekKey]=w);
+  const wOcc = mWeekKeys.map(k => wMap[k] ? (wMap[k].sp>0 ? +(wMap[k].ag/wMap[k].sp*100).toFixed(1) : 0) : 0);
+  const wOccST = mWeekKeys.map(k => wMap[k] ? (wMap[k].st>0 ? +(wMap[k].ag/wMap[k].st*100).toFixed(1) : 0) : 0);
+
+  mkChart("chart-semana-occ",{type:"bar",data:{labels:mWeeks,
     datasets:[
       {label:"Ocup. base (slots prática)",data:wOcc,backgroundColor:"#2D3A8C",borderRadius:4},
       {label:"Ocup. c/ overbooking",data:wOccST,backgroundColor:"#C5CBE8",borderRadius:4}
@@ -2040,10 +2086,10 @@ function buildMacro(){
   });
 
   // Volume chart
-  mkChart("chart-semana-vol",{type:"bar",data:{labels:WEEKS,
+  mkChart("chart-semana-vol",{type:"bar",data:{labels:mWeeks,
     datasets:[
-      {label:"Slots Prática",data:WEEKS.map(w=>wMap[wKey(w)]?.sp||0),backgroundColor:"#C5CBE8",borderRadius:3},
-      {label:"Agendamentos",data:WEEKS.map(w=>wMap[wKey(w)]?.ag||0),backgroundColor:"#1A2459",borderRadius:3}
+      {label:"Slots Prática",data:mWeekKeys.map(k=>wMap[k]?.sp||0),backgroundColor:"#C5CBE8",borderRadius:3},
+      {label:"Agendamentos",data:mWeekKeys.map(k=>wMap[k]?.ag||0),backgroundColor:"#1A2459",borderRadius:3}
     ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11}}}},
       scales:{y:{ticks:{stepSize:100},grid:{color:"#eee"}},x:{grid:{display:false}}}}
@@ -2073,25 +2119,27 @@ function buildMacro(){
         tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtN(ctx.parsed)} agend. (${(ctx.parsed/total.ag*100).toFixed(1)}%)`}}}}
   });
 
-  buildHeatmap();
+  buildHeatmap(_D, mWeekKeys, mWeeks);
 }
 
-function buildHeatmap(){
-  const _DH=getD();
-  const uAgg = aggBy(_DH, ["unidade","week"]);
-  const map = {}; uAgg.forEach(x=>{ if(!map[x.unidade]) map[x.unidade]={}; map[x.unidade][x.week]=x; });
+function buildHeatmap(_DH, weekKeysArg, weekLabelsArg){
+  const D = _DH || getDMacro();
+  const wkKeys = weekKeysArg || [...new Set(D.map(d=>d.weekKey))].sort();
+  const wkLabels = weekLabelsArg || wkKeys.map((k,i)=>mondayKeyToLabel(k,i));
+  const uAgg = aggBy(D, ["unidade","weekKey"]);
+  const map = {}; uAgg.forEach(x=>{ if(!map[x.unidade]) map[x.unidade]={}; map[x.unidade][x.weekKey]=x; });
 
   let html = `<table style="width:100%;border-collapse:collapse;font-size:12px">
     <thead><tr><th style="padding:10px 14px;background:#1A2459;color:#fff;text-align:left">Unidade</th>`;
-  WEEKS.forEach(w=>{ html+=`<th style="padding:10px 8px;background:#1A2459;color:#fff;text-align:center;font-size:11px">${w}</th>`; });
+  wkLabels.forEach(w=>{ html+=`<th style="padding:10px 8px;background:#1A2459;color:#fff;text-align:center;font-size:11px">${w}</th>`; });
   html+=`<th style="padding:10px 8px;background:#1A2459;color:#fff;text-align:center">Total Mês</th></tr></thead><tbody>`;
 
   UNIDADES.forEach((u,ui)=>{
     const bg = ui%2===0?"#fff":"#F0F4F8";
     html+=`<tr style="background:${bg}"><td style="padding:10px 14px;font-weight:bold;color:${U_COLORS[u]}">${u}</td>`;
     let tot_ag=0,tot_sp=0;
-    WEEKS.forEach(w=>{
-      const v = map[u]?.[wKey(w)];
+    wkKeys.forEach(k=>{
+      const v = map[u]?.[k];
       const occ = v && v.sp>0 ? v.ag/v.sp : null;
       const bg2 = occColor(occ);
       const tc = "#fff";
@@ -3304,8 +3352,9 @@ function handleUpload(input){
       if(!rows.length){ status.textContent = "❌ Nenhum dado válido encontrado"; return; }
 
       // Atualizar DATA global
-      DATA = rows.map(r=>({turma:r[0],unidade:r[1],modulo:r[2],data:r[3],week:getWeek(r[3]),sp:r[4],se:r[5],st:r[6],ag:r[7]}));
+      DATA = rows.map(r=>({turma:r[0],unidade:r[1],modulo:r[2],data:r[3],weekKey:getMondayKey(r[3]),week:getWeek(r[3]),sp:r[4],se:r[5],st:r[6],ag:r[7]}));
       curMes = "";
+      curMesesMacro = [];
       selWeek = null;
       updateWeekLabels();
       initMesDropdowns(true); // rebuild dropdowns
