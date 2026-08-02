@@ -148,7 +148,7 @@
   </div>
   <div style="text-align:right;flex-shrink:0">
     <div class="sub">Última atualização</div>
-    <div id="last-update" style="font-size:13px;font-weight:bold">31/07/2026 12:43</div>
+    <div id="last-update" style="font-size:13px;font-weight:bold">02/08/2026 18:03</div>
   </div>
 </div>
 
@@ -158,7 +158,7 @@
   <div class="tab" onclick="showPage('unidade',this)">🏛️ Por Unidade</div>
   <div class="tab" onclick="showPage('turma',this)">👥 Por Turma</div>
   <div class="tab" onclick="showPage('modulo',this)">📚 Por Módulo</div>
-  <div class="tab" onclick="showPage('pagas',this)">💰 Turmas Pagas (Jul)</div>
+  <div class="tab" onclick="showPage('pagas',this)">💰 Turmas Pagas (Ago)</div>
 </div>
 
 <!-- ═══════════════ MACRO ═══════════════ -->
@@ -1813,9 +1813,9 @@
   </div>
 </div>
 
-<!-- ═══════════════ TURMAS PAGAS (JUL) ═══════════════ -->
+<!-- ═══════════════ TURMAS PAGAS (AGO) ═══════════════ -->
 <div id="page-pagas" class="page">
-  <div style="margin-bottom:12px;font-size:12px;color:#666">Turmas de dermatologia com práticas pagas (extracurriculares) — competência Julho/2026.</div>
+  <div style="margin-bottom:12px;font-size:12px;color:#666">Turmas de dermatologia com práticas pagas (extracurriculares) — competência Agosto/2026.</div>
   <div class="kpi-row" id="kpi-pagas"></div>
   <div class="kpi-row" id="kpi-pagas-unidade"></div>
   <div class="card">
@@ -9769,35 +9769,30 @@ function mkChart(id, cfg){
   charts[id] = new Chart(ctx, cfg);
 }
 
-// ─── TURMAS PAGAS (JUL) ────────────────────────────────────────────────────────
+// ─── TURMAS PAGAS (AGO) ────────────────────────────────────────────────────────
 function fmtBRL(n){ return n.toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0}); }
 
-const PAGAS_JULHO = [
-  {turma:"Dermatologia CPS T08",unidade:"CPS",modulos:["M3 - Técnicas de Aplicação de Toxina Botulínica na Face"],sp:12,se:4,st:16,ag:21,n:1,valor:6000},
-  {turma:"Dermatologia SP T09",unidade:"SP",modulos:["M12 - Peelings Químicos"],sp:72,se:33,st:105,ag:66,n:3,valor:21600},
-  {turma:"Dermatologia SP T04",unidade:"SP",modulos:["M19 - Técnicas de Rejuvenescimento Regenerativo: PRP, MMP, Biorremodeladores e Bioestimuladores"],sp:36,se:6,st:42,ag:40,n:3,valor:32400},
-  {turma:"Dermatologia SP T14",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:43,n:3,valor:21600},
-  {turma:"Dermatologia SP T13",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:44,n:3,valor:21600},
-  {turma:"Dermatologia SP T08",unidade:"SP",modulos:["M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)"],sp:72,se:24,st:96,ag:119,n:3,valor:25200},
-  {turma:"Dermatologia SP T11",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:51,n:3,valor:21600},
-  {turma:"Dermatologia BSB T03",unidade:"BSB",modulos:["M3 - Técnicas de Aplicação de Toxina Botulínica na Face"],sp:36,se:12,st:48,ag:53,n:3,valor:18000},
-  {turma:"Dermatologia CPS T04",unidade:"CPS",modulos:["M12 - Peelings Químicos"],sp:72,se:33,st:105,ag:71,n:3,valor:21600},
-  {turma:"Dermatologia CPS T09",unidade:"CPS",modulos:["M3 - Técnicas de Aplicação de Toxina Botulínica na Face"],sp:36,se:12,st:48,ag:63,n:3,valor:18000},
-  {turma:"Dermatologia SP T10",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:24,se:8,st:32,ag:22,n:2,valor:14400},
-  {turma:"Dermatologia SP T12",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:24,se:8,st:32,ag:25,n:2,valor:14400}
+const PAGAS_AGOSTO = [
+  {turma:"Dermatologia SP T10",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)"],sp:36,se:12,st:48,ag:31,n:2,valor:15600},
+  {turma:"Dermatologia SP T17",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:24,se:8,st:32,ag:52,n:2,valor:14400},
+  {turma:"Dermatologia One SP T01",unidade:"SP",modulos:["M5 - Laser I – conceitos, fototipos, rejuvenescimento e melasma"],sp:24,se:8,st:32,ag:42,n:1,valor:8400},
+  {turma:"Dermatologia SP T12",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:12,se:4,st:16,ag:17,n:1,valor:7200},
+  {turma:"Dermatologia SP T13",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:12,se:4,st:16,ag:9,n:1,valor:7200},
+  {turma:"Dermatologia SP T14",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:12,se:4,st:16,ag:0,n:1,valor:7200},
+  {turma:"Dermatologia SP T20",unidade:"SP",modulos:["M3 - Técnicas de Aplicação de Toxina Botulínica na Face"],sp:12,se:4,st:16,ag:30,n:1,valor:6000}
 ];
 
 function buildPagas(){
-  const total = PAGAS_JULHO.reduce((a,d)=>({sp:a.sp+d.sp,st:a.st+d.st,ag:a.ag+d.ag,valor:a.valor+d.valor,n:a.n+d.n}),{sp:0,st:0,ag:0,valor:0,n:0});
+  const total = PAGAS_AGOSTO.reduce((a,d)=>({sp:a.sp+d.sp,st:a.st+d.st,ag:a.ag+d.ag,valor:a.valor+d.valor,n:a.n+d.n}),{sp:0,st:0,ag:0,valor:0,n:0});
   document.getElementById("kpi-pagas").innerHTML = `
-    <div class="kpi" style="border-left-color:#7F6000"><div class="label">Turmas Pagas</div><div class="value" style="color:#7F6000">${PAGAS_JULHO.length}</div><div class="sub">Dermatologia · Jul/2026</div></div>
+    <div class="kpi" style="border-left-color:#7F6000"><div class="label">Turmas Pagas</div><div class="value" style="color:#7F6000">${PAGAS_AGOSTO.length}</div><div class="sub">Dermatologia · Ago/2026</div></div>
     <div class="kpi green"><div class="label">Receita Total</div><div class="value">${fmtBRL(total.valor)}</div><div class="sub">${total.n} práticas realizadas</div></div>
     <div class="kpi orange"><div class="label">Ocupação (base)</div><div class="value">${pct(total.ag,total.sp)}</div><div class="sub">${fmtN(total.ag)} agend. / ${fmtN(total.sp)} slots</div></div>
     <div class="kpi ${pctV(total.ag,total.st)<0.6?'red':'green'}"><div class="label">Ocupação (c/ extra)</div><div class="value">${pct(total.ag,total.st)}</div><div class="sub">${fmtN(total.ag)} agend. / ${fmtN(total.st)} slots</div></div>
-    <div class="kpi"><div class="label">Ticket Médio / Turma</div><div class="value">${fmtBRL(total.valor/PAGAS_JULHO.length)}</div><div class="sub">Receita ÷ nº de turmas</div></div>
+    <div class="kpi"><div class="label">Ticket Médio / Turma</div><div class="value">${fmtBRL(total.valor/PAGAS_AGOSTO.length)}</div><div class="sub">Receita ÷ nº de turmas</div></div>
   `;
   const byU = {};
-  PAGAS_JULHO.forEach(d=>{
+  PAGAS_AGOSTO.forEach(d=>{
     if(!byU[d.unidade]) byU[d.unidade]={sp:0,st:0,ag:0,valor:0,n:0,turmas:0};
     const u=byU[d.unidade];
     u.sp+=d.sp; u.st+=d.st; u.ag+=d.ag; u.valor+=d.valor; u.n+=d.n; u.turmas+=1;
@@ -9811,7 +9806,7 @@ function buildPagas(){
       <div class="sub">${d.turmas} turmas · ${pct(d.ag,d.sp)} ocupação</div>
     </div>`;
   }).join("");
-  const rows = [...PAGAS_JULHO].sort((a,b)=>b.valor-a.valor);
+  const rows = [...PAGAS_AGOSTO].sort((a,b)=>b.valor-a.valor);
   document.getElementById("tbl-pagas-body").innerHTML = rows.map((d,i)=>{
     const occB = d.sp>0? d.ag/d.sp : null;
     return `<tr style="background:${i%2? '#EEF0F8':'#fff'}">
@@ -9830,7 +9825,7 @@ function buildPagas(){
     </tr>`;
   }).join("");
   document.getElementById("tbl-pagas-foot").innerHTML = `
-    <td class="left">TOTAL (${PAGAS_JULHO.length} turmas)</td><td></td><td></td>
+    <td class="left">TOTAL (${PAGAS_AGOSTO.length} turmas)</td><td></td><td></td>
     <td>${total.n}</td><td>${fmtN(total.sp)}</td><td>${fmtN(total.st)}</td><td>${fmtN(total.ag)}</td>
     <td style="font-weight:bold">${pct(total.ag,total.sp)}</td><td>${pct(total.ag,total.st)}</td>
     <td style="font-weight:bold">${fmtBRL(total.valor)}</td>
@@ -9845,7 +9840,7 @@ function simInit(){
   const body = document.getElementById("tbl-sim-body");
   if(!body) return;
   const prev = SIM_STATE;
-  SIM_STATE = PAGAS_JULHO.map((d,i)=>{
+  SIM_STATE = PAGAS_AGOSTO.map((d,i)=>{
     const p = prev[i];
     const valorAgReal = d.ag>0 ? d.valor/d.ag : 0;
     return {
@@ -9881,7 +9876,7 @@ function simToggleAll(checked){
 
 function simReset(){
   SIM_STATE.forEach((s,i)=>{
-    const d = PAGAS_JULHO[i];
+    const d = PAGAS_AGOSTO[i];
     s.slots = d.st;
     s.valorAg = d.ag>0 ? d.valor/d.ag : 0;
     s.checked = true;
