@@ -148,7 +148,7 @@
   </div>
   <div style="text-align:right;flex-shrink:0">
     <div class="sub">Última atualização</div>
-    <div id="last-update" style="font-size:13px;font-weight:bold">02/08/2026 18:03</div>
+    <div id="last-update" style="font-size:13px;font-weight:bold">02/08/2026 18:14</div>
   </div>
 </div>
 
@@ -9773,13 +9773,18 @@ function mkChart(id, cfg){
 function fmtBRL(n){ return n.toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0}); }
 
 const PAGAS_AGOSTO = [
-  {turma:"Dermatologia SP T10",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)"],sp:36,se:12,st:48,ag:31,n:2,valor:15600},
-  {turma:"Dermatologia SP T17",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:24,se:8,st:32,ag:52,n:2,valor:14400},
-  {turma:"Dermatologia One SP T01",unidade:"SP",modulos:["M5 - Laser I – conceitos, fototipos, rejuvenescimento e melasma"],sp:24,se:8,st:32,ag:42,n:1,valor:8400},
+  {turma:"Dermatologia SP T10",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)","M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)"],sp:84,se:28,st:112,ag:93,n:4,valor:32400},
+  {turma:"Dermatologia SP T13",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:36,se:12,st:48,ag:17,n:3,valor:21600},
+  {turma:"Dermatologia SP T14",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:36,se:12,st:48,ag:4,n:3,valor:21600},
+  {turma:"Dermatologia SP T08",unidade:"SP",modulos:["M12 - Peelings Químicos"],sp:72,se:33,st:105,ag:85,n:3,valor:21600},
+  {turma:"Dermatologia SP T11",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:36,se:12,st:48,ag:29,n:3,valor:21600},
   {turma:"Dermatologia SP T12",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:12,se:4,st:16,ag:17,n:1,valor:7200},
-  {turma:"Dermatologia SP T13",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:12,se:4,st:16,ag:9,n:1,valor:7200},
-  {turma:"Dermatologia SP T14",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:12,se:4,st:16,ag:0,n:1,valor:7200},
-  {turma:"Dermatologia SP T20",unidade:"SP",modulos:["M3 - Técnicas de Aplicação de Toxina Botulínica na Face"],sp:12,se:4,st:16,ag:30,n:1,valor:6000}
+  {turma:"Dermatologia SP T20",unidade:"SP",modulos:["M3 - Técnicas de Aplicação de Toxina Botulínica na Face"],sp:36,se:12,st:48,ag:97,n:3,valor:18000},
+  {turma:"Dermatologia SP T17",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:76,n:3,valor:21600},
+  {turma:"Dermatologia BSB T02",unidade:"BSB",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:27,se:9,st:36,ag:6,n:3,valor:16200},
+  {turma:"Dermatologia SP T15",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:61,n:3,valor:21600},
+  {turma:"Dermatologia CPS T05",unidade:"CPS",modulos:["M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)"],sp:24,se:8,st:32,ag:23,n:1,valor:8400},
+  {turma:"Dermatologia One SP T01",unidade:"SP",modulos:["M5 - Laser I – conceitos, fototipos, rejuvenescimento e melasma"],sp:24,se:8,st:32,ag:42,n:1,valor:8400}
 ];
 
 function buildPagas(){
