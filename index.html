@@ -3,7 +3,7 @@
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Acompanhamento Semanal de Práticas — Mai–Set/2026</title>
+<title>Acompanhamento Semanal de Práticas — Mai–Out/2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -137,7 +137,7 @@
 <div class="topbar" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
   <div>
     <div class="sub">Faculdade São Leopoldo Mandic</div>
-    <h1>Acompanhamento Semanal de Práticas — Mai–Set/2026</h1>
+    <h1>Acompanhamento Semanal de Práticas — Mai–Out/2026</h1>
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
     <label for="upload-xlsx" style="cursor: pointer; display: flex; align-items: center; gap: 6px; background: rgb(245, 197, 24); color: rgb(26, 36, 89); font-weight: bold; font-size: 12px; padding: 8px 16px; border-radius: 6px; white-space: nowrap; transition: background 0.15s;" onmouseover="this.style.background=&#39;#e0b010&#39;" onmouseout="this.style.background=&#39;#F5C518&#39;">
@@ -148,7 +148,7 @@
   </div>
   <div style="text-align:right;flex-shrink:0">
     <div class="sub">Última atualização</div>
-    <div id="last-update" style="font-size:13px;font-weight:bold">18/08/2026 11:25</div>
+    <div id="last-update" style="font-size:13px;font-weight:bold">18/08/2026 10:08</div>
   </div>
 </div>
 
@@ -159,6 +159,7 @@
   <div class="tab" onclick="showPage('turma',this)">👥 Por Turma</div>
   <div class="tab" onclick="showPage('modulo',this)">📚 Por Módulo</div>
   <div class="tab" onclick="showPage('pagas',this)">💰 Turmas Pagas (Ago)</div>
+  <div class="tab" onclick="showPage('exec',this)">📋 Resumo Executivo</div>
 </div>
 
 <!-- ═══════════════ MACRO ═══════════════ -->
@@ -1816,7 +1817,7 @@
 <!-- ═══════════════ TURMAS PAGAS (AGO) ═══════════════ -->
 <div id="page-pagas" class="page">
   <div style="margin-bottom:12px;font-size:12px;color:#666">Turmas de dermatologia com práticas pagas (extracurriculares) — competência Agosto/2026. <b>Receita 100%</b> = potencial cheio informado na planilha; <b>Receita 60%</b> = cenário conservador (60%).</div>
-  <div style="margin-bottom:12px;padding:8px 10px;background:#FFF4E5;border-left:3px solid #C55A11;font-size:11px;color:#843C0C">⚠️ <b>Receita congelada em 03/08/2026</b> (situação reconfirmada nas planilhas seguintes, a última de 11/08/2026). A partir da versão seguinte da planilha, a aba "Ocupação - Ago." deixou de trazer as colunas de Receita e as marcações de "É paga?" passaram a incluir Endocrinologia, Oftalmologia, Pediatria e Psiquiatria (junho e julho seguem 100% Dermatologia). Os valores abaixo são o último recorte consistente; a ocupação das demais abas está atualizada normalmente.</div>
+  <div style="margin-bottom:12px;padding:8px 10px;background:#FFF4E5;border-left:3px solid #C55A11;font-size:11px;color:#843C0C">⚠️ <b>Receita congelada em 03/08/2026</b> (situação reconfirmada nas planilhas seguintes, a última de 18/08/2026). A partir da versão seguinte da planilha, a aba "Ocupação - Ago." deixou de trazer as colunas de Receita e as marcações de "É paga?" passaram a incluir Endocrinologia, Oftalmologia, Pediatria e Psiquiatria (junho e julho seguem 100% Dermatologia). Os valores abaixo são o último recorte consistente; a ocupação das demais abas está atualizada normalmente.</div>
   <div class="kpi-row" id="kpi-pagas"></div>
   <div class="kpi-row" id="kpi-pagas-unidade"></div>
   <div class="card">
@@ -1869,6 +1870,53 @@
         </table>
       </div>
       <div id="sim-compare" style="margin-top:12px;font-size:12px;color:#595959"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ RESUMO EXECUTIVO ═══════════════ -->
+<div id="page-exec" class="page">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <label style="font-size:12px;font-weight:bold;color:#1A2459">Mês:</label>
+    <select id="filter-mes-exec" onchange="changeMesExec(this.value)" style="padding:5px 10px;border:1px solid #ccc;border-radius:5px;font-size:12px;background:#fff">
+      <option value="">Todos</option>
+    </select>
+  </div>
+  <div class="filter-bar" style="margin-bottom:12px">
+    <input id="search-turma-exec" type="text" placeholder="Buscar turma…" oninput="buildExec()" style="flex:1.2">
+    <select id="filter-unid-exec" onchange="buildExec()">
+      <option value="">Todas as unidades</option>
+      <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
+    </select>
+    <div style="position:relative" id="spec-dropdown-wrap-exec">
+      <button id="spec-dropdown-btn-exec" onclick="toggleSpecDropdownExec()" style="padding:6px 12px;border:1px solid #ccc;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;white-space:nowrap;min-width:190px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span id="spec-btn-label-exec">🏷️ Filtrar por especialidade…</span>
+        <span>▾</span>
+      </button>
+      <div id="spec-dropdown-list-exec" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:1000;background:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.15);min-width:300px;max-height:320px;overflow-y:auto;padding:6px 0">
+        <div style="padding:6px 10px;border-bottom:1px solid #eee;display:flex;gap:8px">
+          <input id="spec-search-input-exec" type="text" placeholder="Buscar especialidade…" oninput="filterSpecDropdownExec()" style="flex:1;padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:11px">
+          <button onclick="clearSpecFilterExec()" style="padding:4px 8px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;font-size:11px;cursor:pointer">Limpar</button>
+        </div>
+        <div id="spec-checkbox-list-exec" style="padding:4px 0"></div>
+      </div>
+    </div>
+    <div id="spec-chips-exec" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>
+  </div>
+  <div style="margin-bottom:6px;font-size:14px;font-weight:bold;color:#1A2459">Panorama por Curso</div>
+  <div style="margin-bottom:10px;font-size:12px;color:#666">Visão condensada por curso, ordenada da menor para a maior ocupação — para identificar prioridades rapidamente. <b>Clique em um curso</b> para ver as turmas que o compõem.</div>
+  <div style="margin-bottom:12px;padding:8px 10px;background:#EEF0F8;border-left:3px solid #2D3A8C;font-size:11px;color:#1A2459">ℹ️ Este resumo usa apenas dados de <b>ocupação</b> (Slots Ofertados, Realizado, Ociosos). O checklist-captacao.xlsx não registra Faltas nem Cancelamentos por aluno — por isso essas métricas não aparecem aqui. Meta de ocupação considerada: <b>85%</b> (Ótimo ≥85% · Regular 65–85% · Requer Atenção &lt;65%).</div>
+  <div class="kpi-row" id="kpi-exec"></div>
+  <div class="card">
+    <div class="card-header">Panorama por Curso</div>
+    <div class="card-body no-pad">
+      <div class="tbl-wrap"><table id="tbl-exec">
+        <thead><tr>
+          <th class="left">Curso</th><th>Unidades</th><th>Turmas</th>
+          <th>Slots Ofertados</th><th>Realizado</th><th>Ociosos</th><th>% Ocupação ▲</th><th>Status</th>
+        </tr></thead>
+        <tbody id="tbl-exec-body"></tbody>
+      </table></div>
     </div>
   </div>
 </div>
@@ -3221,6 +3269,221 @@ function simUpdate(){
 }
 
 // ─── PAGE NAVIGATION ─────────────────────────────────────────────────────────
+// ─── RESUMO EXECUTIVO ────────────────────────────────────────────────────────
+function getCurso(turma,unidade){ return getSpec(turma); } // getSpec() já cobre CPS/SP/ONL/BSB, ver "SPECIALTY MULTI-SELECT"
+let curMesExec = null; // inicializado no primeiro initMesExecDropdown() com o mês atual real
+function initMesExecDropdown(){
+  const meses=[...new Set(DATA.map(d=>d.data.split("/")[1]))].sort();
+  const s=document.getElementById("filter-mes-exec");
+  if(!s) return;
+  s.innerHTML='<option value="">Todos</option>';
+  meses.forEach(mm=>{const o=document.createElement("option");o.value=mm;o.textContent=getMesLabel(mm);s.appendChild(o);});
+  if(curMesExec===null){
+    const hoje=new Date();
+    const mmAtual=String(hoje.getMonth()+1).padStart(2,"0");
+    curMesExec = meses.includes(mmAtual) ? mmAtual : (meses.length?meses[meses.length-1]:"");
+  }
+  if([...s.options].some(o=>o.value===curMesExec)) s.value=curMesExec;
+}
+function changeMesExec(v){ curMesExec=v; buildExec(); }
+
+const META_OCUPACAO_EXEC = 0.85;
+function statusExec(occ){
+  if(occ===null) return {label:"— Sem dados",color:"#999",bg:"#F2F2F2"};
+  if(occ>=META_OCUPACAO_EXEC) return {label:"▲ Ótimo",color:"#375623",bg:"#E2EFDA"};
+  if(occ>=META_OCUPACAO_EXEC-0.20) return {label:"— Regular",color:"#7F6000",bg:"#FFF2CC"};
+  return {label:"⚠ Requer Atenção",color:"#C00000",bg:"#FDE3E3"};
+}
+
+// ─── RESUMO EXECUTIVO: multi-select de especialidade (estado independente do Por Turma) ──
+window._selectedSpecsExec = new Set();
+function toggleSpecDropdownExec(){
+  const panel = document.getElementById("spec-dropdown-list-exec");
+  if(!panel) return;
+  const isOpen = panel.style.display !== "none";
+  panel.style.display = isOpen ? "none" : "block";
+  if(!isOpen) document.getElementById("spec-search-input-exec").focus();
+}
+function _execFilteredBase(){
+  const src = curMesExec ? DATA.filter(d=>d.data.split("/")[1]===curMesExec) : DATA;
+  const fu = document.getElementById("filter-unid-exec")?.value || "";
+  const ft = (document.getElementById("search-turma-exec")?.value || "").toLowerCase();
+  return src.filter(d=>(!fu||d.unidade===fu) && (!ft||d.turma.toLowerCase().includes(ft)));
+}
+function rebuildSpecDropdownExec(){
+  const allSpecs = [...new Set(_execFilteredBase().map(d=>getSpec(d.turma)))].sort();
+  for(const s of [...window._selectedSpecsExec]){ if(!allSpecs.includes(s)) window._selectedSpecsExec.delete(s); }
+  _renderSpecCheckboxListExec(allSpecs, "");
+  _updateSpecChipsExec();
+  _updateSpecBtnLabelExec();
+}
+function _renderSpecCheckboxListExec(specs, query){
+  const container = document.getElementById("spec-checkbox-list-exec");
+  if(!container) return;
+  const filtered = query ? specs.filter(s=>s.toLowerCase().includes(query.toLowerCase())) : specs;
+  if(!filtered.length){
+    container.innerHTML = `<div style="padding:8px 12px;color:#999;font-size:11px">Nenhuma especialidade encontrada</div>`;
+    return;
+  }
+  container.innerHTML = filtered.map(s=>{
+    const checked = window._selectedSpecsExec.has(s);
+    const safeS = s.replace(/"/g,"&quot;").replace(/'/g,"\\'");
+    return `<label onmouseover="this.style.background='#f0f6ff'" onmouseout="this.style.background='${checked?"#EEF0F8":""}'" style="display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:11px;background:${checked?"#EEF0F8":"transparent"}">
+      <input type="checkbox" ${checked?"checked":""} onchange="toggleSpecExec('${safeS}',this.checked)" style="accent-color:#1A2459;flex-shrink:0">
+      <span>${s}</span>
+    </label>`;
+  }).join("");
+}
+function filterSpecDropdownExec(){
+  const q = document.getElementById("spec-search-input-exec").value;
+  const allSpecs = [...new Set(_execFilteredBase().map(d=>getSpec(d.turma)))].sort();
+  _renderSpecCheckboxListExec(allSpecs, q);
+}
+function toggleSpecExec(spec, checked){
+  if(checked) window._selectedSpecsExec.add(spec);
+  else window._selectedSpecsExec.delete(spec);
+  _updateSpecChipsExec();
+  _updateSpecBtnLabelExec();
+  buildExec();
+}
+function _updateSpecBtnLabelExec(){
+  const lbl = document.getElementById("spec-btn-label-exec");
+  if(!lbl) return;
+  const n = window._selectedSpecsExec.size;
+  lbl.textContent = n===0 ? "🏷️ Filtrar por especialidade…" : `🏷️ Especialidade: ${n} selecionada${n>1?"s":""}`;
+  const btn = document.getElementById("spec-dropdown-btn-exec");
+  if(btn){ btn.style.borderColor = n>0 ? "#375623" : "#ccc"; btn.style.fontWeight = n>0 ? "bold" : "normal"; }
+}
+function _updateSpecChipsExec(){
+  const container = document.getElementById("spec-chips-exec");
+  if(!container) return;
+  const specs = [...window._selectedSpecsExec].sort();
+  container.innerHTML = specs.map(s=>{
+    const safeS = s.replace(/'/g,"\\'").replace(/"/g,"&quot;");
+    const label = s.length>40 ? s.slice(0,38)+"…" : s;
+    return `<span title="${s}" style="display:inline-flex;align-items:center;gap:4px;background:#375623;color:#fff;padding:3px 8px;border-radius:12px;font-size:10px;max-width:240px">
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${label}</span>
+      <span onclick="toggleSpecExec('${safeS}',false);rebuildSpecDropdownExec();buildExec()" style="cursor:pointer;font-size:12px;line-height:1;opacity:.8;flex-shrink:0" title="Remover">✕</span>
+    </span>`;
+  }).join("");
+}
+function clearSpecFilterExec(){
+  window._selectedSpecsExec.clear();
+  _updateSpecChipsExec();
+  _updateSpecBtnLabelExec();
+  filterSpecDropdownExec();
+  buildExec();
+}
+
+window._expandedCursosExec = new Set();
+function toggleCursoExpandExec(curso){
+  if(window._expandedCursosExec.has(curso)) window._expandedCursosExec.delete(curso);
+  else window._expandedCursosExec.add(curso);
+  buildExec();
+}
+
+function buildExec(){
+  const tbody=document.getElementById("tbl-exec-body");
+  const kpiEl=document.getElementById("kpi-exec");
+  if(!tbody||!kpiEl) return;
+  initMesExecDropdown();
+  rebuildSpecDropdownExec();
+  let src = _execFilteredBase();
+  if(window._selectedSpecsExec.size>0) src = src.filter(d=>window._selectedSpecsExec.has(getSpec(d.turma)));
+
+  const map = {};
+  src.forEach(d=>{
+    const curso = getCurso(d.turma,d.unidade);
+    if(!map[curso]) map[curso]={unidades:new Set(),turmas:new Set(),ofertado:0,realizado:0,turmaMap:{}};
+    map[curso].unidades.add(d.unidade);
+    map[curso].turmas.add(d.turma);
+    map[curso].ofertado += d.st;
+    map[curso].realizado += d.ag;
+    if(!map[curso].turmaMap[d.turma]) map[curso].turmaMap[d.turma] = {unidade:d.unidade, ofertado:0, realizado:0};
+    map[curso].turmaMap[d.turma].ofertado += d.st;
+    map[curso].turmaMap[d.turma].realizado += d.ag;
+  });
+
+  let rows = Object.keys(map).sort().map(curso=>{
+    const v=map[curso];
+    const occ = v.ofertado>0 ? v.realizado/v.ofertado : null;
+    const ociosos = Math.max(v.ofertado - v.realizado, 0);
+    const turmaDetails = Object.keys(v.turmaMap).sort().map(turma=>{
+      const t=v.turmaMap[turma];
+      const tOcc = t.ofertado>0 ? t.realizado/t.ofertado : null;
+      return {turma, unidade:t.unidade, ofertado:t.ofertado, realizado:t.realizado, ociosos:Math.max(t.ofertado-t.realizado,0), occ:tOcc};
+    });
+    return {curso, unidades:[...v.unidades].sort().join(", "), turmas:v.turmas.size, ofertado:v.ofertado, realizado:v.realizado, ociosos, occ, turmaDetails};
+  });
+  rows.sort((a,b)=>(a.occ===null?-1:a.occ)-(b.occ===null?-1:b.occ));
+
+  if(!rows.length){
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#999;padding:16px">Sem dados para o período selecionado.</td></tr>';
+    kpiEl.innerHTML = '';
+    return;
+  }
+
+  const withOcc = rows.filter(r=>r.occ!==null);
+  const melhor = withOcc.length ? withOcc.reduce((a,b)=>b.occ>a.occ?b:a) : null;
+  const pior   = withOcc.length ? withOcc.reduce((a,b)=>b.occ<a.occ?b:a) : null;
+  const maiorOportunidade = rows.reduce((a,b)=>b.ociosos>a.ociosos?b:a);
+  const abaixoMeta = withOcc.filter(r=>r.occ<META_OCUPACAO_EXEC).length;
+
+  kpiEl.innerHTML = `
+    <div class="kpi green"><div class="label">Melhor Ocupação</div><div class="value">${melhor?melhor.curso:"—"}</div><div class="sub">${melhor?pct(melhor.realizado,melhor.ofertado)+" · "+fmtN(melhor.realizado)+" de "+fmtN(melhor.ofertado)+" slots":""}</div></div>
+    <div class="kpi red"><div class="label">Requer Atenção</div><div class="value">${pior?pior.curso:"—"}</div><div class="sub">${pior?pct(pior.realizado,pior.ofertado)+" · "+fmtN(pior.realizado)+" de "+fmtN(pior.ofertado)+" slots":""}</div></div>
+    <div class="kpi orange"><div class="label">Maior Oportunidade</div><div class="value">${maiorOportunidade.curso}</div><div class="sub">${fmtN(maiorOportunidade.ociosos)} slots ociosos</div></div>
+    <div class="kpi"><div class="label">Cursos Abaixo da Meta</div><div class="value">${abaixoMeta} de ${withOcc.length}</div><div class="sub">${withOcc.length?Math.round(abaixoMeta/withOcc.length*100):0}% dos cursos no filtro</div></div>
+  `;
+
+  tbody.innerHTML = rows.map(r=>{
+    const st=statusExec(r.occ);
+    const occLabel = r.occ!==null ? (r.occ*100).toFixed(1)+"%" : "—";
+    const safeCurso = r.curso.replace(/'/g,"\\'");
+    const isOpen = window._expandedCursosExec.has(r.curso);
+    const mainRow = `<tr onclick="toggleCursoExpandExec('${safeCurso}')" style="cursor:pointer" title="Clique para ver as turmas">
+      <td class="left" style="font-weight:bold;color:#1A2459">${isOpen?"▾":"▸"} ${r.curso}</td>
+      <td>${r.unidades}</td>
+      <td>${r.turmas}</td>
+      <td>${fmtN(r.ofertado)}</td>
+      <td style="font-weight:bold">${fmtN(r.realizado)}</td>
+      <td>${fmtN(r.ociosos)}</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div class="pbar-wrap" style="flex:1"><div class="pbar" style="width:${r.occ!==null?Math.min(r.occ*100,100):0}%;background:${occColor(r.occ)}"></div></div><span style="font-weight:bold;color:${occColor(r.occ)};min-width:42px">${occLabel}</span></div></td>
+      <td><span class="badge" style="background:${st.bg};color:${st.color}">${st.label}</span></td>
+    </tr>`;
+    if(!isOpen) return mainRow;
+    const turmaRowsHtml = r.turmaDetails.map(t=>{
+      const tOccLabel = t.occ!==null ? (t.occ*100).toFixed(1)+"%" : "—";
+      return `<tr style="border-bottom:1px solid #E8EEF4">
+        <td style="padding:5px 8px;text-align:left">${t.turma}</td>
+        <td style="padding:5px 8px;text-align:center"><span class="badge badge-${t.unidade.toLowerCase()}">${t.unidade}</span></td>
+        <td style="padding:5px 8px;text-align:center">${fmtN(t.ofertado)}</td>
+        <td style="padding:5px 8px;text-align:center;font-weight:bold">${fmtN(t.realizado)}</td>
+        <td style="padding:5px 8px;text-align:center">${fmtN(t.ociosos)}</td>
+        <td style="padding:5px 8px;text-align:center;font-weight:bold;color:${occColor(t.occ)}">${tOccLabel}</td>
+      </tr>`;
+    }).join("");
+    const subRow = `<tr>
+      <td colspan="8" style="padding:0;background:#F8F9FC;cursor:default">
+        <div style="padding:10px 16px 14px 34px">
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead><tr style="background:#EEF0F8">
+              <th style="padding:5px 8px;text-align:left;color:#1A2459">Turma</th>
+              <th style="padding:5px 8px;color:#1A2459">Unidade</th>
+              <th style="padding:5px 8px;color:#1A2459">Slots Ofertados</th>
+              <th style="padding:5px 8px;color:#1A2459">Realizado</th>
+              <th style="padding:5px 8px;color:#1A2459">Ociosos</th>
+              <th style="padding:5px 8px;color:#1A2459">% Ocupação</th>
+            </tr></thead>
+            <tbody>${turmaRowsHtml}</tbody>
+          </table>
+        </div>
+      </td>
+    </tr>`;
+    return mainRow + subRow;
+  }).join("");
+}
+
 function showPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -3232,6 +3495,7 @@ function showPage(name,el){
   if(name==='turma'){ rebuildModuleDropdown(); rebuildSpecDropdown(); renderTurmaTable(); }
   if(name==='modulo') buildModulo();
   if(name==='pagas') buildPagas();
+  if(name==='exec') buildExec();
 }
 
 // ─── MACRO ───────────────────────────────────────────────────────────────────
@@ -3771,6 +4035,8 @@ document.addEventListener("click", function(e){
   if(modWrap && !modWrap.contains(e.target)) document.getElementById("mod-dropdown-list").style.display="none";
   const specWrap = document.getElementById("spec-dropdown-wrap");
   if(specWrap && !specWrap.contains(e.target)) document.getElementById("spec-dropdown-list").style.display="none";
+  const specWrapExec = document.getElementById("spec-dropdown-wrap-exec");
+  if(specWrapExec && !specWrapExec.contains(e.target)) document.getElementById("spec-dropdown-list-exec").style.display="none";
 });
 
 function rebuildModuleDropdown(){
@@ -4104,7 +4370,7 @@ function showTurmaExec(turmaName){
 
   const insightLines = [
     `<b style="color:#1A2459;font-size:13px">📌 ${turmaName}</b>`,
-    `<b>Unidade:</b> ${unidade} &nbsp;|&nbsp; <b>Mês:</b> Mai–Set/2026`,
+    `<b>Unidade:</b> ${unidade} &nbsp;|&nbsp; <b>Mês:</b> Mai–Out/2026`,
     modulosUnicos.length>1
       ? `<b>Módulos:</b> ${modulosUnicos.length} módulos no mês`
       : `<b>Módulo:</b> ${modulosUnicos[0]}`,
@@ -4194,7 +4460,7 @@ function showGroupExec(){
   panel.style.display="block";
   panel.scrollIntoView({behavior:"smooth",block:"start"});
 
-  document.getElementById("group-exec-title").textContent = `Análise do Grupo: ${groupName}${fu?" · "+fu:""} · Mai–Set/2026`;
+  document.getElementById("group-exec-title").textContent = `Análise do Grupo: ${groupName}${fu?" · "+fu:""} · Mai–Out/2026`;
 
   // KPIs
   const occClass = avgOcc>=0.85?"green":avgOcc>=0.5?"orange":"red";
@@ -4297,7 +4563,7 @@ function showGroupExec(){
   const semanasOk = WEEKS.filter(w=>weekGrp[w]&&weekGrp[w].sp>0&&weekGrp[w].ag/weekGrp[w].sp>=0.85);
   document.getElementById("group-insights").innerHTML=[
     `<b style="color:#375623;font-size:13px">📌 Grupo: ${groupName}</b>`,
-    `<b>Período:</b> Mai–Set/2026 &nbsp;|&nbsp; <b>${turmasNoGrupo.length} turmas</b>`,
+    `<b>Período:</b> Mai–Out/2026 &nbsp;|&nbsp; <b>${turmasNoGrupo.length} turmas</b>`,
     `<hr style="border:none;border-top:1px solid #ddd;margin:6px 0">`,
     `<b>📊 Consolidado do Grupo:</b>`,
     `&nbsp;• <b>${fmtN(tot.ag)}</b> agendamentos · <b>${fmtN(tot.sp)}</b> slots de prática`,
@@ -4331,7 +4597,7 @@ function copyGroupToPPT(){
     ``,
     `Grupo:    ${d.groupName}`,
     `Turmas:   ${d.turmasNoGrupo.length}`,
-    `Período:  Mai–Set/2026`,
+    `Período:  Mai–Out/2026`,
     ``,
     `RESUMO CONSOLIDADO`,
     `-`.repeat(52),
@@ -4628,6 +4894,7 @@ function handleUpload(input){
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 initMesDropdowns();
+initMesExecDropdown();
 buildMacro();
 buildSemana();
 buildUnidade();
@@ -4636,6 +4903,7 @@ rebuildSpecDropdown();
 renderTurmaTable();
 buildModulo();
 buildPagas();
+buildExec();
 </script>
 
 
