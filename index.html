@@ -173,6 +173,11 @@
       </button>
       <div id="filter-mes-macro-panel" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:30;background:#fff;border:1px solid #ccc;border-radius:5px;padding:8px 12px;box-shadow:0 4px 12px rgba(0,0,0,.15);min-width:150px"></div>
     </div>
+    <label style="font-size:12px;font-weight:bold;color:#1A2459;margin-left:12px">Unidade:</label>
+    <select id="filter-unid-macro" onchange="changeUnidMacro(this.value)" style="padding:5px 10px;border:1px solid #ccc;border-radius:5px;font-size:12px;background:#fff;color:#1A2459">
+      <option value="">Todas</option>
+      <option>CPS</option><option>SP</option><option>ONL</option><option>BSB</option>
+    </select>
   </div>
   <div class="kpi-row" id="kpi-macro">
     <div class="kpi"><div class="label">Slots da Prática</div><div class="value">3.280</div><div class="sub">159 práticas com slots</div></div>
@@ -3007,6 +3012,7 @@ function parseData(){
 let DATA = parseData();
 let curMes = "";
 let curMesesMacro = [];
+let curUnidMacro = "";
 function getD(){
   if(!curMes) return DATA;
   const primary=DATA.filter(d=>d.data.split("/")[1]===curMes);
@@ -3014,11 +3020,18 @@ function getD(){
   return DATA.filter(d=>validKeys.has(d.weekKey));
 }
 function getDMacro(){
-  if(!curMesesMacro.length) return DATA;
-  const primary=DATA.filter(d=>curMesesMacro.includes(d.data.split("/")[1]));
-  const validKeys=new Set(primary.map(d=>d.weekKey));
-  return DATA.filter(d=>validKeys.has(d.weekKey));
+  let base;
+  if(!curMesesMacro.length){
+    base = DATA;
+  } else {
+    const primary=DATA.filter(d=>curMesesMacro.includes(d.data.split("/")[1]));
+    const validKeys=new Set(primary.map(d=>d.weekKey));
+    base = DATA.filter(d=>validKeys.has(d.weekKey));
+  }
+  if(curUnidMacro) base = base.filter(d=>d.unidade===curUnidMacro);
+  return base;
 }
+function changeUnidMacro(v){ curUnidMacro=v; buildMacro(); }
 function getMesLabel(mm){return{'01':'Jan','02':'Fev','03':'Mar','04':'Abr','05':'Mai','06':'Jun','07':'Jul','08':'Ago','09':'Set','10':'Out','11':'Nov','12':'Dez'}[mm]||mm;}
 function mondayKeyToLabel(key,idx){
   const mon=new Date(key+"T12:00:00Z");
