@@ -148,7 +148,7 @@
   </div>
   <div style="text-align:right;flex-shrink:0">
     <div class="sub">Última atualização</div>
-    <div id="last-update" style="font-size:13px;font-weight:bold">01/09/2026 15:02</div>
+    <div id="last-update" style="font-size:13px;font-weight:bold">02/09/2026 12:36</div>
   </div>
 </div>
 
@@ -158,7 +158,7 @@
   <div class="tab" onclick="showPage('unidade',this)">🏛️ Por Unidade</div>
   <div class="tab" onclick="showPage('turma',this)">👥 Por Turma</div>
   <div class="tab" onclick="showPage('modulo',this)">📚 Por Módulo</div>
-  <div class="tab" onclick="showPage('pagas',this)">💰 Turmas Pagas (Ago)</div>
+  <div class="tab" onclick="showPage('pagas',this)">💰 Turmas Pagas (Set)</div>
   <div class="tab" onclick="showPage('exec',this)">📋 Resumo Executivo</div>
 </div>
 
@@ -1819,10 +1819,9 @@
   </div>
 </div>
 
-<!-- ═══════════════ TURMAS PAGAS (AGO) ═══════════════ -->
+<!-- ═══════════════ TURMAS PAGAS (SET) ═══════════════ -->
 <div id="page-pagas" class="page">
-  <div style="margin-bottom:12px;font-size:12px;color:#666">Turmas de dermatologia com práticas pagas (extracurriculares) — competência Agosto/2026. <b>Receita 100%</b> = potencial cheio informado na planilha; <b>Receita 60%</b> = cenário conservador (60%).</div>
-  <div style="margin-bottom:12px;padding:8px 10px;background:#FFF4E5;border-left:3px solid #C55A11;font-size:11px;color:#843C0C">⚠️ <b>Receita congelada em 03/08/2026</b> (situação reconfirmada nas planilhas seguintes, a última de 18/08/2026). A partir da versão seguinte da planilha, a aba "Ocupação - Ago." deixou de trazer as colunas de Receita e as marcações de "É paga?" passaram a incluir Endocrinologia, Oftalmologia, Pediatria e Psiquiatria (junho e julho seguem 100% Dermatologia). Os valores abaixo são o último recorte consistente; a ocupação das demais abas está atualizada normalmente.</div>
+  <div style="margin-bottom:12px;font-size:12px;color:#666">Turmas de dermatologia com práticas pagas (extracurriculares) — competência Setembro/2026. <b>Receita 100%</b> = potencial cheio informado na planilha; <b>Receita 60%</b> = cenário conservador (60%).</div>
   <div class="kpi-row" id="kpi-pagas"></div>
   <div class="kpi-row" id="kpi-pagas-unidade"></div>
   <div class="card">
@@ -3135,28 +3134,31 @@ function mkChart(id, cfg){
   charts[id] = new Chart(ctx, cfg);
 }
 
-// ─── TURMAS PAGAS (AGO) ────────────────────────────────────────────────────────
+// ─── TURMAS PAGAS (SET) ────────────────────────────────────────────────────────
 function fmtBRL(n){ return n.toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0}); }
 
 const PAGAS_MES = [
-  {turma:"Dermatologia SP T10",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)", "M11 - Laserterapia em Medicina Estética II (Radiofrequência Agulhada, Plasma, Ultrassom Micro e Microfocado, Ondas de Choque e Campo Eletromagnético)"],sp:84,se:28,st:112,ag:93,n:4,valor:32400,valor60:19440},
-  {turma:"Dermatologia SP T13",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:36,se:12,st:48,ag:17,n:3,valor:21600,valor60:12960},
-  {turma:"Dermatologia SP T14",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:36,se:12,st:48,ag:4,n:3,valor:21600,valor60:12960},
-  {turma:"Dermatologia SP T08",unidade:"SP",modulos:["M12 - Peelings Químicos"],sp:72,se:33,st:105,ag:85,n:3,valor:21600,valor60:12960},
-  {turma:"Dermatologia SP T11",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:36,se:12,st:48,ag:29,n:3,valor:21600,valor60:12960},
-  {turma:"Dermatologia SP T17",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:76,n:3,valor:21600,valor60:12960},
-  {turma:"Dermatologia SP T15",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:61,n:3,valor:21600,valor60:12960},
-  {turma:"Dermatologia SP T20",unidade:"SP",modulos:["M3 - Técnicas de Aplicação de Toxina Botulínica na Face"],sp:36,se:12,st:48,ag:97,n:3,valor:18000,valor60:10800},
-  {turma:"Dermatologia BSB T02",unidade:"BSB",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:27,se:9,st:36,ag:6,n:3,valor:16200,valor60:9720},
-  {turma:"Dermatologia CPS T05",unidade:"CPS",modulos:["M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)"],sp:24,se:8,st:32,ag:23,n:1,valor:8400,valor60:5040},
-  {turma:"Dermatologia One SP T01",unidade:"SP",modulos:["M5 - Laser I – conceitos, fototipos, rejuvenescimento e melasma"],sp:24,se:8,st:32,ag:42,n:1,valor:8400,valor60:5040},
-  {turma:"Dermatologia SP T12",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:12,se:4,st:16,ag:17,n:1,valor:7200,valor60:4320}
+  {turma:"Dermatologia SP T09",unidade:"SP",modulos:["M14 - Preenchimento Glúteo"],sp:36,se:6,st:42,ag:42,n:3,valor:36000,valor60:21600},
+  {turma:"Dermatologia CPS T04",unidade:"CPS",modulos:["M14 - Preenchimento Glúteo"],sp:36,se:6,st:42,ag:44,n:3,valor:36000,valor60:21600},
+  {turma:"Dermatologia CPS T06",unidade:"CPS",modulos:["M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)"],sp:72,se:24,st:96,ag:88,n:3,valor:25200,valor60:15120},
+  {turma:"Dermatologia CPS T07",unidade:"CPS",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:58,n:3,valor:21600,valor60:12960},
+  {turma:"Dermatologia SP T12",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:36,se:12,st:48,ag:25,n:3,valor:21600,valor60:12960},
+  {turma:"Dermatologia SP T19",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:31,n:3,valor:21600,valor60:12960},
+  {turma:"Dermatologia SP T21",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:42,n:3,valor:21600,valor60:12960},
+  {turma:"Dermatologia SP T15",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:36,se:12,st:48,ag:11,n:3,valor:21600,valor60:12960},
+  {turma:"Dermatologia SP T18",unidade:"SP",modulos:["M8 - Técnicas de Preenchimento com Ácido Hialurônico na Face"],sp:36,se:12,st:48,ag:17,n:3,valor:21600,valor60:12960},
+  {turma:"Dermatologia SP T10",unidade:"SP",modulos:["M12 - Peelings Químicos"],sp:72,se:33,st:105,ag:59,n:3,valor:21600,valor60:12960},
+  {turma:"Dermatologia SP T17",unidade:"SP",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:36,se:12,st:48,ag:6,n:3,valor:21600,valor60:12960},
+  {turma:"Dermatologia CPS T03",unidade:"CPS",modulos:["M17 - Tratamentos Capilares"],sp:63,se:21,st:84,ag:86,n:3,valor:18900,valor60:11340},
+  {turma:"Dermatologia SP T06",unidade:"SP",modulos:["M17 - Tratamentos Capilares"],sp:63,se:21,st:84,ag:84,n:3,valor:18900,valor60:11340},
+  {turma:"Dermatologia CPS T05",unidade:"CPS",modulos:["M7 - Laserterapia em Medicina Estética I (LIP, Nd:YAG, Q-Switched, Erbium, CO2, Tímio)"],sp:48,se:16,st:64,ag:60,n:2,valor:16800,valor60:10080},
+  {turma:"Dermatologia BSB T02",unidade:"BSB",modulos:["M10 - Técnicas de Preenchimento com Ácido Hialurônico II (Lábios, Olheiras e Queixo)"],sp:27,se:9,st:36,ag:14,n:3,valor:16200,valor60:9720}
 ];
 
 function buildPagas(){
   const total = PAGAS_MES.reduce((a,d)=>({sp:a.sp+d.sp,st:a.st+d.st,ag:a.ag+d.ag,valor:a.valor+d.valor,valor60:a.valor60+(d.valor60||0),n:a.n+d.n}),{sp:0,st:0,ag:0,valor:0,valor60:0,n:0});
   document.getElementById("kpi-pagas").innerHTML = `
-    <div class="kpi" style="border-left-color:#7F6000"><div class="label">Turmas Pagas</div><div class="value" style="color:#7F6000">${PAGAS_MES.length}</div><div class="sub">Dermatologia · Ago/2026</div></div>
+    <div class="kpi" style="border-left-color:#7F6000"><div class="label">Turmas Pagas</div><div class="value" style="color:#7F6000">${PAGAS_MES.length}</div><div class="sub">Dermatologia · Set/2026</div></div>
     <div class="kpi green"><div class="label">Receita 100%</div><div class="value">${fmtBRL(total.valor)}</div><div class="sub">${total.n} práticas · potencial cheio</div></div>
     <div class="kpi orange"><div class="label">Receita 60%</div><div class="value">${fmtBRL(total.valor60)}</div><div class="sub">cenário conservador</div></div>
     <div class="kpi orange"><div class="label">Ocupação (base)</div><div class="value">${pct(total.ag,total.sp)}</div><div class="sub">${fmtN(total.ag)} agend. / ${fmtN(total.sp)} slots</div></div>
