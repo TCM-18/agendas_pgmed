@@ -15,6 +15,7 @@
     --blue-pale: #EEF0F8;
     --green: #375623;
     --green-light: #E2EFDA;
+    --wine: #6B0F1A;
     --red: #C00000;
     --orange: #ED7D31;
     --yellow: #F5C518;
@@ -353,7 +354,8 @@
     </div>
     <div class="card-body">
       <div id="daily-legend" style="display:flex;gap:16px;margin-bottom:12px;font-size:11px;flex-wrap:wrap">
-        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#375623;margin-right:4px"></span>≥ 85%</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#6B0F1A;margin-right:4px"></span>≥ 115%</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#375623;margin-right:4px"></span>85–115%</span>
         <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#F5C518;margin-right:4px"></span>50–85%</span>
         <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#C00000;margin-right:4px"></span>&lt; 50%</span>
         <span style="margin-left:12px;color:#595959">Tendência: <strong style="color:#375623">↑ Crescendo</strong> · <strong style="color:#C00000">↓ Caindo</strong> · <strong style="color:#7F6000">→ Estável</strong></span>
@@ -3271,6 +3273,7 @@ function pctV(ag,sp){ return sp>0 ? ag/sp : null; }
 
 function occColor(v){
   if(v===null) return "#E8EEF4";
+  if(v>=1.15) return "#6B0F1A";
   if(v>=1.0) return "#375623"; if(v>=0.85) return "#70AD47";
   if(v>=0.70) return "#F5C518"; if(v>=0.50) return "#ED7D31";
   return "#C00000";
